@@ -12,7 +12,7 @@
     <header>
         <nav>
             <div class="logo">
-                <img src="assests/M.K Store logo.png" alt="M.K. Store Logo">
+                <img src="assests/mk-logo.svg" alt="M.K. Store Logo" style="height:40px; width:auto">
                 <h1>M.K. Store</h1>
             </div>
             <div class="search-bar">
@@ -25,8 +25,6 @@
             <ul class="nav-links">
                 <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="about.html"><i class="fa fa-info-circle"></i> About</a></li>
-                <li><a href="contact.html"><i class="fa fa-envelope"></i> Contact</a></li>
                 <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a></li>
                 <li><a href="login.html" class="active"><i class="fa fa-user"></i> Login</a></li>
             </ul>
@@ -44,7 +42,10 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <input type="password" id="password" name="password" required>
+                        <div style="position:relative;display:flex;align-items:center;">
+                            <input type="password" id="password" name="password" required style="padding-right:40px;">
+                            <button type="button" id="togglePassword" aria-label="Show password" style="position:absolute;right:10px;background:none;border:none;color:#6b7280;cursor:pointer"><i class="fa fa-eye"></i></button>
+                        </div>
                     </div>
                     <div class="form-group remember-me">
                         <input type="checkbox" id="remember" name="remember">
@@ -103,6 +104,20 @@
 
     <script src="js/script.js"></script>
     <script src="js/login.js"></script>
+    <script>
+    // Password visibility toggle
+    (function(){
+        var toggle = document.getElementById('togglePassword');
+        var pwd = document.getElementById('password');
+        if (toggle && pwd){
+            toggle.addEventListener('click', function(){
+                var isText = pwd.getAttribute('type') === 'text';
+                pwd.setAttribute('type', isText ? 'password' : 'text');
+                this.innerHTML = '<i class="fa ' + (isText ? 'fa-eye' : 'fa-eye-slash') + '"></i>';
+            });
+        }
+    })();
+    </script>
     <script src="js/livehelp.js"></script>
 </body>
 </html>
