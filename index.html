@@ -1,20 +1,25 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <title>M.K. Store — Daily Essentials & Groceries</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Shop daily essentials, groceries, snacks, and more at M.K. Store. Quality products at great prices with a smooth shopping experience.">
+    <meta name="description"
+        content="Shop daily essentials, groceries, snacks, and more at M.K. Store. Quality products at great prices with a smooth shopping experience.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Poppins:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/cart.css">
     <link rel="stylesheet" href="css/login.css">
     <link rel="stylesheet" href="css/shop.css">
     <link rel="stylesheet" href="css/checkout.css">
 </head>
+
 <body>
     <header>
         <nav>
@@ -32,7 +37,8 @@
             <ul class="nav-links">
                 <li><a href="index.html" class="active"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a></li>
+                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                </li>
                 <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
             </ul>
         </nav>
@@ -41,9 +47,10 @@
     <main>
         <section class="hero-1" data-animate="fade-up">
             <div class="hero-content">
-                <h2>Daily essentials, delivered right when you need them</h2>
-                <p>Shop trusted groceries and household staples at fair prices with a smooth, reliable experience.</p>
-                <a href="shop.html" class="btn">Shop Now</a>
+                <h2>Daily Essentials, <br>Delivered instantly.</h2>
+                <p>Experience the new standard of online grocery shopping. Premium quality, unbeatable prices, and
+                    lightning-fast delivery.</p>
+                <a href="shop.html" class="btn"><i class="fa-solid fa-bag-shopping"></i> Start Shopping</a>
             </div>
         </section>
 
@@ -52,40 +59,64 @@
             <div class="product-grid">
                 <!-- Product 1 -->
                 <div class="product" data-animate="zoom-in">
-                    <img src="assets/sail,suger&jaggery.webp" alt="Sail Sugar">
-                    <h3>Sail Sugar</h3>
-                    <span class="price">$1</span>
-                    <button class="add-to-cart" 
-                        data-product='{"name": "Sail Sugar", "price": 1, "image": "assets/sail,suger&jaggery.webp"}'>
-                        Add to Cart
-                    </button>
+                    <div class="product-image-wrapper">
+                        <img src="assets/sail,suger&jaggery.webp" alt="Sail Sugar">
+                        <div class="product-actions">
+                            <button class="btn" style="padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem;"
+                                onclick="location.href='shop.html'"><i class="fa-regular fa-eye"></i> View</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Sail Sugar</h3>
+                        <span class="price">$1.00</span>
+                        <button class="add-to-cart"
+                            data-product='{"name": "Sail Sugar", "price": 1, "image": "assets/sail,suger&jaggery.webp"}'>
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
                 </div>
                 <!-- Product 2 -->
                 <div class="product" data-animate="zoom-in">
-                    <img src="assets/atta.webp" alt="Atta & Flour">
-                    <h3>Atta & Flour</h3>
-                    <span class="price">$2</span>
-                    <button class="add-to-cart" 
-                        data-product='{"name": "Atta & Flour", "price": 2, "image": "assets/atta.webp"}'>
-                        Add to Cart
-                    </button>
+                    <div class="product-image-wrapper">
+                        <img src="assets/atta.webp" alt="Atta & Flour">
+                        <div class="product-actions">
+                            <button class="btn" style="padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem;"
+                                onclick="location.href='shop.html'"><i class="fa-regular fa-eye"></i> View</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Atta & Flour</h3>
+                        <span class="price">$2.00</span>
+                        <button class="add-to-cart"
+                            data-product='{"name": "Atta & Flour", "price": 2, "image": "assets/atta.webp"}'>
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
                 </div>
                 <!-- Product 3 -->
                 <div class="product" data-animate="zoom-in">
-                    <img src="assets/rice & rice product.webp" alt="Rice & Rice Products">
-                    <h3>Rice & Rice Products</h3>
-                    <span class="price">$3</span>
-                    <button class="add-to-cart" 
-                        data-product='{"name": "Rice & Rice Products", "price": 3, "image": "assets/rice & rice product.webp"}'>
-                        Add to Cart
-                    </button>
+                    <div class="product-image-wrapper">
+                        <img src="assets/rice & rice product.webp" alt="Rice & Rice Products">
+                        <div class="product-actions">
+                            <button class="btn" style="padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem;"
+                                onclick="location.href='shop.html'"><i class="fa-regular fa-eye"></i> View</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Rice & Rice Products</h3>
+                        <span class="price">$3.00</span>
+                        <button class="add-to-cart"
+                            data-product='{"name": "Rice & Rice Products", "price": 3, "image": "assets/rice & rice product.webp"}'>
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
                 </div>
                 <!-- Product 4 -->
                 <div class="product" data-animate="zoom-in">
                     <img src="assets/Dals & Pulses.webp" alt="Dals & Pulses">
                     <h3>Dals & Pulses</h3>
                     <span class="price">$5</span>
-                    <button class="add-to-cart" 
+                    <button class="add-to-cart"
                         data-product='{"name": "Dals & Pulses", "price": 5, "image": "assets/Dals & Pulses.webp"}'>
                         Add to Cart
                     </button>
@@ -98,15 +129,21 @@
             <h2>About M.K. Store</h2>
             <div class="product-grid" style="grid-template-columns: 1.2fr 1fr; align-items:center;">
                 <div>
-                    <p style="color:#4b5563; margin-bottom:1rem;">We make everyday shopping simple. From pantry staples to daily essentials, our mission is to bring you quality, value, and convenience in one place.</p>
+                    <p style="color:#4b5563; margin-bottom:1rem;">We make everyday shopping simple. From pantry staples
+                        to daily essentials, our mission is to bring you quality, value, and convenience in one place.
+                    </p>
                     <ul style="list-style:none; padding:0; margin:0; color:#374151;">
-                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Trusted brands and fresh products</li>
-                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Fair pricing and weekly offers</li>
-                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Fast, reliable service</li>
+                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Trusted
+                            brands and fresh products</li>
+                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Fair
+                            pricing and weekly offers</li>
+                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Fast,
+                            reliable service</li>
                     </ul>
                 </div>
                 <div>
-                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60" alt="About M.K. Store" style="width:100%; border-radius:12px; box-shadow: var(--shadow-md);">
+                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60"
+                        alt="About M.K. Store" style="width:100%; border-radius:12px; box-shadow: var(--shadow-md);">
                 </div>
             </div>
         </section>
@@ -116,21 +153,26 @@
             <h2>Contact Us</h2>
             <div class="product-grid" style="grid-template-columns: 1fr 1fr;">
                 <div>
-                    <form id="homeContactForm" style="background:#fff; padding:1rem; border-radius:12px; box-shadow: var(--shadow-md);">
+                    <form id="homeContactForm"
+                        style="background:#fff; padding:1rem; border-radius:12px; box-shadow: var(--shadow-md);">
                         <div class="form-group" style="margin-bottom:0.8rem;">
                             <label for="cname">Name</label>
-                            <input id="cname" type="text" required style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:8px;">
+                            <input id="cname" type="text" required
+                                style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:8px;">
                         </div>
                         <div class="form-group" style="margin-bottom:0.8rem;">
                             <label for="cemail">Email</label>
-                            <input id="cemail" type="email" required style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:8px;">
+                            <input id="cemail" type="email" required
+                                style="width:100%; padding:0.7rem; border:1px solid var(--border); border-radius:8px;">
                         </div>
                         <div class="form-group" style="margin-bottom:0.8rem;">
                             <label for="cmsg">Message</label>
-                            <textarea id="cmsg" required style="width:100%; min-height:120px; padding:0.7rem; border:1px solid var(--border); border-radius:8px;"></textarea>
+                            <textarea id="cmsg" required
+                                style="width:100%; min-height:120px; padding:0.7rem; border:1px solid var(--border); border-radius:8px;"></textarea>
                         </div>
                         <button class="btn" type="submit">Send Message</button>
-                        <div id="home-contact-success" style="display:none;color:green;margin-top:0.8rem;">Thanks! We’ll be in touch shortly.</div>
+                        <div id="home-contact-success" style="display:none;color:green;margin-top:0.8rem;">Thanks! We’ll
+                            be in touch shortly.</div>
                     </form>
                 </div>
                 <div>
@@ -140,7 +182,10 @@
                         <p style="color:#6b7280;">Phone: +91 7878005320</p>
                         <p style="color:#6b7280;">Email: mkstore5100@gmail.com</p>
                         <div style="margin-top:0.8rem;">
-                            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215018125037!2d-73.987844924164!3d40.757985971389!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus" width="100%" height="240" style="border:0; border-radius:8px;" allowfullscreen="" loading="lazy"></iframe>
+                            <iframe
+                                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3022.215018125037!2d-73.987844924164!3d40.757985971389!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x89c25855c6480299%3A0x55194ec5a1ae072e!2sTimes%20Square!5e0!3m2!1sen!2sus!4v1700000000000!5m2!1sen!2sus"
+                                width="100%" height="240" style="border:0; border-radius:8px;" allowfullscreen=""
+                                loading="lazy"></iframe>
                         </div>
                     </div>
                 </div>
@@ -154,7 +199,7 @@
                     <img src="assets/Morning Starters.webp" alt="Morning Starters">
                     <h3>Morning Starters</h3>
                     <span class="price">$1</span>
-                    <button class="add-to-cart" 
+                    <button class="add-to-cart"
                         data-product='{"name": "Morning Starters", "price": 1, "image": "assets/Morning Starters.webp"}'>
                         Add to Cart
                     </button>
@@ -164,7 +209,7 @@
                     <img src="assets/Chai Snacks.webp" alt="Chai Snacks">
                     <h3>Chai Snacks</h3>
                     <span class="price">$2</span>
-                    <button class="add-to-cart" 
+                    <button class="add-to-cart"
                         data-product='{"name": "Chai Snacks", "price": 2, "image": "assets/Chai Snacks.webp"}'>
                         Add to Cart
                     </button>
@@ -174,20 +219,28 @@
                     <img src="assets/Sweets.webp" alt="Sweets">
                     <h3>Sweets</h3>
                     <span class="price">$3</span>
-                    <button class="add-to-cart" 
+                    <button class="add-to-cart"
                         data-product='{"name": "Sweets", "price": 3, "image": "assets/Sweets.webp"}'>
                         Add to Cart
                     </button>
                 </div>
                 <!-- Product 4 -->
                 <div class="product" data-animate="zoom-in">
-                    <img src="assets/Pasta & More.webp" alt="Pasta & More">
-                    <h3>Pasta & More</h3>
-                    <span class="price">$4</span>
-                    <button class="add-to-cart" 
-                        data-product='{"name": "Pasta & More", "price": 4, "image": "assets/Pasta & More.webp"}'>
-                        Add to Cart
-                    </button>
+                    <div class="product-image-wrapper">
+                        <img src="assets/Pasta & More.webp" alt="Pasta & More">
+                        <div class="product-actions">
+                            <button class="btn" style="padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem;"
+                                onclick="location.href='shop.html'"><i class="fa-regular fa-eye"></i> View</button>
+                        </div>
+                    </div>
+                    <div class="product-info">
+                        <h3>Pasta & More</h3>
+                        <span class="price">$4.00</span>
+                        <button class="add-to-cart"
+                            data-product='{"name": "Pasta & More", "price": 4, "image": "assets/Pasta & More.webp"}'>
+                            <i class="fa-solid fa-cart-plus"></i> Add to Cart
+                        </button>
+                    </div>
                 </div>
             </div>
         </section>
@@ -206,7 +259,8 @@
         <div class="footer-content">
             <div class="footer-section">
                 <h3>About Us</h3>
-                <p>M.K. Store is your local destination for quality groceries and daily essentials. We focus on trusted brands, fair pricing, and dependable service.</p>
+                <p>M.K. Store is your local destination for quality groceries and daily essentials. We focus on trusted
+                    brands, fair pricing, and dependable service.</p>
                 <a href="#about-section">Learn more</a>
             </div>
             <div class="footer-section">
@@ -238,22 +292,23 @@
 
     <script src="js/script.js"></script>
     <script>
-    // Simple contact form handler on home page
-    (function(){
-        var form = document.getElementById('homeContactForm');
-        if (!form) return;
-        form.addEventListener('submit', function(e){
-            e.preventDefault();
-            var name = document.getElementById('cname').value.trim();
-            var email = document.getElementById('cemail').value.trim();
-            var msg = document.getElementById('cmsg').value.trim();
-            if (!name || !email || !msg) return;
-            document.getElementById('home-contact-success').style.display = 'block';
-            form.reset();
-        });
-    })();
+        // Simple contact form handler on home page
+        (function () {
+            var form = document.getElementById('homeContactForm');
+            if (!form) return;
+            form.addEventListener('submit', function (e) {
+                e.preventDefault();
+                var name = document.getElementById('cname').value.trim();
+                var email = document.getElementById('cemail').value.trim();
+                var msg = document.getElementById('cmsg').value.trim();
+                if (!name || !email || !msg) return;
+                document.getElementById('home-contact-success').style.display = 'block';
+                form.reset();
+            });
+        })();
     </script>
     <script src="js/livehelp.js"></script>
-    
+
 </body>
+
 </html>
