@@ -1,8 +1,21 @@
 // Cart functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Initialize cart from localStorage
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
+    // Add checkout button functionality
+    const checkoutBtn = document.querySelector('.checkout-btn'); // Assuming a button with class 'checkout-btn' exists
+    if (checkoutBtn) {
+        checkoutBtn.addEventListener('click', () => {
+            const currentCart = JSON.parse(localStorage.getItem('cart')) || [];
+            if (currentCart.length === 0) {
+                alert('Your cart is empty!');
+                return;
+            }
+            window.location.href = 'checkout.html';
+        });
+    }
+
     // Display cart items
     function displayCartItems() {
         const cartItems = document.querySelector('.cart-items');
@@ -26,7 +39,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 const cartItem = document.createElement('div');
                 cartItem.className = 'cart-item';
                 cartItem.innerHTML = `
-                    <img src="${item.image}" alt="${item.name}" class="item-image">
+                    <img src="${item.image}" alt="${item.name}" class="item-image" onerror="this.src='assets/placeholder.png'">
                     <div class="cart-item-details">
                         <div class="cart-item-title">${item.name}</div>
                         <div class="cart-item-price">$${item.price}</div>
@@ -45,7 +58,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Add event listeners for quantity buttons
             document.querySelectorAll('.quantity-btn').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const index = this.dataset.index;
                     if (this.classList.contains('minus')) {
                         updateQuantity(index, -1);
@@ -57,7 +70,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Add event listeners for remove buttons
             document.querySelectorAll('.remove-item').forEach(button => {
-                button.addEventListener('click', function() {
+                button.addEventListener('click', function () {
                     const index = this.dataset.index;
                     removeItem(index);
                 });
@@ -65,7 +78,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Add event listeners for quantity inputs
             document.querySelectorAll('.quantity-input').forEach((input, idx) => {
-                input.addEventListener('change', function() {
+                input.addEventListener('change', function () {
                     const newQuantity = parseInt(this.value);
                     if (newQuantity > 0) {
                         cart[idx].quantity = newQuantity;

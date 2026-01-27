@@ -1,56 +1,58 @@
-// Check Admin Token
+// Check Admin Auth
 const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user'));
+const user = JSON.parse(localStorage.getItem('user')) || {};
 
-if (!token || !user || user.role !== 'admin') {
-    alert('Access Denied. Admins only.');
+if (!token || user.role !== 'admin') {
+    alert('Access Denied: Admins Only');
     window.location.href = 'login.html';
 }
 
-document.addEventListener('DOMContentLoaded', async () => {
-    // Placeholder for actual API calls
-    // In a real app, we would have /api/admin/stats endpoints
+document.addEventListener('DOMContentLoaded', () => {
+    // Populate Stats
+    const orders = JSON.parse(localStorage.getItem('orders')) || [];
+    const usersCount = Math.floor(Math.random() * 50) + 10; // Mock user count
+    const totalSales = orders.reduce((sum, order) => sum + parseFloat(order.total), 0);
 
-    // For now, let's mock the dashboard data if API fails or is not implemented fully
-    document.getElementById('total-orders').innerText = '12';
-    document.getElementById('total-users').innerText = '5';
-    document.getElementById('total-sales').innerText = '$1,240';
+    document.getElementById('total-orders').textContent = orders.length;
+    document.getElementById('total-users').textContent = usersCount;
+    document.getElementById('total-sales').textContent = `$${totalSales.toFixed(2)}`;
 
+    // Populate Orders Table
     const ordersTable = document.getElementById('orders-table');
-    // Mock Orders
-    const orders = [
-        { id: '#ORD-001', user: 'Test User', total: '$45.00', status: 'Completed', date: '2024-01-20' },
-        { id: '#ORD-002', user: 'Jane Doe', total: '$12.50', status: 'Pending', date: '2024-01-21' }
-    ];
+    if (orders.length === 0) {
+        ordersTable.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders found.</td></tr>';
+    } else {
+        ordersTable.innerHTML = orders.map(order => `
+            <tr>
+                <td>${order.id}</td>
+                <td>${user.email}</td> <!-- In a real app, this would be the customer email -->
+                <td>$${order.total}</td>
+                <td><span class="order-status status-${order.status === 'Processing' ? 'pending' : 'completed'}">${order.status}</span></td>
+                <td>${new Date(order.date).toLocaleDateString()}</td>
+            </tr>
+        `).join('');
+    }
 
-    orders.forEach(order => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${order.id}</td>
-            <td>${order.user}</td>
-            <td>${order.total}</td>
-            <td><span class="order-status ${order.status === 'Completed' ? 'status-completed' : 'status-pending'}">${order.status}</span></td>
-            <td>${order.date}</td>
-        `;
-        ordersTable.appendChild(tr);
-    });
-
+    // Populate Users Table (Mock Data)
     const usersTable = document.getElementById('users-table');
-    // Mock Users (or fetch from API if available)
-    // We could add an API endpoint for users in a future step
-    const users = [
-        { id: '1', username: 'karankumawat', email: 'admin@mkstore.com', role: 'admin' },
-        { id: '2', username: 'testuser', email: 'test@example.com', role: 'user' }
-    ];
-
-    users.forEach(u => {
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-            <td>${u.id}</td>
-            <td>${u.username}</td>
-            <td>${u.email}</td>
-            <td>${u.role}</td>
-        `;
-        usersTable.appendChild(tr);
-    });
+    usersTable.innerHTML = `
+        <tr>
+            <td>1</td>
+            <td>Admin User</td>
+            <td>mkstore5100@gmail.com</td>
+            <td><span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:10px;">Admin</span></td>
+        </tr>
+        <tr>
+            <td>2</td>
+            <td>Test User</td>
+            <td>user@example.com</td>
+            <td>Customer</td>
+        </tr>
+    `;
 });
+
+function logout() {
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    window.location.href = 'login.html';
+}

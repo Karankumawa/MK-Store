@@ -3,35 +3,42 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchFeaturedProducts() {
-    // More specific selector to avoid targeting the About Us grid
-    const grid = document.querySelector('.featured-products .product-grid');
+    const grid = document.getElementById('home-products-grid');
     if (!grid) {
-        console.warn('Home page product grid not found');
+        console.warn('Target grid #home-products-grid not found in DOM');
         return;
     }
 
     grid.innerHTML = '<div class="loading-spinner"><i class="fa fa-spinner fa-spin"></i> Loading essentials...</div>';
 
     try {
-        const res = await fetch('http://localhost:5000/api/products');
-        if (!res.ok) throw new Error('Failed to fetch products');
+        // Use relative path to work in both dev and potential prod
+        const res = await fetch('/api/products');
+        if (!res.ok) throw new Error(`Server returned ${res.status}`);
+
         const products = await res.json();
 
+        if (!Array.isArray(products)) throw new Error('Invalid data format');
+
         // Pick 4 random products for "Everyday Essentials"
-        const featured = products.sort(() => 0.5 - Math.random()).slice(0, 4);
+        const featured = products
+            .filter(p => p.image && p.price) // Simple validation
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 4);
 
         if (featured.length === 0) {
-            grid.innerHTML = '<p class="no-products">No essentials found today. Check back soon!</p>';
+            grid.innerHTML = '<div class="no-products" style="grid-column:1/-1;text-align:center;">No essentials available right now.</div>';
             return;
         }
 
         grid.innerHTML = featured.map(product => `
             <div class="product" data-animate="zoom-in">
                 <div class="product-image-wrapper">
-                    <img src="${product.image}" alt="Image of ${product.name}" onerror="this.onerror=null;this.src='assets/placeholder.png';">
+                    <img src="${product.image}" alt="${product.name}" loading="lazy" 
+                        onerror="this.onerror=null;this.src='assets/placeholder.png';">
                     <div class="product-actions">
                         <button class="btn" style="padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem;"
-                            onclick="location.href='product-detail.html?id=${product._id}'"><i class="fa-regular fa-eye"></i> View</button>
+                            onclick="location.href='shop.html'"><i class="fa-regular fa-eye"></i> View</button>
                     </div>
                 </div>
                 <div class="product-info">
@@ -48,7 +55,13 @@ async function fetchFeaturedProducts() {
 
     } catch (err) {
         console.error('Error loading home products:', err);
-        grid.innerHTML = '<p class="error-text">Unable to load recommended products.</p>';
+        // User friendly error with retry button
+        grid.innerHTML = `
+            <div class="error-text" style="grid-column:1/-1;text-align:center;color:var(--text-muted);">
+                <p>Couldn't load products.</p>
+                <button onclick="fetchFeaturedProducts()" class="btn" style="margin-top:10px;padding:5px 15px;font-size:0.8rem;">Retry</button>
+            </div>
+        `;
     }
 }
 
