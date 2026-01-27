@@ -46,20 +46,95 @@
     </header>
 
     <main>
-        <section class="hero-1" data-animate="fade-up">
-            <div class="hero-content">
-                <h2>Daily Essentials, <br>Delivered instantly.</h2>
-                <p>Experience the new standard of online grocery shopping. Premium quality, unbeatable prices, and
-                    lightning-fast delivery.</p>
-                <a href="shop.html" class="btn"><i class="fa-solid fa-bag-shopping"></i> Start Shopping</a>
+        <!-- Category Bar -->
+        <div class="category-bar-container">
+            <div class="category-bar">
+                <a href="shop.html" class="category-item">
+                    <div class="cat-icon"><img
+                            src="https://rukminim1.flixcart.com/flap/128/128/image/29327f40e9c4d26b.png" alt="Grocery">
+                    </div>
+                    <span>Grocery</span>
+                </a>
+                <a href="shop.html" class="category-item">
+                    <div class="cat-icon"><img
+                            src="https://rukminim1.flixcart.com/flap/128/128/image/22fddf3c7da4c4f4.png" alt="Mobiles">
+                    </div>
+                    <span>Mobiles</span>
+                </a>
+                <a href="shop.html" class="category-item">
+                    <div class="cat-icon"><img
+                            src="https://rukminim1.flixcart.com/flap/128/128/image/c12afc017e6f24cb.png" alt="Fashion">
+                    </div>
+                    <span>Fashion</span>
+                </a>
+                <a href="shop.html" class="category-item">
+                    <div class="cat-icon"><img
+                            src="https://rukminim1.flixcart.com/flap/128/128/image/69c6589653afdb9a.png"
+                            alt="Electronics"></div>
+                    <span>Electronics</span>
+                </a>
+                <a href="shop.html" class="category-item">
+                    <div class="cat-icon"><img
+                            src="https://rukminim1.flixcart.com/flap/128/128/image/ab7e2b022a4587dd.jpg" alt="Home">
+                    </div>
+                    <span>Home</span>
+                </a>
+                <a href="shop.html" class="category-item">
+                    <div class="cat-icon"><img
+                            src="https://rukminim1.flixcart.com/flap/128/128/image/0ff199d1bd27eb98.png"
+                            alt="Appliances"></div>
+                    <span>Appliances</span>
+                </a>
+                <a href="shop.html" class="category-item">
+                    <div class="cat-icon"><img
+                            src="https://rukminim1.flixcart.com/flap/128/128/image/71050627a56cb408.png" alt="Travel">
+                    </div>
+                    <span>Travel</span>
+                </a>
+                <a href="shop.html" class="category-item">
+                    <div class="cat-icon"><img
+                            src="https://rukminim1.flixcart.com/flap/128/128/image/dff3f7adcf3a90c6.png" alt="Toys">
+                    </div>
+                    <span>Toys & Beauty</span>
+                </a>
+            </div>
+        </div>
+
+        <!-- Hero Carousel -->
+        <section class="hero-carousel-container">
+            <div class="hero-carousel" id="hero-carousel">
+                <div class="slide active"
+                    style="background-image: url('https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/354cb863cf0755b0.jpg?q=20');">
+                </div>
+                <div class="slide"
+                    style="background-image: url('https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/b21213346e969038.jpg?q=20');">
+                </div>
+                <div class="slide"
+                    style="background-image: url('https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/aa1b237ce8e90691.jpg?q=20');">
+                </div>
+                <!-- Navigation Arrows -->
+                <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
+                <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
             </div>
         </section>
 
-        <section class="featured-products" data-animate="fade-up">
-            <h2>Everyday Essentials</h2>
-            <div class="product-grid" id="home-products-grid">
-                <!-- Dynamic content loaded by js/home.js -->
-            </div>
+        <!-- Dynamic Product Section with Header -->
+        <section class="featured-products" style="background:#f1f3f6; padding:1rem 0;">
+            <div class="section-container"
+                style="background:white; padding:1rem; max-width:1400px; margin:0 auto; box-shadow:0 1px 2px rgba(0,0,0,0.1);">
+                <div class="section-header"
+                    style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f0f0f0; padding-bottom:10px; margin-bottom:15px;">
+                    <div>
+                        <h2 style="font-size:1.5rem; margin:0;">Best of Electronics & Groceries</h2>
+                        <span style="color:#878787; font-size:0.9rem;">Items you cannot miss!</span>
+                    </div>
+                    <a href="shop.html" class="btn-primary"
+                        style="padding:10px 20px; text-decoration:none; border-radius:2px; font-weight:500;">View
+                        All</a>
+                </div>
+                <div class="product-grid" id="home-products-grid">
+                    <!-- Dynamic content loaded by js/home.js -->
+                </div>
         </section>
 
         <!-- About section (moved from separate page) -->

@@ -23,8 +23,31 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initialize the shop
     async function initShop() {
         await fetchProducts();
+
+        // Check for search query in URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('search');
+
+        if (searchQuery) {
+            applySearchFilter(searchQuery);
+            // Update UI to show search term
+            const header = document.querySelector('.shop-header h1');
+            if (header) header.innerHTML = `Search Results: "${searchQuery}" <a href="shop.html" style="font-size:0.8rem; color:var(--brand); margin-left:10px;">(Clear)</a>`;
+        }
+
         updateCartCount();
         setupEventListeners();
+    }
+
+    // Apply Search Filter
+    function applySearchFilter(query) {
+        const lowerQuery = query.toLowerCase();
+        filteredProducts = products.filter(p =>
+            p.name.toLowerCase().includes(lowerQuery) ||
+            (p.category && p.category.toLowerCase().includes(lowerQuery))
+        );
+        currentPage = 1;
+        displayProducts();
     }
 
     // Fetch Products from API
@@ -38,10 +61,10 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!res.ok) throw new Error('Failed to fetch products');
 
             products = await res.json();
+            // Default: Show all unless searched
             filteredProducts = [...products];
 
-            // Initial display
-            displayProducts();
+            // Note: displayProducts() is called after search check in initShop()
 
         } catch (err) {
             console.error(err);

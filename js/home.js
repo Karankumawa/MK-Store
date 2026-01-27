@@ -3,66 +3,72 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function fetchFeaturedProducts() {
-    const grid = document.getElementById('home-products-grid');
-    if (!grid) {
-        console.warn('Target grid #home-products-grid not found in DOM');
-        return;
-    }
+    // Start Carousel
+    startCarousel();
 
-    grid.innerHTML = '<div class="loading-spinner"><i class="fa fa-spinner fa-spin"></i> Loading essentials...</div>';
+    const grid = document.getElementById('home-products-grid');
+    if (!grid) return;
+
+    grid.innerHTML = '<div class="loading-spinner"><i class="fa fa-spinner fa-spin"></i> Loading top deals...</div>';
 
     try {
-        // Use relative path to work in both dev and potential prod
         const res = await fetch('/api/products');
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
-
         const products = await res.json();
 
-        if (!Array.isArray(products)) throw new Error('Invalid data format');
-
-        // Pick 4 random products for "Everyday Essentials"
+        // Use random products or specific ones
         const featured = products
-            .filter(p => p.image && p.price) // Simple validation
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 4);
+            .filter(p => p.image && p.price)
+            .sort(() => 0.5 - Math.random()) // Shuffle
+            .slice(0, 5); // Show 5 items
 
         if (featured.length === 0) {
-            grid.innerHTML = '<div class="no-products" style="grid-column:1/-1;text-align:center;">No essentials available right now.</div>';
+            grid.innerHTML = '<div class="no-products">No deals active right now.</div>';
             return;
         }
 
         grid.innerHTML = featured.map(product => `
-            <div class="product" data-animate="zoom-in">
-                <div class="product-image-wrapper">
-                    <img src="${product.image}" alt="${product.name}" loading="lazy" 
-                        onerror="this.onerror=null;this.src='assets/placeholder.png';">
-                    <div class="product-actions">
-                        <button class="btn" style="padding:0.5rem 1rem; border-radius:8px; font-size:0.9rem;"
-                            onclick="location.href='shop.html'"><i class="fa-regular fa-eye"></i> View</button>
-                    </div>
+            <div class="product-card-enhanced" onclick="window.location.href='shop.html'">
+                <div class="wishlist-icon"><i class="fa fa-heart"></i></div>
+                <div class="product-img-container">
+                    <img src="${product.image}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
                 </div>
-                <div class="product-info">
-                    <h3>${product.name}</h3>
-                    <span class="price">$${product.price}</span>
-                    <div style="margin-top:0.5rem;">
-                         <button class="add-to-cart" onclick='addToCartHome(${JSON.stringify(product).replace(/'/g, "&#39;")})'>
-                            <i class="fa-solid fa-cart-plus"></i> Add
-                        </button>
-                    </div>
+                <h3 class="product-title">${product.name}</h3>
+                <div class="product-rating">4.5 <i class="fa fa-star" style="font-size:0.7rem"></i></div>
+                <div style="margin-top:5px;">
+                    <span class="product-price">$${product.price}</span>
+                    <span class="product-discount">20% off</span>
                 </div>
+                 <button class="add-to-cart-btn" style="margin-top:10px; width:100%; padding:8px; background:#ff9f00; border:none; color:white; font-weight:600; cursor:pointer;" onclick='event.stopPropagation(); addToCartHome(${JSON.stringify(product).replace(/'/g, "&#39;")})'>
+                    ADD TO CART
+                </button>
             </div>
         `).join('');
 
     } catch (err) {
-        console.error('Error loading home products:', err);
-        // User friendly error with retry button
-        grid.innerHTML = `
-            <div class="error-text" style="grid-column:1/-1;text-align:center;color:var(--text-muted);">
-                <p>Couldn't load products.</p>
-                <button onclick="fetchFeaturedProducts()" class="btn" style="margin-top:10px;padding:5px 15px;font-size:0.8rem;">Retry</button>
-            </div>
-        `;
+        console.error(err);
+        grid.innerHTML = '<div class="error-text">Failed to load deals. <button onclick="fetchFeaturedProducts()">Retry</button></div>';
     }
+}
+
+let slideIndex = 0;
+function startCarousel() {
+    const slides = document.querySelectorAll('.slide');
+    if (slides.length === 0) return;
+
+    // Auto slide every 4 seconds
+    setInterval(() => {
+        moveSlide(1);
+    }, 4000);
+}
+
+function moveSlide(n) {
+    const slides = document.querySelectorAll('.slide');
+    if (!slides.length) return;
+
+    slides[slideIndex].classList.remove('active');
+    slideIndex = (slideIndex + n + slides.length) % slides.length;
+    slides[slideIndex].classList.add('active');
 }
 
 // Simple Home Page Cart Logic (Synced with localStorage)

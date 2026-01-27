@@ -1,15 +1,15 @@
 // Main functionality
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     // Initialize cart from localStorage
     let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    
+
     // Add to cart functionality
     const addToCartButtons = document.querySelectorAll('.add-to-cart');
     addToCartButtons.forEach(button => {
-        button.addEventListener('click', function() {
+        button.addEventListener('click', function () {
             const productData = JSON.parse(this.dataset.product);
             let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            
+
             // Check if product already exists in cart
             const existingProduct = cart.find(item => item.name === productData.name);
             if (existingProduct) {
@@ -18,10 +18,10 @@ document.addEventListener('DOMContentLoaded', function() {
                 productData.quantity = 1;
                 cart.push(productData);
             }
-            
+
             localStorage.setItem('cart', JSON.stringify(cart));
             updateCartCount();
-            
+
             // Show notification
             showNotification('Product added to cart!');
         });
@@ -43,11 +43,11 @@ document.addEventListener('DOMContentLoaded', function() {
         notification.className = 'notification';
         notification.textContent = message;
         document.body.appendChild(notification);
-        
+
         setTimeout(() => {
             notification.classList.add('show');
         }, 100);
-        
+
         setTimeout(() => {
             notification.classList.remove('show');
             setTimeout(() => {
@@ -62,16 +62,16 @@ document.addEventListener('DOMContentLoaded', function() {
     // Mobile menu toggle
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinks = document.querySelector('.nav-links');
-    
+
     if (menuToggle) {
-        menuToggle.addEventListener('click', function() {
+        menuToggle.addEventListener('click', function () {
             navLinks.classList.toggle('active');
             menuToggle.classList.toggle('active');
         });
     }
 
     // Close mobile menu when clicking outside
-    document.addEventListener('click', function(event) {
+    document.addEventListener('click', function (event) {
         if (!event.target.closest('.nav-links') && !event.target.closest('.menu-toggle')) {
             navLinks.classList.remove('active');
             menuToggle.classList.remove('active');
@@ -88,12 +88,12 @@ document.addEventListener('DOMContentLoaded', function() {
             window.location.href = `shop.html?search=${encodeURIComponent(searchTerm)}`;
         }
     };
-    
+
     if (searchButton) {
         searchButton.addEventListener('click', performSearch);
     }
     if (searchInput) {
-        searchInput.addEventListener('keydown', function(e) {
+        searchInput.addEventListener('keydown', function (e) {
             if (e.key === 'Enter') performSearch();
         });
     }
