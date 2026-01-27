@@ -1,138 +1,13 @@
 // Shop functionality
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize products
-    const products = [
-        {
-            id: 1,
-            name: "Sail Sugar",
-            price: 1,
-            image: "assets/sail,suger&jaggery.webp",
-            category: "daily-items",
-            rating: 4.5
-        },
-        {
-            id: 2,
-            name: "Atta & Flour",
-            price: 2,
-            image: "assets/atta.webp",
-            category: "daily-items",
-            rating: 4.2
-        },
-        {
-            id: 3,
-            name: "Rice & Rice Products",
-            price: 3,
-            image: "assets/rice & rice product.webp",
-            category: "daily-items",
-            rating: 4.8
-        },
-        {
-            id: 4,
-            name: "Dals & Pulses",
-            price: 5,
-            image: "assets/Dals & Pulses.webp",
-            category: "daily-items",
-            rating: 4.3
-        },
-        {
-            id: 5,
-            name: "Morning Starters",
-            price: 1,
-            image: "assets/Morning Starters.webp",
-            category: "snacks",
-            rating: 4.6
-        },
-        {
-            id: 6,
-            name: "Chai Snacks",
-            price: 2,
-            image: "assets/Chai Snacks.webp",
-            category: "snacks",
-            rating: 4.4
-        },
-        {
-            name: "Sweets",
-            price: 3,
-            image: "assets/Sweets.webp",
-            category: "snacks",
-            rating: 4
-        },
-        {
-            name: "Pasta & More",
-            price: 4,
-            image: "assets/Pasta & More.webp",
-            category: "snacks",
-            rating: 4
-        },
-        {
-            name: "Tea & Coffee",
-            price: 3,
-            image: "assets/tea-coffee.webp",
-            category: "beverages",
-            rating: 4
-        },
-        {
-            name: "Soft Drinks",
-            price: 2,
-            image: "assets/soft-drinks.webp",
-            category: "beverages",
-            rating: 4
-        },
-        {
-            name: "Shampoo",
-            price: 5,
-            image: "assets/shampoo.webp",
-            category: "personal-care",
-            rating: 4
-        },
-        {
-            name: "Soap",
-            price: 2,
-            image: "assets/soap.webp",
-            category: "personal-care",
-            rating: 4
-        },
-        {
-            name: "Cleaning Supplies",
-            price: 4,
-            image: "assets/cleaning.webp",
-            category: "household",
-            rating: 4
-        },
-        {
-            name: "Fresh Fruits",
-            price: 3,
-            image: "assets/fruits.webp",
-            category: "fruits-vegetables",
-            rating: 4
-        },
-        {
-            name: "Fresh Vegetables",
-            price: 2,
-            image: "assets/vegetables.webp",
-            category: "fruits-vegetables",
-            rating: 4
-        },
-        {
-            name: "Milk",
-            price: 3,
-            image: "assets/milk.webp",
-            category: "dairy",
-            rating: 4
-        },
-        {
-            name: "Bread",
-            price: 2,
-            image: "assets/bread.webp",
-            category: "bakery",
-            rating: 4
-        }
-    ];
+document.addEventListener('DOMContentLoaded', function () {
+    // API URL
+    const PRODUCT_API = 'http://localhost:5000/api/products';
 
     // Initialize variables
+    let products = [];
+    let filteredProducts = [];
     let currentPage = 1;
     const productsPerPage = 8;
-    let filteredProducts = [...products];
 
     // DOM Elements
     const productGrid = document.querySelector('.product-grid');
@@ -146,10 +21,32 @@ document.addEventListener('DOMContentLoaded', function() {
     const pageNumbers = document.querySelector('.page-numbers');
 
     // Initialize the shop
-    function initShop() {
-        displayProducts();
+    async function initShop() {
+        await fetchProducts();
         updateCartCount();
         setupEventListeners();
+    }
+
+    // Fetch Products from API
+    async function fetchProducts() {
+        if (!productGrid) return;
+
+        productGrid.innerHTML = '<p class="loading-text">Loading products...</p>';
+
+        try {
+            const res = await fetch(PRODUCT_API);
+            if (!res.ok) throw new Error('Failed to fetch products');
+
+            products = await res.json();
+            filteredProducts = [...products];
+
+            // Initial display
+            displayProducts();
+
+        } catch (err) {
+            console.error(err);
+            productGrid.innerHTML = '<p class="error-text">Error loading products. Please try again later.</p>';
+        }
     }
 
     // Setup event listeners
@@ -200,28 +97,35 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Apply filters
     function applyFilters() {
-        const selectedCategories = Array.from(document.querySelectorAll('.filter-option input[type="checkbox"]:checked'))
+        const selectedCategories = Array.from(document.querySelectorAll('.filter-option input[name="category"]:checked'))
             .map(input => input.value);
-        
+
         const selectedPriceRange = document.querySelector('input[name="price"]:checked')?.value;
         const selectedRating = document.querySelector('input[name="rating"]:checked')?.value;
 
         filteredProducts = products.filter(product => {
             // Category filter
-            if (selectedCategories.length > 0 && !selectedCategories.includes(product.category)) {
-                return false;
+            if (selectedCategories.length > 0) {
+                const productCat = (product.category || '').toLowerCase();
+                const matches = selectedCategories.some(cat => productCat.includes(cat.toLowerCase()));
+                if (!matches) return false;
             }
 
             // Price range filter
             if (selectedPriceRange) {
-                const [min, max] = selectedPriceRange.split('-').map(Number);
-                if (product.price < min || product.price > max) {
-                    return false;
+                if (selectedPriceRange === '6+') {
+                    if (product.price < 6) return false;
+                } else {
+                    const [min, max] = selectedPriceRange.split('-').map(Number);
+                    if (product.price < min || product.price > max) {
+                        return false;
+                    }
                 }
             }
 
             // Rating filter
-            if (selectedRating && product.rating < Number(selectedRating)) {
+            const rating = product.rating || 0;
+            if (selectedRating && rating < Number(selectedRating.replace('+', ''))) {
                 return false;
             }
 
@@ -235,25 +139,35 @@ document.addEventListener('DOMContentLoaded', function() {
     // Apply sorting
     function applySorting() {
         const sortValue = sortSelect.value;
-        
+
         filteredProducts.sort((a, b) => {
-            switch(sortValue) {
+            switch (sortValue) {
                 case 'price-low':
                     return a.price - b.price;
                 case 'price-high':
                     return b.price - a.price;
-                case 'name-asc':
-                    return a.name.localeCompare(b.name);
-                case 'name-desc':
-                    return b.name.localeCompare(a.name);
-                case 'rating-high':
-                    return b.rating - a.rating;
+                case 'rating':
+                    return (b.rating || 0) - (a.rating || 0);
                 default:
                     return 0;
             }
         });
 
         displayProducts();
+    }
+
+    function generateStars(rating) {
+        let starsHtml = '';
+        for (let i = 1; i <= 5; i++) {
+            if (i <= rating) {
+                starsHtml += '<i class="fa fa-star"></i>';
+            } else if (i - 0.5 <= rating) {
+                starsHtml += '<i class="fa fa-star-half-stroke"></i>';
+            } else {
+                starsHtml += '<i class="fa-regular fa-star"></i>';
+            }
+        }
+        return starsHtml;
     }
 
     // Display products
@@ -265,20 +179,35 @@ document.addEventListener('DOMContentLoaded', function() {
         const productsToShow = filteredProducts.slice(start, end);
 
         productGrid.innerHTML = '';
+
+        if (productsToShow.length === 0) {
+            productGrid.innerHTML = '<p class="no-products">No products found matching your criteria.</p>';
+            if (pageNumbers) pageNumbers.textContent = '0 / 0';
+            return;
+        }
+
         productsToShow.forEach(product => {
             const productElement = document.createElement('div');
             productElement.className = 'product';
+            // Use API image or placeholder
+            const imageSrc = product.image || 'assets/placeholder.png';
+            const rating = product.rating || 4.5; // Mock rating if missing
+
             productElement.innerHTML = `
-                <img src="${product.image}" alt="${product.name}">
+                <div class="product-image-wrapper">
+                    <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
+                    <div class="product-actions">
+                         <button class="btn-view" onclick="console.log('View product ${product._id}')"><i class="fa-regular fa-eye"></i></button>
+                    </div>
+                </div>
                 <div class="product-info">
                     <h3 class="product-title">${product.name}</h3>
-                    <div class="product-price">$${product.price}</div>
+                    <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
                     <div class="product-rating">
-                        ${'<i class="fa fa-star"></i>'.repeat(Math.floor(product.rating))}
-                        ${product.rating % 1 ? '<i class="fa fa-star-half-o"></i>' : ''}
+                        ${generateStars(rating)}
                     </div>
-                    <button class="add-to-cart" data-product='${JSON.stringify(product)}'>
-                        Add to Cart
+                    <button class="add-to-cart" data-product-id="${product._id}">
+                         Add to Cart
                     </button>
                 </div>
             `;
@@ -288,7 +217,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Update pagination
         if (pageNumbers) {
             const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-            pageNumbers.textContent = `${currentPage} / ${totalPages}`;
+            pageNumbers.textContent = totalPages > 0 ? `${currentPage} / ${totalPages}` : '0 / 0';
         }
 
         if (prevPageBtn) {
@@ -297,16 +226,22 @@ document.addEventListener('DOMContentLoaded', function() {
 
         if (nextPageBtn) {
             const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-            nextPageBtn.disabled = currentPage === totalPages;
+            nextPageBtn.disabled = currentPage >= totalPages || totalPages === 0;
         }
 
-        // Add event listeners to new add-to-cart buttons
+        // Attach event listeners to new buttons
+        attachAddToCartListeners();
+    }
+
+    function attachAddToCartListeners() {
         document.querySelectorAll('.add-to-cart').forEach(button => {
-            button.addEventListener('click', function() {
-                const product = JSON.parse(this.dataset.product);
-                addToCart(product);
-                updateCartCount();
-                showNotification('Product added to cart!');
+            button.addEventListener('click', function () {
+                const productId = this.getAttribute('data-product-id');
+                const product = products.find(p => p._id === productId);
+                if (product) {
+                    addToCart(product);
+                    showNotification(`${product.name} added to cart!`);
+                }
             });
         });
     }
@@ -314,20 +249,23 @@ document.addEventListener('DOMContentLoaded', function() {
     // Add to cart functionality
     function addToCart(product) {
         let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const existingItem = cart.find(item => item.name === product.name);
-        
+        // Use _id for uniqueness since we have it now
+        const existingItem = cart.find(item => item._id === product._id);
+
         if (existingItem) {
             existingItem.quantity += 1;
         } else {
             cart.push({
+                _id: product._id,
                 name: product.name,
                 price: product.price,
                 image: product.image,
                 quantity: 1
             });
         }
-        
+
         localStorage.setItem('cart', JSON.stringify(cart));
+        updateCartCount();
     }
 
     // Update cart count
@@ -337,28 +275,53 @@ document.addEventListener('DOMContentLoaded', function() {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
             cartCount.textContent = totalItems > 0 ? `(${totalItems})` : '';
+            // Make sure it's visible if items exist
+            if (totalItems > 0) cartCount.style.display = 'inline';
         }
     }
 
     // Show notification
     function showNotification(message) {
+        const existing = document.querySelector('.notification');
+        if (existing) existing.remove();
+
         const notification = document.createElement('div');
         notification.className = 'notification';
         notification.textContent = message;
         document.body.appendChild(notification);
 
-        setTimeout(() => {
-            notification.classList.add('show');
-        }, 100);
+        // Inline styles for reliability
+        Object.assign(notification.style, {
+            position: 'fixed',
+            bottom: '20px',
+            right: '20px',
+            background: '#28a745',
+            color: 'white',
+            padding: '12px 24px',
+            borderRadius: '8px',
+            zIndex: '9999',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
+            fontSize: '1rem',
+            opacity: '0',
+            transform: 'translateY(20px)',
+            transition: 'all 0.3s ease'
+        });
+
+        // Trigger animation
+        requestAnimationFrame(() => {
+            notification.style.opacity = '1';
+            notification.style.transform = 'translateY(0)';
+        });
 
         setTimeout(() => {
-            notification.classList.remove('show');
+            notification.style.opacity = '0';
+            notification.style.transform = 'translateY(20px)';
             setTimeout(() => {
-                document.body.removeChild(notification);
+                if (notification.parentNode) notification.parentNode.removeChild(notification);
             }, 300);
         }, 3000);
     }
 
     // Initialize the shop when the DOM is loaded
     initShop();
-}); 
+});

@@ -70,8 +70,9 @@
                 <div class="social-login">
                     <p>Or login with</p>
                     <div class="social-buttons">
-                        <button class="social-btn google">
-                            <i class="fa fa-google"></i> Google
+                        <button class="social-btn google"
+                            onclick="alert('For Google Login: Please configure Firebase in js/auth.js with your API Key.')">
+                            <i class="fa-brands fa-google"></i> Google
                         </button>
                         <button class="social-btn facebook">
                             <i class="fa fa-facebook"></i> Facebook
@@ -115,6 +116,7 @@
 
     <script src="js/script.js"></script>
     <script src="js/login.js"></script>
+    <script src="js/auth.js"></script>
     <script>
         // Password visibility toggle
         (function () {

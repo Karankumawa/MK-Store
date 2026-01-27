@@ -1,0 +1,29 @@
+{
+  "name": "m-k-store",
+  "version": "1.0.0",
+  "description": "M.K. Store is a modern, user-friendly e-commerce website designed to provide high-quality daily essentials at affordable prices. The platform offers a wide range of products including groceries, snacks, beverages, personal care items, and household supplies. With a focus on convenience, quality, and customer satisfaction, M.K. Store aims to make shopping for daily needs easy and accessible for everyone.",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Karankumawa/MK-Store.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Karankumawa/MK-Store/issues"
+  },
+  "homepage": "https://github.com/Karankumawa/MK-Store#readme",
+  "dependencies": {
+    "bcryptjs": "^3.0.3",
+    "cors": "^2.8.6",
+    "dotenv": "^17.2.3",
+    "express": "^5.2.1",
+    "jsonwebtoken": "^9.0.3",
+    "mongoose": "^9.1.5"
+  }
+}
