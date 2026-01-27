@@ -162,7 +162,7 @@
     function handleProductRecommendations(){
         addMessage('Based on popular items, you might like:', 'bot');
         setTimeout(function(){
-            var card = '\n                <div style="display:flex;gap:10px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:8px;align-items:center;">\n                    <img src="assests/Morning Starters.webp" style="width:56px;height:56px;border-radius:8px;object-fit:cover" alt="Morning Starters"/>\n                    <div>\n                        <div style="font-weight:600;color:#111827">Morning Starters</div>\n                        <div style="font-size:12px;color:#6b7280">$1 - Fresh and energizing.</div>\n                    </div>\n                </div>\n            ';
+            var card = '\n                <div style="display:flex;gap:10px;background:#fff;border:1px solid #e5e7eb;border-radius:12px;padding:8px;align-items:center;">\n                    <img src="assets/Morning Starters.webp" style="width:56px;height:56px;border-radius:8px;object-fit:cover" alt="Morning Starters"/>\n                    <div>\n                        <div style="font-weight:600;color:#111827">Morning Starters</div>\n                        <div style="font-size:12px;color:#6b7280">$1 - Fresh and energizing.</div>\n                    </div>\n                </div>\n            ';
             addMessage(card, 'bot');
             setTimeout(showMainMenuOption, 700);
         }, 500);

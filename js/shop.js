@@ -6,7 +6,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 1,
             name: "Sail Sugar",
             price: 1,
-            image: "assests/sail,suger&jaggery.webp",
+            image: "assets/sail,suger&jaggery.webp",
             category: "daily-items",
             rating: 4.5
         },
@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 2,
             name: "Atta & Flour",
             price: 2,
-            image: "assests/atta.webp",
+            image: "assets/atta.webp",
             category: "daily-items",
             rating: 4.2
         },
@@ -22,7 +22,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 3,
             name: "Rice & Rice Products",
             price: 3,
-            image: "assests/rice & rice product.webp",
+            image: "assets/rice & rice product.webp",
             category: "daily-items",
             rating: 4.8
         },
@@ -30,7 +30,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 4,
             name: "Dals & Pulses",
             price: 5,
-            image: "assests/Dals & Pulses.webp",
+            image: "assets/Dals & Pulses.webp",
             category: "daily-items",
             rating: 4.3
         },
@@ -38,7 +38,7 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 5,
             name: "Morning Starters",
             price: 1,
-            image: "assests/Morning Starters.webp",
+            image: "assets/Morning Starters.webp",
             category: "snacks",
             rating: 4.6
         },
@@ -46,84 +46,84 @@ document.addEventListener('DOMContentLoaded', function() {
             id: 6,
             name: "Chai Snacks",
             price: 2,
-            image: "assests/Chai Snacks.webp",
+            image: "assets/Chai Snacks.webp",
             category: "snacks",
             rating: 4.4
         },
         {
             name: "Sweets",
             price: 3,
-            image: "assests/Sweets.webp",
+            image: "assets/Sweets.webp",
             category: "snacks",
             rating: 4
         },
         {
             name: "Pasta & More",
             price: 4,
-            image: "assests/Pasta & More.webp",
+            image: "assets/Pasta & More.webp",
             category: "snacks",
             rating: 4
         },
         {
             name: "Tea & Coffee",
             price: 3,
-            image: "assests/tea-coffee.webp",
+            image: "assets/tea-coffee.webp",
             category: "beverages",
             rating: 4
         },
         {
             name: "Soft Drinks",
             price: 2,
-            image: "assests/soft-drinks.webp",
+            image: "assets/soft-drinks.webp",
             category: "beverages",
             rating: 4
         },
         {
             name: "Shampoo",
             price: 5,
-            image: "assests/shampoo.webp",
+            image: "assets/shampoo.webp",
             category: "personal-care",
             rating: 4
         },
         {
             name: "Soap",
             price: 2,
-            image: "assests/soap.webp",
+            image: "assets/soap.webp",
             category: "personal-care",
             rating: 4
         },
         {
             name: "Cleaning Supplies",
             price: 4,
-            image: "assests/cleaning.webp",
+            image: "assets/cleaning.webp",
             category: "household",
             rating: 4
         },
         {
             name: "Fresh Fruits",
             price: 3,
-            image: "assests/fruits.webp",
+            image: "assets/fruits.webp",
             category: "fruits-vegetables",
             rating: 4
         },
         {
             name: "Fresh Vegetables",
             price: 2,
-            image: "assests/vegetables.webp",
+            image: "assets/vegetables.webp",
             category: "fruits-vegetables",
             rating: 4
         },
         {
             name: "Milk",
             price: 3,
-            image: "assests/milk.webp",
+            image: "assets/milk.webp",
             category: "dairy",
             rating: 4
         },
         {
             name: "Bread",
             price: 2,
-            image: "assests/bread.webp",
+            image: "assets/bread.webp",
             category: "bakery",
             rating: 4
         }
