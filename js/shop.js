@@ -1,7 +1,7 @@
 // Shop functionality
 document.addEventListener('DOMContentLoaded', function () {
     // API URL
-    const PRODUCT_API = 'http://localhost:5000/api/products';
+    const PRODUCT_API = '/api/products';
 
     // Initialize variables
     let products = [];
@@ -24,15 +24,20 @@ document.addEventListener('DOMContentLoaded', function () {
     async function initShop() {
         await fetchProducts();
 
-        // Check for search query in URL
+        // Check for search OR category query in URL
         const urlParams = new URLSearchParams(window.location.search);
         const searchQuery = urlParams.get('search');
+        const categoryQuery = urlParams.get('category') || window.pageCategory;
 
         if (searchQuery) {
             applySearchFilter(searchQuery);
             // Update UI to show search term
             const header = document.querySelector('.shop-header h1');
             if (header) header.innerHTML = `Search Results: "${searchQuery}" <a href="shop.html" style="font-size:0.8rem; color:var(--brand); margin-left:10px;">(Clear)</a>`;
+        } else if (categoryQuery) {
+            applyCategoryFilter(categoryQuery);
+            const header = document.querySelector('.shop-header h1');
+            if (header) header.innerHTML = `Category: "${categoryQuery}" <a href="shop.html" style="font-size:0.8rem; color:var(--brand); margin-left:10px;">(Clear)</a>`;
         }
 
         updateCartCount();
@@ -45,6 +50,16 @@ document.addEventListener('DOMContentLoaded', function () {
         filteredProducts = products.filter(p =>
             p.name.toLowerCase().includes(lowerQuery) ||
             (p.category && p.category.toLowerCase().includes(lowerQuery))
+        );
+        currentPage = 1;
+        displayProducts();
+    }
+
+    // Apply Category Filter
+    function applyCategoryFilter(cat) {
+        const lowerCat = cat.toLowerCase();
+        filteredProducts = products.filter(p =>
+            p.category && p.category.toLowerCase().includes(lowerCat)
         );
         currentPage = 1;
         displayProducts();
@@ -88,7 +103,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
 
         // Filter change events
-        filterOptions.forEach(option => {
+        // New structure uses inputs inside labels with .chip class
+        const newFilterInputs = document.querySelectorAll('.filter-chips input');
+        newFilterInputs.forEach(option => {
             option.addEventListener('change', applyFilters);
         });
 
@@ -120,8 +137,24 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Apply filters
     function applyFilters() {
-        const selectedCategories = Array.from(document.querySelectorAll('.filter-option input[name="category"]:checked'))
-            .map(input => input.value);
+        // Collect active category pills
+        // Since pills are <a> tags with .active class, we need to handle them differently if they are not checkboxes anymore.
+        // However, the previous code assumed checkboxes. 
+        // For this new design, let's assume valid category selection is done via URL params for simplicity OR if we want SPA-like filtering, we need to add click listeners to the pills.
+        // But for now, let's update this function to check for the checked radio buttons (price/rating) which are still inputs.
+
+        // Note: The category pills in HTML are links (<a href="groceries.html">). 
+        // If we want them to filter IN PLACE on shop.html, we should prevent default and handle click.
+        // But looking at the HTML, they link to separate pages. So 'applyFilters' here is mostly for the Sidebar Price/Rating inputs.
+
+        let selectedCategories = [];
+        // If we want to support multi-category filtering on the main shop page, we would need to change the HTML to be inputs or handle clicks.
+        // Current HTML: <a href="groceries.html">...</a> which implies page reload.
+        // But if we are on shop.html, we might want to respect the URL category param.
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentCategory = urlParams.get('category');
+        if (currentCategory) selectedCategories.push(currentCategory);
 
         const selectedPriceRange = document.querySelector('input[name="price"]:checked')?.value;
         const selectedRating = document.querySelector('input[name="rating"]:checked')?.value;
@@ -212,26 +245,41 @@ document.addEventListener('DOMContentLoaded', function () {
         productsToShow.forEach(product => {
             const productElement = document.createElement('div');
             productElement.className = 'product';
-            // Use API image or placeholder
+            productElement.onclick = () => window.location.href = `product.html?id=${product._id}`;
+
+            // Image & Badges
             const imageSrc = product.image || 'assets/placeholder.png';
-            const rating = product.rating || 4.5; // Mock rating if missing
+            const rating = product.rating || 4.5;
+
+            let badgeHtml = '';
+            if (product.price > 50 && product.price < 100) badgeHtml = '<span class="badge sale">Sale</span>';
+            else if (Math.random() > 0.8) badgeHtml = '<span class="badge new">New</span>';
 
             productElement.innerHTML = `
                 <div class="product-image-wrapper">
+                    ${badgeHtml}
                     <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
                     <div class="product-actions">
-                         <button class="btn-view" onclick="console.log('View product ${product._id}')"><i class="fa-regular fa-eye"></i></button>
+                         <button class="action-btn" onclick="event.stopPropagation(); console.log('Wishlist ${product._id}')">
+                            <i class="fa-regular fa-heart"></i>
+                         </button>
+                         <button class="action-btn" onclick="event.stopPropagation(); window.location.href='product.html?id=${product._id}'">
+                            <i class="fa-regular fa-eye"></i>
+                         </button>
                     </div>
                 </div>
                 <div class="product-info">
+                    <div class="product-category">${product.category || 'General'}</div>
                     <h3 class="product-title">${product.name}</h3>
-                    <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
-                    <div class="product-rating">
-                        ${generateStars(rating)}
+                    <div class="rating-stars">
+                        ${generateStars(rating)} <span class="rating-text">(${Math.floor(Math.random() * 200) + 50})</span>
                     </div>
-                    <button class="add-to-cart" data-product-id="${product._id}">
-                         Add to Cart
-                    </button>
+                    <div class="price-row">
+                        <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
+                        <button class="add-btn add-to-cart-btn" data-product-id="${product._id}" onclick="event.stopPropagation()">
+                             Add
+                        </button>
+                    </div>
                 </div>
             `;
             productGrid.appendChild(productElement);
@@ -257,7 +305,7 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     function attachAddToCartListeners() {
-        document.querySelectorAll('.add-to-cart').forEach(button => {
+        document.querySelectorAll('.add-to-cart-btn').forEach(button => {
             button.addEventListener('click', function () {
                 const productId = this.getAttribute('data-product-id');
                 const product = products.find(p => p._id === productId);
@@ -289,6 +337,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
         localStorage.setItem('cart', JSON.stringify(cart));
         updateCartCount();
+
+        // Redirect to Cart Page as requested
+        window.location.href = 'cart.html';
     }
 
     // Update cart count

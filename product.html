@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Product Details - M.K. Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/product.css">
+    <link rel="stylesheet" href="css/cart.css">
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+                <h1>M.K. Store</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search products...">
+                <button id="search-button"><i class="fa fa-search"></i></button>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
+                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                </li>
+                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="product-detail-container">
+            <!-- Left: Gallery -->
+            <div class="product-gallery">
+                <div class="main-image-container">
+                    <img id="main-product-img" src="" alt="Product Image">
+                </div>
+                <!-- Thumbnails (Static for now, but could be dynamic) -->
+                <div class="thumbnail-list">
+                    <img src="" class="thumbnail active" onclick="changeImage(this.src)" id="thumb-1">
+                    <img src="https://via.placeholder.com/150?text=View+2" class="thumbnail"
+                        onclick="changeImage(this.src)">
+                    <img src="https://via.placeholder.com/150?text=View+3" class="thumbnail"
+                        onclick="changeImage(this.src)">
+                    <img src="https://via.placeholder.com/150?text=View+4" class="thumbnail"
+                        onclick="changeImage(this.src)">
+                </div>
+            </div>
+
+            <!-- Right: Details -->
+            <div class="product-info-detail">
+                <div class="product-breadcrumb">
+                    <a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <span
+                        id="breadcrumb-category">Category</span>
+                </div>
+
+                <h1 id="product-name" class="product-title-large">Loading Product...</h1>
+
+                <div class="product-meta">
+                    <div class="rating-large">
+                        <span id="product-rating">4.5</span> <i class="fa fa-star"></i>
+                    </div>
+                    <span class="review-count">1,245 Reviews</span>
+                    <span class="stock-status" style="color:#16a34a; font-weight:600;"><i
+                            class="fa fa-check-circle"></i> In Stock</span>
+                </div>
+
+                <div class="product-price-large">
+                    <span id="product-price">$0.00</span>
+                    <span class="original-price" id="img-original-price">$0.00</span>
+                    <span class="discount-badge">20% OFF</span>
+                </div>
+                <p style="color:#64748b; margin-bottom:2rem;">Inclusive of all taxes</p>
+
+                <!-- Description Snippet -->
+                <div style="margin-bottom:2rem; line-height:1.7; color:#334155;">
+                    <p id="product-desc-short">Experience premium quality with this improved version. Designed for
+                        durability and performance.</p>
+                </div>
+
+                <div class="product-actions-large">
+                    <div class="quantity-selector">
+                        <button class="qty-btn" onclick="updateQty(-1)">-</button>
+                        <input type="text" value="1" class="qty-input" id="qty-input" readonly>
+                        <button class="qty-btn" onclick="updateQty(1)">+</button>
+                    </div>
+                    <button class="btn-add-cart-large" id="add-to-cart-btn">
+                        <i class="fa fa-shopping-cart"></i> Add to Cart
+                    </button>
+                    <button class="btn-wishlist-large">
+                        <i class="fa-regular fa-heart"></i>
+                    </button>
+                </div>
+
+                <!-- Features -->
+                <div class="product-features">
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa fa-truck"></i></div>
+                        <div>
+                            <h4 style="font-weight:600;">Free Delivery</h4>
+                            <p style="font-size:0.9rem; color:#64748b;">For orders over $50</p>
+                        </div>
+                    </div>
+                    <div class="feature-item">
+                        <div class="feature-icon"><i class="fa fa-shield-alt"></i></div>
+                        <div>
+                            <h4 style="font-weight:600;">1 Year Warranty</h4>
+                            <p style="font-size:0.9rem; color:#64748b;">Standard warranty included</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tabs -->
+                <div class="product-tabs">
+                    <div class="tab-headers">
+                        <button class="tab-btn active" onclick="switchTab('desc')">Description</button>
+                        <button class="tab-btn" onclick="switchTab('spec')">Specifications</button>
+                        <button class="tab-btn" onclick="switchTab('reviews')">Reviews</button>
+                    </div>
+                    <div id="tab-desc" class="tab-content active">
+                        <p>Detailed product description goes here. This product is made with high-quality materials and
+                            designed to last. It is perfect for your daily needs and offers great value for money.</p>
+                        <br>
+                        <p><strong>Key Benefits:</strong></p>
+                        <ul style="padding-left:1.5rem; margin-top:0.5rem;">
+                            <li>Premium Build Quality</li>
+                            <li>Ergonomic Design</li>
+                            <li>Eco-friendly Materials</li>
+                        </ul>
+                    </div>
+                    <div id="tab-spec" class="tab-content">
+                        <table style="width:100%; border-collapse: collapse;">
+                            <tr>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0; font-weight:600;">Brand</td>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0;">M.K. Select</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0; font-weight:600;">Model</td>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0;">2024 Edition</td>
+                            </tr>
+                        </table>
+                    </div>
+                    <div id="tab-reviews" class="tab-content">
+                        <p>No reviews yet.</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 M.K. Store. All rights reserved.</p>
+    </footer>
+
+    <!-- Logic to fetch product -->
+    <script>
+        // Simple script to handle UI logic
+        function updateQty(change) {
+            const input = document.getElementById('qty-input');
+            let val = parseInt(input.value) + change;
+            if (val < 1) val = 1;
+            input.value = val;
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            event.target.classList.add('active');
+            document.getElementById('tab-' + tabId).classList.add('active');
+        }
+
+        function changeImage(src) {
+            document.getElementById('main-product-img').src = src;
+        }
+
+        // Fetch Product Data
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const productId = urlParams.get('id');
+
+            if (!productId) {
+                // Handle no ID (redirect or show error)
+                return;
+            }
+
+            try {
+                // In a real app, fetch single product. For now, we fetch all and find one since we don't have a single product endpoint yet
+                // Or better, assume we passed data via simple object if from static array. 
+                // But since we are full stack, let's fetch from API if we can, or just find it from list.
+                // Actually, I'll update the backend to have a single product route? No, to be safe, I'll just fetch all and filter client side for now to speed up.
+
+                const res = await fetch('/api/products');
+                const products = await res.json();
+                const product = products.find(p => p._id === productId);
+
+                if (product) {
+                    document.title = product.name + " - M.K. Store";
+                    document.getElementById('product-name').textContent = product.name;
+                    document.getElementById('product-price').textContent = '$' + product.price;
+                    document.getElementById('img-original-price').textContent = '$' + (product.price * 1.2).toFixed(2);
+                    document.getElementById('product-rating').textContent = product.rating || 4.5;
+                    document.getElementById('main-product-img').src = product.image;
+                    document.getElementById('thumb-1').src = product.image;
+                    document.getElementById('breadcrumb-category').textContent = product.category || 'Shop';
+
+                    // Setup Add to Cart
+                    document.getElementById('add-to-cart-btn').onclick = () => {
+                        addToCartFromDetail(product);
+                    };
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        });
+
+        function addToCartFromDetail(product) {
+            const qty = parseInt(document.getElementById('qty-input').value);
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            const existingItem = cart.find(item => item._id === product._id);
+
+            if (existingItem) {
+                existingItem.quantity += qty;
+            } else {
+                cart.push({ ...product, quantity: qty });
+            }
+
+            localStorage.setItem('cart', JSON.stringify(cart));
+
+            // Show feedback and redirect
+            const btn = document.getElementById('add-to-cart-btn');
+            btn.innerHTML = '<i class="fa fa-check"></i> Added';
+            btn.style.background = '#16a34a';
+
+            setTimeout(() => {
+                window.location.href = 'cart.html';
+            }, 500);
+        }
+    </script>
+    <script src="js/script.js"></script>
+    <script src="js/nav.js"></script>
+</body>
+
+</html>

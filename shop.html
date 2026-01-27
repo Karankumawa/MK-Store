@@ -43,23 +43,17 @@
     <main>
         <div class="shop-container">
             <!-- Special Offers Banner -->
-            <div class="offers-banner"
-                style="grid-column: 1/-1; background: linear-gradient(135deg, #2563eb, #1e40af); color: white; padding: 2rem; border-radius: 12px; margin-bottom: 2rem; text-align: center; position: relative; overflow: hidden; box-shadow: 0 4px 15px rgba(37, 99, 235, 0.2);">
-                <div style="position: relative; z-index: 2;">
-                    <h2 style="font-size: 2rem; margin-bottom: 0.5rem; font-weight: 700;">Weekly Special Offers!</h2>
-                    <p style="font-size: 1.1rem; opacity: 0.9; margin-bottom: 1.5rem;">Get up to 50% off on selected
-                        daily essentials and snacks.</p>
-                    <button class="btn"
-                        style="background: white; color: #2563eb; padding: 0.8rem 2rem; font-weight: 600; border: none; border-radius: 8px; cursor: pointer; transition: transform 0.2s;"
-                        onclick="document.querySelector('.product-grid').scrollIntoView({behavior: 'smooth'})">Shop
-                        Deals Now</button>
+            <div class="offers-banner">
+                <div class="banner-content">
+                    <h2>Weekly Special Offers!</h2>
+                    <p>Get up to 50% off on selected daily essentials and snacks.</p>
+                    <button class="btn btn-white"
+                        onclick="document.querySelector('.product-grid').scrollIntoView({behavior: 'smooth'})">
+                        Shop Deals Now
+                    </button>
                 </div>
-                <div
-                    style="position: absolute; top: -50px; right: -50px; width: 150px; height: 150px; background: rgba(255,255,255,0.1); border-radius: 50%;">
-                </div>
-                <div
-                    style="position: absolute; bottom: -30px; left: -30px; width: 100px; height: 100px; background: rgba(255,255,255,0.1); border-radius: 50%;">
-                </div>
+                <div class="banner-decoration d-1"></div>
+                <div class="banner-decoration d-2"></div>
             </div>
 
             <button class="filter-toggle">
@@ -70,73 +64,69 @@
                 <div class="close-filters">
                     <i class="fa fa-times"></i>
                 </div>
-                <div class="filter-section">
+
+                <div class="filter-group">
                     <h3>Categories</h3>
-                    <div class="filter-options">
-                        <div class="filter-option">
-                            <input type="checkbox" id="category1" name="category" value="daily-items">
-                            <label for="category1">Daily Items</label>
-                        </div>
-                        <div class="filter-option">
-                            <input type="checkbox" id="category2" name="category" value="snacks">
-                            <label for="category2">Snacks</label>
-                        </div>
-                        <div class="filter-option">
-                            <input type="checkbox" id="category3" name="category" value="beverages">
-                            <label for="category3">Beverages</label>
-                        </div>
-                        <div class="filter-option">
-                            <input type="checkbox" id="category4" name="category" value="personal-care">
-                            <label for="category4">Personal Care</label>
-                        </div>
+                    <div class="category-pills">
+                        <a href="shop.html" class="cat-pill active">All</a>
+                        <a href="groceries.html" class="cat-pill">Groceries</a>
+                        <a href="mobiles.html" class="cat-pill">Mobiles</a>
+                        <a href="fashion.html" class="cat-pill">Fashion</a>
+                        <a href="electronics.html" class="cat-pill">Electronics</a>
+                        <a href="home.html" class="cat-pill">Home</a>
+                        <a href="appliances.html" class="cat-pill">Appliances</a>
+                        <a href="toys.html" class="cat-pill">Toys</a>
                     </div>
                 </div>
 
-                <div class="filter-section">
+                <div class="filter-group">
                     <h3>Price Range</h3>
-                    <div class="filter-options">
-                        <div class="filter-option">
-                            <input type="radio" id="price1" name="price" value="0-2">
-                            <label for="price1">$0 - $2</label>
-                        </div>
-                        <div class="filter-option">
-                            <input type="radio" id="price2" name="price" value="2-4">
-                            <label for="price2">$2 - $4</label>
-                        </div>
-                        <div class="filter-option">
-                            <input type="radio" id="price3" name="price" value="4-6">
-                            <label for="price3">$4 - $6</label>
-                        </div>
-                        <div class="filter-option">
-                            <input type="radio" id="price4" name="price" value="6+">
-                            <label for="price4">$6+</label>
-                        </div>
+                    <div class="filter-chips">
+                        <label class="chip">
+                            <input type="radio" name="price" value="0-2">
+                            <span>$0 - $2</span>
+                        </label>
+                        <label class="chip">
+                            <input type="radio" name="price" value="2-4">
+                            <span>$2 - $4</span>
+                        </label>
+                        <label class="chip">
+                            <input type="radio" name="price" value="4-6">
+                            <span>$4 - $6</span>
+                        </label>
+                        <label class="chip">
+                            <input type="radio" name="price" value="6+">
+                            <span>$6+</span>
+                        </label>
                     </div>
                 </div>
 
-                <div class="filter-section">
+                <div class="filter-group">
                     <h3>Rating</h3>
-                    <div class="filter-options">
-                        <div class="filter-option">
-                            <input type="radio" id="rating1" name="rating" value="5">
-                            <label for="rating1">5 Stars</label>
-                        </div>
-                        <div class="filter-option">
-                            <input type="radio" id="rating2" name="rating" value="4+">
-                            <label for="rating2">4+ Stars</label>
-                        </div>
-                        <div class="filter-option">
-                            <input type="radio" id="rating3" name="rating" value="3+">
-                            <label for="rating3">3+ Stars</label>
-                        </div>
+                    <div class="filter-chips">
+                        <label class="chip">
+                            <input type="radio" name="rating" value="5">
+                            <span>5 Stars</span>
+                        </label>
+                        <label class="chip">
+                            <input type="radio" name="rating" value="4+">
+                            <span>4+ Stars</span>
+                        </label>
+                        <label class="chip">
+                            <input type="radio" name="rating" value="3+">
+                            <span>3+ Stars</span>
+                        </label>
                     </div>
                 </div>
             </aside>
 
             <div class="shop-content">
                 <div class="shop-header">
-                    <h1>Our Products</h1>
-                    <div class="sort-options">
+                    <div>
+                        <h1>Our Products</h1>
+                        <p class="text-muted">Discover our premium collection</p>
+                    </div>
+                    <div class="sort-wrapper">
                         <label for="sort">Sort by:</label>
                         <select id="sort">
                             <option value="featured">Featured</option>

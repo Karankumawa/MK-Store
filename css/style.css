@@ -246,6 +246,60 @@ nav {
     box-shadow: 0 6px 20px 0 rgba(79, 70, 229, 0.6);
 }
 
+/* Hero Slide Content - Text Overlay */
+.hero-slide-content {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    text-align: center;
+    color: white;
+    z-index: 20;
+    width: 90%;
+    max-width: 800px;
+}
+
+.hero-slide-content h2 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+    color: white;
+}
+
+.hero-slide-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5);
+    color: #f1f5f9;
+}
+
+.btn-hero {
+    display: inline-block;
+    padding: 12px 30px;
+    background: var(--brand);
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+    border-radius: 4px;
+    transition: transform 0.2s, background 0.2s;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.2);
+}
+
+.btn-hero:hover {
+    background: var(--brand-dark);
+    transform: translateY(-2px);
+}
+
+@media (max-width: 768px) {
+    .hero-slide-content h2 {
+        font-size: 2rem;
+    }
+
+    .hero-slide-content p {
+        font-size: 1rem;
+    }
+}
+
 /* Section Common */
 section {
     max-width: 1280px;
@@ -523,11 +577,14 @@ footer {
 .hero-carousel {
     position: relative;
     width: 100%;
-    height: 280px;
+    height: 500px;
+    /* Increased from 280px for better visibility */
     max-width: 1400px;
     margin: 0 auto;
     overflow: hidden;
     background: white;
+    border-radius: 12px;
+    box-shadow: var(--shadow-md);
 }
 
 .slide {
@@ -535,7 +592,8 @@ footer {
     width: 100%;
     height: 100%;
     background-size: cover;
-    background-position: center;
+    background-position: center top;
+    /* Better for people/products */
     opacity: 0;
     transition: opacity 0.5s ease-in-out;
 }

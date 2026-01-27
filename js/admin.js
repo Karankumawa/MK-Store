@@ -1,58 +1,122 @@
-// Check Admin Auth
-const token = localStorage.getItem('token');
-const user = JSON.parse(localStorage.getItem('user')) || {};
-
-if (!token || user.role !== 'admin') {
-    alert('Access Denied: Admins Only');
-    window.location.href = 'login.html';
-}
-
 document.addEventListener('DOMContentLoaded', () => {
-    // Populate Stats
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    const usersCount = Math.floor(Math.random() * 50) + 10; // Mock user count
-    const totalSales = orders.reduce((sum, order) => sum + parseFloat(order.total), 0);
+    // Auth Check
+    const token = localStorage.getItem('token');
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
 
-    document.getElementById('total-orders').textContent = orders.length;
-    document.getElementById('total-users').textContent = usersCount;
-    document.getElementById('total-sales').textContent = `$${totalSales.toFixed(2)}`;
-
-    // Populate Orders Table
-    const ordersTable = document.getElementById('orders-table');
-    if (orders.length === 0) {
-        ordersTable.innerHTML = '<tr><td colspan="5" style="text-align:center;">No orders found.</td></tr>';
-    } else {
-        ordersTable.innerHTML = orders.map(order => `
-            <tr>
-                <td>${order.id}</td>
-                <td>${user.email}</td> <!-- In a real app, this would be the customer email -->
-                <td>$${order.total}</td>
-                <td><span class="order-status status-${order.status === 'Processing' ? 'pending' : 'completed'}">${order.status}</span></td>
-                <td>${new Date(order.date).toLocaleDateString()}</td>
-            </tr>
-        `).join('');
+    if (!token || user.role !== 'admin') {
+        window.location.href = 'login.html';
+        return;
     }
 
-    // Populate Users Table (Mock Data)
-    const usersTable = document.getElementById('users-table');
-    usersTable.innerHTML = `
-        <tr>
-            <td>1</td>
-            <td>Admin User</td>
-            <td>mkstore5100@gmail.com</td>
-            <td><span style="background:#e0e7ff; color:#3730a3; padding:2px 8px; border-radius:10px;">Admin</span></td>
-        </tr>
-        <tr>
-            <td>2</td>
-            <td>Test User</td>
-            <td>user@example.com</td>
-            <td>Customer</td>
-        </tr>
-    `;
+    // Set Welcome Msg
+    const welcome = document.querySelector('.welcome-text');
+    if (welcome) welcome.textContent = `Welcome, ${user.username}`;
+
+    // Sidebar toggle (if exists)
+    // ...
+
+    // Content Loading
+    loadDashboard();
+
+    // Event Listeners for Nav
+    document.querySelectorAll('.admin-nav a').forEach(link => {
+        link.addEventListener('click', (e) => {
+            e.preventDefault();
+            document.querySelectorAll('.admin-nav a').forEach(l => l.classList.remove('active'));
+            link.classList.add('active');
+
+            const section = link.getAttribute('href').substring(1); // #products -> products
+            loadSection(section);
+        });
+    });
+
+    // Logout
+    document.getElementById('logoutBtn')?.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    });
 });
 
-function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = 'login.html';
+async function loadDashboard() {
+    loadSection('products'); // Default
+}
+
+function loadSection(section) {
+    const main = document.querySelector('.admin-content');
+
+    if (section === 'products') {
+        loadProducts(main);
+    } else if (section === 'orders') {
+        main.innerHTML = '<h2>Orders</h2><p>Order management coming soon.</p>';
+    } else if (section === 'users') {
+        main.innerHTML = '<h2>Users</h2><p>User management coming soon.</p>';
+    }
+}
+
+async function loadProducts(container) {
+    container.innerHTML = `
+        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+            <h2>Product Management</h2>
+            <button class="btn-primary" onclick="showAddProductModal()">+ Add Product</button>
+        </div>
+        <div class="product-table-container">
+            <table class="admin-table">
+                <thead>
+                    <tr>
+                        <th>Image</th>
+                        <th>Name</th>
+                        <th>Category</th>
+                        <th>Price</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="product-tbody">
+                    <tr><td colspan="5">Loading...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    `;
+
+    try {
+        const res = await fetch('/api/products');
+        const products = await res.json();
+
+        const tbody = document.getElementById('product-tbody');
+        if (products.length === 0) {
+            tbody.innerHTML = '<tr><td colspan="5">No products found.</td></tr>';
+            return;
+        }
+
+        tbody.innerHTML = products.map(p => `
+            <tr>
+                <td><img src="${p.image}" alt="${p.name}" style="width:40px; height:40px; object-fit:contain;"></td>
+                <td>${p.name}</td>
+                <td>${p.category || '-'}</td>
+                <td>$${p.price}</td>
+                <td>
+                    <button class="btn-sm btn-edit" onclick="editProduct('${p._id}')"><i class="fa fa-edit"></i></button>
+                    <button class="btn-sm btn-delete" onclick="deleteProduct('${p._id}')"><i class="fa fa-trash"></i></button>
+                </td>
+            </tr>
+        `).join('');
+
+    } catch (err) {
+        container.innerHTML += `<p class="error">Error loading products: ${err.message}</p>`;
+    }
+}
+
+function showAddProductModal() {
+    alert('Add Product Modal (Feature under construction - Requires API endpoint)');
+}
+
+function editProduct(id) {
+    alert(`Edit Product ${id} (Feature under construction)`);
+}
+
+function deleteProduct(id) {
+    if (confirm('Are you sure you want to delete this product?')) {
+        alert('Delete API call placeholder');
+        // fetch(`/api/products/${id}`, { method: 'DELETE' })...
+    }
 }

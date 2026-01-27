@@ -1,47 +1,93 @@
+// Register Functionality
 document.addEventListener('DOMContentLoaded', () => {
-    const form = document.getElementById('registerForm');
+    const registerForm = document.getElementById('registerForm');
+    const togglePasswordVideo = document.querySelectorAll('.togglePassword');
 
     // Toggle Password Visibility
-    document.querySelectorAll('.togglePassword').forEach(btn => {
+    togglePasswordVideo.forEach(btn => {
         btn.addEventListener('click', function () {
             const input = this.previousElementSibling;
-            const type = input.getAttribute('type') === 'password' ? 'text' : 'password';
-            input.setAttribute('type', type);
-            this.querySelector('i').classList.toggle('fa-eye');
-            this.querySelector('i').classList.toggle('fa-eye-slash');
+            const icon = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.remove('fa-eye');
+                icon.classList.add('fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.remove('fa-eye-slash');
+                icon.classList.add('fa-eye');
+            }
         });
     });
 
-    form.addEventListener('submit', (e) => {
-        e.preventDefault();
+    if (registerForm) {
+        registerForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
 
-        const name = document.getElementById('reg-name').value.trim();
-        const email = document.getElementById('reg-email').value.trim();
-        const password = document.getElementById('reg-password').value;
-        const confirm = document.getElementById('reg-confirm').value;
+            const username = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            const confirmPass = document.getElementById('reg-confirm').value.trim();
+            const btn = registerForm.querySelector('button[type="submit"]');
 
-        // Basic Validation
-        if (password !== confirm) {
-            alert('Passwords do not match!');
-            return;
-        }
+            if (password !== confirmPass) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
 
-        if (password.length < 6) {
-            alert('Password must be at least 6 characters.');
-            return;
-        }
+            if (password.length < 6) {
+                showNotification('Password must be at least 6 characters', 'error');
+                return;
+            }
 
-        // Simulate API Registration
-        const submitBtn = form.querySelector('button[type="submit"]');
-        submitBtn.disabled = true;
-        submitBtn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Creating Account...';
+            try {
+                btn.disabled = true;
+                btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> creating...';
 
-        setTimeout(() => {
-            // Success
-            alert('Registration Successful! Please login.');
+                const res = await fetch('/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, email, password })
+                });
 
-            // Optional: Auto-login logic could go here, but usually redirect to login is safer
-            window.location.href = 'login.html';
-        }, 1500);
-    });
+                const data = await res.json();
+
+                if (!res.ok) {
+                    throw new Error(data.msg || 'Registration failed');
+                }
+
+                // Success
+                localStorage.setItem('token', data.token);
+                localStorage.setItem('user', JSON.stringify(data.user));
+
+                showNotification('Registration successful! Redirecting...', 'success');
+                setTimeout(() => {
+                    window.location.href = 'index.html';
+                }, 1500);
+
+            } catch (err) {
+                console.error(err);
+                showNotification(err.message, 'error');
+                btn.disabled = false;
+                btn.textContent = 'Register';
+            }
+        });
+    }
+
+    function showNotification(msg, type = 'success') {
+        const div = document.createElement('div');
+        div.className = `notification ${type}`;
+        div.textContent = msg;
+        div.style.position = 'fixed';
+        div.style.bottom = '20px';
+        div.style.right = '20px';
+        div.style.padding = '12px 24px';
+        div.style.borderRadius = '8px';
+        div.style.color = '#fff';
+        div.style.background = type === 'error' ? '#ef4444' : '#22c55e';
+        div.style.zIndex = '10000';
+        div.style.boxShadow = '0 4px 6px rgba(0,0,0,0.1)';
+        document.body.appendChild(div);
+        setTimeout(() => div.remove(), 3000);
+    }
 });

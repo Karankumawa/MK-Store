@@ -16,11 +16,25 @@ async function fetchFeaturedProducts() {
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
         const products = await res.json();
 
-        // Use random products or specific ones
-        const featured = products
-            .filter(p => p.image && p.price)
-            .sort(() => 0.5 - Math.random()) // Shuffle
-            .slice(0, 5); // Show 5 items
+        // Filter for specific categories relevant to the section title
+        const targetedCategories = ['electronics', 'grocery', 'essentials', 'fashion'];
+        let featured = products.filter(p =>
+            p.category && targetedCategories.some(t => p.category.toLowerCase().includes(t))
+        );
+
+        // If not enough targeted items, fill with others
+        if (featured.length < 5) {
+            const others = products.filter(p => !featured.includes(p));
+            featured = [...featured, ...others];
+        }
+
+        // Shuffle and slice
+        featured = featured
+            .sort(() => 0.5 - Math.random())
+        // Shuffle and slice
+        featured = featured
+            .sort(() => 0.5 - Math.random())
+            .slice(0, 8); // Show 8 items for a nice grid (2 rows of 4)
 
         if (featured.length === 0) {
             grid.innerHTML = '<div class="no-products">No deals active right now.</div>';
@@ -28,8 +42,8 @@ async function fetchFeaturedProducts() {
         }
 
         grid.innerHTML = featured.map(product => `
-            <div class="product-card-enhanced" onclick="window.location.href='shop.html'">
-                <div class="wishlist-icon"><i class="fa fa-heart"></i></div>
+            <div class="product-card-enhanced" onclick="window.location.href='product.html?id=${product._id}'" style="cursor:pointer">
+                <div class="wishlist-icon" onclick="event.stopPropagation()"><i class="fa fa-heart"></i></div>
                 <div class="product-img-container">
                     <img src="${product.image}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
                 </div>
@@ -39,7 +53,7 @@ async function fetchFeaturedProducts() {
                     <span class="product-price">$${product.price}</span>
                     <span class="product-discount">20% off</span>
                 </div>
-                 <button class="add-to-cart-btn" style="margin-top:10px; width:100%; padding:8px; background:#ff9f00; border:none; color:white; font-weight:600; cursor:pointer;" onclick='event.stopPropagation(); addToCartHome(${JSON.stringify(product).replace(/'/g, "&#39;")})'>
+                 <button class="add-to-cart-btn" style="margin-top:10px; width:100%; padding:8px; background:#ff9f00; border:none; color:white; font-weight:600; cursor:pointer;" onclick='event.stopPropagation(); addToCartHome(${JSON.stringify(product).replace(/\'/g, "''")})'>
                     ADD TO CART
                 </button>
             </div>
@@ -84,7 +98,11 @@ function addToCartHome(product) {
 
     localStorage.setItem('cart', JSON.stringify(cart));
     updateCartCountHome();
-    showNotificationHome("Product added to cart!");
+    showNotificationHome("Product added to cart! Redirecting...");
+
+    setTimeout(() => {
+        window.location.href = 'cart.html';
+    }, 800);
 }
 
 function updateCartCountHome() {
