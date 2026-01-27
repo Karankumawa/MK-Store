@@ -97,10 +97,11 @@ nav {
 .logo h1 {
     font-size: 1.5rem;
     font-weight: 700;
-    background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
+    color: var(--brand-dark);
+    /* background: linear-gradient(135deg, var(--brand) 0%, var(--accent) 100%); */
+    /* -webkit-background-clip: text; */
+    /* background-clip: text; */
+    /* color: transparent; */
 }
 
 .search-bar {
