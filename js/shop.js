@@ -230,6 +230,77 @@ document.addEventListener('DOMContentLoaded', function () {
     function displayProducts() {
         if (!productGrid) return;
 
+        // Determine if we are in "Default View" (No search, no category filter selected, first page)
+        const urlParams = new URLSearchParams(window.location.search);
+        const searchQuery = urlParams.get('search');
+        // Note: filteredProducts might be filtered by sidebar options even if URL is clean
+        // We check if we are filtering.
+
+        // Simple heuristic: If filteredProducts.length === products.length, we are likely in default view.
+        // BUT, we want to allow sidebar filtering to trigger Grid View.
+        // So we check our internal state variables or URL.
+        const activeCategory = urlParams.get('category') || window.pageCategory;
+        const isFiltering = searchQuery || activeCategory ||
+            document.querySelector('input[name="price"]:checked') ||
+            document.querySelector('input[name="rating"]:checked') ||
+            (sortSelect && sortSelect.value !== 'default');
+
+        if (!isFiltering && currentPage === 1) {
+            displayCategorySliders();
+        } else {
+            displayGridView();
+        }
+    }
+
+    function displayCategorySliders() {
+        productGrid.innerHTML = '';
+        productGrid.classList.add('view-mode-slider');
+        // Hide pagination in slider view
+        if (pageNumbers) pageNumbers.parentElement.style.display = 'none';
+
+        if (products.length === 0) {
+            productGrid.innerHTML = '<p class="no-products">No products found.</p>';
+            return;
+        }
+
+        // Group products by category
+        const categories = {};
+        products.forEach(p => {
+            const cat = p.category || 'Other';
+            if (!categories[cat]) categories[cat] = [];
+            categories[cat].push(p);
+        });
+
+        // Sort categories if needed, or just iterate properties
+        Object.keys(categories).sort().forEach(catName => {
+            const catProducts = categories[catName];
+            if (catProducts.length === 0) return;
+
+            const section = document.createElement('div');
+            section.className = 'category-section';
+
+            const productCardsHtml = catProducts.map(product => createProductCardHtml(product)).join('');
+
+            section.innerHTML = `
+                <div class="category-title-row">
+                    <h2 class="category-title">${catName}</h2>
+                    <a href="shop.html?category=${encodeURIComponent(catName)}" class="view-all-link">View All</a>
+                </div>
+                <div class="product-slider">
+                    ${productCardsHtml}
+                </div>
+            `;
+            productGrid.appendChild(section);
+        });
+
+        attachAddToCartListeners();
+    }
+
+    function displayGridView() {
+        productGrid.classList.remove('view-mode-slider');
+        // Show pagination
+        if (pageNumbers) pageNumbers.parentElement.style.display = 'flex';
+
         const start = (currentPage - 1) * productsPerPage;
         const end = start + productsPerPage;
         const productsToShow = filteredProducts.slice(start, end);
@@ -246,42 +317,7 @@ document.addEventListener('DOMContentLoaded', function () {
             const productElement = document.createElement('div');
             productElement.className = 'product';
             productElement.onclick = () => window.location.href = `product.html?id=${product._id}`;
-
-            // Image & Badges
-            const imageSrc = product.image || 'assets/placeholder.png';
-            const rating = product.rating || 4.5;
-
-            let badgeHtml = '';
-            if (product.price > 50 && product.price < 100) badgeHtml = '<span class="badge sale">Sale</span>';
-            else if (Math.random() > 0.8) badgeHtml = '<span class="badge new">New</span>';
-
-            productElement.innerHTML = `
-                <div class="product-image-wrapper">
-                    ${badgeHtml}
-                    <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
-                    <div class="product-actions">
-                         <button class="action-btn" onclick="event.stopPropagation(); console.log('Wishlist ${product._id}')">
-                            <i class="fa-regular fa-heart"></i>
-                         </button>
-                         <button class="action-btn" onclick="event.stopPropagation(); window.location.href='product.html?id=${product._id}'">
-                            <i class="fa-regular fa-eye"></i>
-                         </button>
-                    </div>
-                </div>
-                <div class="product-info">
-                    <div class="product-category">${product.category || 'General'}</div>
-                    <h3 class="product-title">${product.name}</h3>
-                    <div class="rating-stars">
-                        ${generateStars(rating)} <span class="rating-text">(${Math.floor(Math.random() * 200) + 50})</span>
-                    </div>
-                    <div class="price-row">
-                        <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
-                        <button class="add-btn add-to-cart-btn" data-product-id="${product._id}" onclick="event.stopPropagation()">
-                             Add
-                        </button>
-                    </div>
-                </div>
-            `;
+            productElement.innerHTML = createProductCardInnerHtml(product);
             productGrid.appendChild(productElement);
         });
 
@@ -300,8 +336,55 @@ document.addEventListener('DOMContentLoaded', function () {
             nextPageBtn.disabled = currentPage >= totalPages || totalPages === 0;
         }
 
-        // Attach event listeners to new buttons
         attachAddToCartListeners();
+    }
+
+    // Helper to generate full card HTML string (for slider)
+    function createProductCardHtml(product) {
+        return `
+            <div class="product" onclick="window.location.href = 'product.html?id=${product._id}'">
+                ${createProductCardInnerHtml(product)}
+            </div>
+        `;
+    }
+
+    // Helper for inner content (reused)
+    function createProductCardInnerHtml(product) {
+        // Image & Badges
+        const imageSrc = product.image || 'assets/placeholder.png';
+        const rating = product.rating || 4.5;
+
+        let badgeHtml = '';
+        if (product.price > 50 && product.price < 100) badgeHtml = '<span class="badge sale">Sale</span>';
+        else if (Math.random() > 0.8) badgeHtml = '<span class="badge new">New</span>';
+
+        return `
+            <div class="product-image-wrapper">
+                ${badgeHtml}
+                <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
+                <div class="product-actions">
+                        <button class="action-btn" onclick="event.stopPropagation(); console.log('Wishlist ${product._id}')">
+                        <i class="fa-regular fa-heart"></i>
+                        </button>
+                        <button class="action-btn" onclick="event.stopPropagation(); window.location.href='product.html?id=${product._id}'">
+                        <i class="fa-regular fa-eye"></i>
+                        </button>
+                </div>
+            </div>
+            <div class="product-info">
+                <div class="product-category">${product.category || 'General'}</div>
+                <h3 class="product-title">${product.name}</h3>
+                <div class="rating-stars">
+                    ${generateStars(rating)} <span class="rating-text">(${Math.floor(Math.random() * 200) + 50})</span>
+                </div>
+                <div class="price-row">
+                    <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
+                    <button class="add-btn add-to-cart-btn" data-product-id="${product._id}" onclick="event.stopPropagation()">
+                            Add
+                    </button>
+                </div>
+            </div>
+        `;
     }
 
     function attachAddToCartListeners() {

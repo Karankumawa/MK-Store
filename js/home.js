@@ -152,3 +152,20 @@ function showNotificationHome(message) {
 
 // Init Cart Count on Load
 document.addEventListener('DOMContentLoaded', updateCartCountHome);
+
+// Slider Navigation Logic
+document.addEventListener('DOMContentLoaded', () => {
+    const slider = document.getElementById('home-products-grid');
+    const prevBtn = document.getElementById('home-prev-btn');
+    const nextBtn = document.getElementById('home-next-btn');
+
+    if (slider && prevBtn && nextBtn) {
+        prevBtn.addEventListener('click', () => {
+            slider.scrollBy({ left: -300, behavior: 'smooth' });
+        });
+
+        nextBtn.addEventListener('click', () => {
+            slider.scrollBy({ left: 300, behavior: 'smooth' });
+        });
+    }
+});

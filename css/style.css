@@ -796,8 +796,39 @@ footer {
 
 .form-group label {
     display: block;
-    margin-bottom: 0.5rem;
-    color: var(--text-muted);
+
+    /* Slider Layout (Home & Global) */
+    .product-slider {
+        display: flex;
+        gap: 1.5rem;
+        overflow-x: auto;
+        padding: 1rem 0.5rem 1.5rem 0.5rem;
+        scroll-behavior: smooth;
+        scrollbar-width: thin;
+    }
+
+    .product-slider::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    .product-slider::-webkit-scrollbar-thumb {
+        background: #cbd5e1;
+        border-radius: 10px;
+    }
+
+    .product-slider::-webkit-scrollbar-track {
+        background: #f1f5f9;
+    }
+
+    /* Ensure cards in slider have fixed width */
+    /* Supporting both .product (shop) and .product-card-enhanced (home) */
+    .product-slider .product,
+    .product-slider .product-card-enhanced {
+        min-width: 260px;
+        max-width: 260px;
+        flex-shrink: 0;
+    }
+
     font-weight: 500;
 }
 

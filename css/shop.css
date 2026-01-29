@@ -456,6 +456,73 @@
     }
 }
 
+/* Slider Layout (New) */
+.category-section {
+    margin-bottom: 3rem;
+}
+
+.category-title-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid #f1f5f9;
+}
+
+.category-title {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-main);
+}
+
+.view-all-link {
+    color: var(--brand);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: color 0.2s;
+}
+
+.view-all-link:hover {
+    color: var(--brand-dark);
+    text-decoration: underline;
+}
+
+.product-slider {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding: 1rem 0.5rem 1.5rem 0.5rem; /* Bottom padding for shadow/hover offset */
+    scroll-behavior: smooth;
+    scrollbar-width: thin; /* Firefox */
+}
+
+.product-slider::-webkit-scrollbar {
+    height: 6px;
+}
+
+.product-slider::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.product-slider::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+/* Ensure cards in slider have fixed width */
+.product-slider .product {
+    min-width: 260px;
+    max-width: 260px;
+    flex-shrink: 0;
+}
+
+/* Specific overrides for when grid is active or not */
+.product-grid.view-mode-slider {
+    display: block; /* Disable grid layout to stack sections vertically */
+}
+
 @keyframes slideIn {
     from {
         transform: translateX(-100%);
