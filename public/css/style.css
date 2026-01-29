@@ -364,106 +364,205 @@ section {
     box-shadow: var(--shadow-sm);
 }
 
-section h2::after {
-    display: none;
-    /* Removing the old underline style for cleaner look */
+/* Product Slider Container */
+.product-slider {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding: 1rem 0.5rem 1.5rem 0.5rem;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    /* Ensure the slider itself doesn't clip the buttons if they are inside (they are outside in HTML structure though) */
 }
 
-/* Product Grid */
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 2.5rem;
+.product-slider::-webkit-scrollbar {
+    height: 6px;
 }
 
-.product {
+.product-slider::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.product-slider::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+/* Product Card Sizing in Slider */
+.product-slider .product,
+.product-slider .product-card-enhanced {
+    min-width: 260px;
+    max-width: 260px;
+    flex-shrink: 0;
+}
+
+/* Slider Navigation Buttons (Premium Look) */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
     background: white;
-    border-radius: 1rem;
-    overflow: hidden;
-    position: relative;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+    color: var(--text-main);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1.1rem;
+}
+
+.slider-btn:hover {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+}
+
+.slider-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.prev-btn {
+    left: -22px;
+}
+
+.next-btn {
+    right: -22px;
+}
+
+/* Mobile Adjustment for Buttons */
+@media (max-width: 900px) {
+    .slider-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .prev-btn {
+        left: -10px;
+    }
+
+    .next-btn {
+        right: -10px;
+    }
+}
+
+/* =========================================
+   About Page Modern Redesign
+========================================= */
+
+/* Restored Global Components */
+
+/* Category Bar */
+.category-bar-container {
+    background: transparent;
+    padding: 1.5rem 0;
+    margin-bottom: 2rem;
+}
+
+.category-bar {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 3rem;
+    width: 100%;
+}
+
+.category-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-decoration: none;
+    color: var(--text-main);
+    font-weight: 500;
+    font-size: 0.95rem;
+    transform: translateY(-5px);
+}
+
+.cat-icon {
+    width: 80px;
+    height: 80px;
+    background: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 0.75rem;
     box-shadow: var(--shadow-sm);
     transition: var(--transition);
     border: 1px solid var(--border);
 }
 
-.product:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-hover);
+.category-item:hover .cat-icon {
+    box-shadow: var(--shadow-md);
+    border-color: var(--brand);
 }
 
-.product-image-wrapper {
+.cat-icon img {
+    width: 48px;
+    height: 48px;
+    object-fit: contain;
+}
+
+/* Hero Carousel */
+.hero-carousel-container {
+    padding: 0 1.5rem;
+    background: transparent;
+    margin-bottom: 5rem;
+}
+
+.hero-carousel {
     position: relative;
+    width: 100%;
+    height: 600px;
     overflow: hidden;
-    padding-top: 100%;
-    /* 1:1 Aspect Ratio */
+    background: #000;
+    border-radius: 20px;
+    box-shadow: var(--shadow-lg);
 }
 
-.product img {
+.slide {
     position: absolute;
-    top: 0;
-    left: 0;
     width: 100%;
     height: 100%;
-    object-fit: cover;
-    transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+    background-size: cover;
+    background-position: center center;
+    opacity: 0;
+    transition: opacity 0.8s ease-in-out;
 }
 
-.product:hover img {
-    transform: scale(1.1);
+.slide.active {
+    opacity: 1;
 }
 
-/* Quick Action Overlay */
-.product-actions {
+.carousel-btn {
     position: absolute;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    padding: 1.5rem;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
-    transform: translateY(100%);
-    transition: var(--transition);
-    display: flex;
-    justify-content: flex-end;
-}
-
-.product:hover .product-actions {
-    transform: translateY(0);
-}
-
-.product-info {
-    padding: 1.5rem;
-}
-
-.product h3 {
-    font-size: 1.1rem;
-    margin-bottom: 0.5rem;
-    white-space: nowrap;
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
-
-.product .price {
-    font-size: 1.25rem;
-    font-weight: 700;
-    color: var(--brand);
-    display: block;
-    margin-bottom: 1rem;
-}
-
-.product button.add-to-cart {
-    width: 100%;
-    padding: 0.75rem;
-    background: var(--text-main);
-    color: white;
+    top: 50%;
+    transform: translateY(-50%);
+    background: white;
     border: none;
-    border-radius: 0.5rem;
-    font-weight: 600;
+    padding: 1.5rem 0.8rem;
     cursor: pointer;
-    transition: var(--transition);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    font-size: 1.2rem;
+    z-index: 10;
+    border-radius: 4px 0 0 4px;
 }
 
-.product button.add-to-cart:hover {
-    background: var(--brand);
+.carousel-btn.prev {
+    left: 0;
+    border-radius: 0 4px 4px 0;
+}
+
+.carousel-btn.next {
+    right: 0;
 }
 
 /* Footer */
@@ -565,293 +664,32 @@ footer {
     opacity: 1;
 }
 
-/* =========================================
-   New E-Commerce UI Overhaul
-========================================= */
-
-/* Category Bar */
-/* =========================================
-   New E-Commerce UI Overhaul
-========================================= */
-
-/* Category Bar - Clean & Modern */
-.category-bar-container {
-    background: transparent;
-    padding: 1.5rem 0;
-    margin-bottom: 2rem;
-}
-
-.category-bar {
-    display: flex;
-    justify-content: center;
-    flex-wrap: wrap;
-    gap: 3rem;
-    width: 100%;
-    /* Removed duplicative max-width/margins as parent handles it */
-}
-
-.category-item {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-decoration: none;
-    color: var(--text-main);
-    font-weight: 500;
-    font-size: 0.95rem;
-    transform: translateY(-5px);
-}
-
-.cat-icon {
-    width: 80px;
-    height: 80px;
-    background: white;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-bottom: 0.75rem;
-    box-shadow: var(--shadow-sm);
-    transition: var(--transition);
-    border: 1px solid var(--border);
-}
-
-.category-item:hover .cat-icon {
-    box-shadow: var(--shadow-md);
-    border-color: var(--brand);
-}
-
-.cat-icon img {
-    width: 48px;
-    height: 48px;
-    object-fit: contain;
-}
-
-/* Hero Carousel - Premium Look */
-.hero-carousel-container {
-    padding: 0 1.5rem;
-    background: transparent;
-    margin-bottom: 5rem;
-}
-
-.hero-carousel {
-    position: relative;
-    width: 100%;
-    height: 600px;
-    overflow: hidden;
-    background: #000;
-    border-radius: 20px;
-    box-shadow: var(--shadow-lg);
-    /* Removed redundant max-width */
-}
-
-.slide {
-    position: absolute;
-    width: 100%;
-    height: 100%;
-    background-size: cover;
-    background-position: center center;
-    opacity: 0;
-    transition: opacity 0.8s ease-in-out;
-}
-
-
-.slide.active {
-    opacity: 1;
-}
-
-.carousel-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    background: white;
-    border: none;
-    padding: 1.5rem 0.8rem;
-    cursor: pointer;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    font-size: 1.2rem;
-    z-index: 10;
-    border-radius: 4px 0 0 4px;
-}
-
-.carousel-btn.prev {
-    left: 0;
-    border-radius: 0 4px 4px 0;
-}
-
-.carousel-btn.next {
-    right: 0;
-}
-
-/* Enhanced Product Grid */
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-    gap: 1.5rem;
-}
-
-/* About Section - Premium Redesign */
-#about-section {
-    /* Resetting to default section behavior */
-    width: 100%;
-    margin-bottom: 4rem;
-}
-
-#about-section h2 {
-    text-align: left;
-    margin-bottom: 2rem;
-    transform: none;
-    left: auto;
-    display: block;
-}
-
-#about-section h2::after {
-    margin: 1rem 0 0;
-}
-
-/* New class for the inner card look of About section */
-.about-card {
-    background: white;
-    padding: 4rem 2rem;
-    border-radius: 20px;
-    box-shadow: var(--shadow-sm);
-    border: 1px solid var(--border);
-    overflow: hidden;
-}
-
-.about-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 4rem;
-    align-items: center;
-}
-
-.about-content p {
-    font-size: 1.15rem;
-    line-height: 1.8;
-    color: var(--text-muted);
-    margin-bottom: 2rem;
-}
-
-.about-features li {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-    font-weight: 500;
-    color: var(--text-main);
-    font-size: 1.05rem;
-}
-
-.about-features i {
-    color: var(--brand);
-    font-size: 1.25rem;
-    background: #e0e7ff;
-    width: 32px;
-    height: 32px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: 50%;
-}
-
-.about-image img {
-    width: 100%;
-    height: auto;
-    border-radius: 12px;
-    box-shadow: var(--shadow-lg);
-    transition: transform 0.4s ease;
-}
-
-.about-image:hover img {
-    transform: scale(1.02);
-}
-
-@media (max-width: 900px) {
-    .about-container {
-        grid-template-columns: 1fr;
-        gap: 3rem;
-    }
-
-    #about-section h2 {
-        text-align: center;
-    }
-
-    #about-section h2::after {
-        margin: 1rem auto 0;
-    }
-}
-
-.form-group label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: var(--text-muted);
-    font-weight: 500;
-}
-
-.form-group input {
-    width: 100%;
-    padding: 0.875rem;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 1rem;
-    transition: all 0.3s ease;
-    background: #f9fafb;
-}
-
-/* Premium About Teaser */
+/* Learn More About Us Section - Who We Are */
 .about-teaser {
-    padding: 6rem 0;
-    background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+    padding: 6rem 1.5rem;
+    background: white;
+    text-align: center;
+    border-radius: 2rem 2rem 0 0;
+    margin-top: -2rem;
     position: relative;
-    overflow: hidden;
-}
-
-.about-teaser::before {
-    content: '';
-    position: absolute;
-    top: -10%;
-    right: -5%;
-    width: 300px;
-    height: 300px;
-    background: radial-gradient(circle, rgba(79, 70, 229, 0.05) 0%, transparent 70%);
-    border-radius: 50%;
-    z-index: 1;
+    z-index: 10;
 }
 
 .about-teaser .main-container {
-    position: relative;
-    z-index: 2;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
+    max-width: 800px;
+    margin: 0 auto;
 }
 
 .about-teaser h2 {
     font-size: 2.5rem;
-    color: var(--text-main);
     margin-bottom: 1.5rem;
-    position: relative;
-    display: inline-block;
-}
-
-.about-teaser h2::after {
-    content: '';
-    position: absolute;
-    bottom: -10px;
-    left: 50%;
-    transform: translateX(-50%);
-    width: 60px;
-    height: 4px;
-    background: var(--brand);
-    border-radius: 2px;
+    color: var(--text-main);
 }
 
 .about-teaser p {
-    max-width: 700px;
     font-size: 1.15rem;
     color: var(--text-muted);
-    margin: 1.5rem 0 2.5rem;
+    margin-bottom: 2.5rem;
     line-height: 1.8;
 }
 
@@ -860,212 +698,18 @@ footer {
     align-items: center;
     gap: 0.75rem;
     padding: 1rem 2.5rem;
-    background: var(--brand);
-    color: white;
+    background: var(--surface);
+    color: var(--brand);
     text-decoration: none;
     font-weight: 600;
-    font-size: 1.05rem;
-    border-radius: 12px;
+    border-radius: 9999px;
+    border: 2px solid var(--brand);
     transition: var(--transition);
-    box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3);
 }
 
 .btn-about:hover {
-    background: var(--brand-dark);
-    transform: translateY(-3px);
-    box-shadow: 0 20px 25px -5px rgba(79, 70, 229, 0.4);
-}
-
-.btn-about i {
-    transition: transform 0.3s ease;
-}
-
-.btn-about:hover i {
-    transform: translateX(5px);
-}
-
-@media (max-width: 768px) {
-    .about-teaser {
-        padding: 4rem 1.5rem;
-    }
-
-    .about-teaser h2 {
-        font-size: 2rem;
-    }
-
-    .about-teaser p {
-        font-size: 1rem;
-    }
-}
-
-.form-group input:focus {
-    border-color: var(--brand);
-    background: white;
-    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-    outline: none;
-}
-
-.btn-login {
-    width: 100%;
-    margin-top: 1rem;
-    padding: 1rem;
-    font-size: 1.1rem;
-    font-weight: 600;
-    background: linear-gradient(135deg, var(--brand) 0%, var(--brand-dark) 100%);
-    color: white;
-    border: none;
-    border-radius: 10px;
-    cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-.btn-login:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(79, 70, 229, 0.3);
-}
-
-.social-login {
-    margin-top: 2rem;
-    text-align: center;
-    border-top: 1px solid var(--border);
-    padding-top: 2rem;
-}
-
-.social-login p {
-    color: var(--text-muted);
-    margin-bottom: 1rem;
-    position: relative;
-    top: -2.7rem;
-    background: rgba(255, 255, 255, 0.9);
-    display: inline-block;
-    padding: 0 1rem;
-}
-
-.social-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.social-btn {
-    flex: 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.5rem;
-    padding: 0.75rem;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    background: white;
-    font-weight: 500;
-    transition: all 0.3s ease;
-    cursor: pointer;
-}
-
-.social-btn:hover {
-    background: #f8fafc;
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-sm);
-}
-
-.social-btn.google {
-    color: #db4437;
-}
-
-.social-btn.facebook {
-    color: #1877f2;
-}
-
-/* =========================================
-   Slider Layout & Controls (Fixed)
-========================================= */
-
-/* Product Slider Container */
-.product-slider {
-    display: flex;
-    gap: 1.5rem;
-    overflow-x: auto;
-    padding: 1rem 0.5rem 1.5rem 0.5rem;
-    scroll-behavior: smooth;
-    scrollbar-width: thin;
-    /* Ensure the slider itself doesn't clip the buttons if they are inside (they are outside in HTML structure though) */
-}
-
-.product-slider::-webkit-scrollbar {
-    height: 6px;
-}
-
-.product-slider::-webkit-scrollbar-thumb {
-    background: #cbd5e1;
-    border-radius: 10px;
-}
-
-.product-slider::-webkit-scrollbar-track {
-    background: #f1f5f9;
-}
-
-/* Product Card Sizing in Slider */
-.product-slider .product,
-.product-slider .product-card-enhanced {
-    min-width: 260px;
-    max-width: 260px;
-    flex-shrink: 0;
-}
-
-/* Slider Navigation Buttons (Premium Look) */
-.slider-btn {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 44px;
-    height: 44px;
-    border-radius: 50%;
-    background: white;
-    border: 1px solid var(--border);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    z-index: 20;
-    color: var(--text-main);
-    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
-    font-size: 1.1rem;
-}
-
-.slider-btn:hover {
     background: var(--brand);
     color: white;
-    border-color: var(--brand);
-    transform: translateY(-50%) scale(1.1);
-    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
-}
-
-.slider-btn:active {
-    transform: translateY(-50%) scale(0.95);
-}
-
-.prev-btn {
-    left: -22px;
-}
-
-.next-btn {
-    right: -22px;
-}
-
-/* Mobile Adjustment for Buttons */
-@media (max-width: 900px) {
-    .slider-btn {
-        width: 36px;
-        height: 36px;
-        font-size: 1rem;
-    }
-
-    .prev-btn {
-        left: -10px;
-    }
-
-    .next-btn {
-        right: -10px;
-    }
-}
+    transform: translateY(-3px);
+    box-shadow: var(--shadow-md);
+}  

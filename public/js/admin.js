@@ -106,10 +106,11 @@ async function loadOrders(container) {
                         <th style="padding: 1rem; text-align: left;">Total</th>
                         <th style="padding: 1rem; text-align: left;">Status</th>
                         <th style="padding: 1rem; text-align: left;">Date</th>
+                        <th style="padding: 1rem; text-align: left;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="order-tbody">
-                    <tr><td colspan="5" style="padding: 1rem;">Loading...</td></tr>
+                    <tr><td colspan="6" style="padding: 1rem;">Loading...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -123,7 +124,7 @@ async function loadOrders(container) {
         const tbody = document.getElementById('order-tbody');
 
         if (orders.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="padding: 1rem;">No orders found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="padding: 1rem;">No orders found.</td></tr>';
             return;
         }
 
@@ -132,8 +133,18 @@ async function loadOrders(container) {
                 <td style="padding: 1rem;">${o._id}</td>
                 <td style="padding: 1rem;">${o.shippingDetails.name}</td>
                 <td style="padding: 1rem;">$${o.totalAmount}</td>
-                <td style="padding: 1rem;"><span class="status-badge ${o.status.toLowerCase()}">${o.status}</span></td>
+                <td style="padding: 1rem;">
+                    <select class="status-select" onchange="updateOrderStatus('${o._id}', this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1;">
+                        <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
+                        <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
+                        <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
+                        <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
+                    </select>
+                </td>
                 <td style="padding: 1rem;">${new Date(o.date).toLocaleDateString()}</td>
+                <td style="padding: 1rem;">
+                    <button class="btn-sm btn-delete" onclick="deleteOrder('${o._id}')" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"><i class="fa fa-trash"></i></button>
+                </td>
             </tr>
         `).join('');
 
@@ -183,8 +194,8 @@ async function loadProducts(container) {
                 <td style="padding: 1rem;">${p.category || '-'}</td>
                 <td style="padding: 1rem;">$${p.price}</td>
                 <td style="padding: 1rem;">
-                    <button class="btn-sm btn-edit" onclick="editProduct('${p._id}')" style="margin-right: 5px;"><i class="fa fa-edit"></i></button>
-                    <button class="btn-sm btn-delete" onclick="deleteProduct('${p._id}')"><i class="fa fa-trash"></i></button>
+                    <button class="btn-sm btn-edit" onclick="editProduct('${p._id}')" style="margin-right: 5px; background: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"><i class="fa fa-edit"></i></button>
+                    <button class="btn-sm btn-delete" onclick="deleteProduct('${p._id}')" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"><i class="fa fa-trash"></i></button>
                 </td>
             </tr>
         `).join('');
@@ -206,10 +217,11 @@ async function loadUsers(container) {
                         <th style="padding: 1rem; text-align: left;">Name</th>
                         <th style="padding: 1rem; text-align: left;">Email</th>
                         <th style="padding: 1rem; text-align: left;">Role</th>
+                        <th style="padding: 1rem; text-align: left;">Actions</th>
                     </tr>
                 </thead>
                 <tbody id="user-tbody">
-                    <tr><td colspan="3" style="padding: 1rem;">Loading...</td></tr>
+                    <tr><td colspan="4" style="padding: 1rem;">Loading...</td></tr>
                 </tbody>
             </table>
         </div>
@@ -226,7 +238,7 @@ async function loadUsers(container) {
         const tbody = document.getElementById('user-tbody');
 
         if (users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="3" style="padding: 1rem;">No users found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="padding: 1rem;">No users found.</td></tr>';
             return;
         }
 
@@ -234,12 +246,104 @@ async function loadUsers(container) {
             <tr style="border-bottom: 1px solid #e2e8f0;">
                 <td style="padding: 1rem;">${u.username}</td>
                 <td style="padding: 1rem;">${u.email}</td>
-                <td style="padding: 1rem;"><span class="role-badge ${u.role}">${u.role}</span></td>
+                <td style="padding: 1rem;">
+                    <select class="role-select" onchange="updateUserRole('${u._id}', this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1;">
+                        <option value="user" ${u.role === 'user' ? 'selected' : ''}>User</option>
+                        <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
+                    </select>
+                </td>
+                <td style="padding: 1rem;">
+                    <button class="btn-sm btn-delete" onclick="deleteUser('${u._id}')" ${u.email === 'karankumawat303@gmail.com' ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : 'style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"'}><i class="fa fa-trash"></i></button>
+                </td>
             </tr>
         `).join('');
 
     } catch (err) {
         container.innerHTML = `<p class="error">Error loading users: ${err.message}</p>`;
+    }
+}
+
+// Action Helper Functions
+async function updateOrderStatus(id, status) {
+    try {
+        const res = await fetch(`/api/orders/${id}/status`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify({ status })
+        });
+
+        // Check if response is JSON
+        const contentType = res.headers.get("content-type");
+        let data;
+        if (contentType && contentType.indexOf("application/json") !== -1) {
+            data = await res.json();
+        } else {
+            const text = await res.text();
+            console.error('Server returned non-JSON:', text);
+            throw new Error('Server error: ' + text);
+        }
+
+        if (res.ok) {
+            alert('Order status updated!');
+            loadSection('orders');
+        } else {
+            alert('Failed: ' + (data.msg || 'Unknown error') + (data.error ? '\nDetails: ' + data.error : ''));
+        }
+    } catch (err) {
+        console.error('Update Order Status Error:', err);
+        alert('Critical Error: ' + err.message);
+    }
+}
+
+async function deleteOrder(id) {
+    if (!confirm('Are you sure you want to delete this order?')) return;
+    try {
+        const res = await fetch(`/api/orders/${id}`, {
+            method: 'DELETE',
+            headers: { 'x-auth-token': localStorage.getItem('token') }
+        });
+        if (res.ok) {
+            alert('Order deleted!');
+            loadSection('orders');
+        } else alert('Failed to delete order');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function updateUserRole(id, role) {
+    try {
+        const res = await fetch(`/api/auth/users/${id}`, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify({ role })
+        });
+        if (res.ok) alert('User role updated!');
+        else alert('Failed to update role');
+    } catch (err) {
+        console.error(err);
+    }
+}
+
+async function deleteUser(id) {
+    if (!confirm('Are you sure you want to delete this user?')) return;
+    try {
+        const res = await fetch(`/api/auth/users/${id}`, {
+            method: 'DELETE',
+            headers: { 'x-auth-token': localStorage.getItem('token') }
+        });
+        if (res.ok) {
+            alert('User deleted!');
+            loadSection('users');
+        } else alert('Failed to delete user');
+    } catch (err) {
+        console.error(err);
     }
 }
 

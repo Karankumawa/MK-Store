@@ -51,20 +51,22 @@
                     </div>
                     <div class="form-group">
                         <label for="password">Password</label>
-                        <div style="position:relative;display:flex;align-items:center;">
-                            <input type="password" id="password" name="password" required style="padding-right:40px;">
-                            <button type="button" id="togglePassword" aria-label="Show password"
-                                style="position:absolute;right:10px;background:none;border:none;color:#6b7280;cursor:pointer"><i
-                                    class="fa fa-eye"></i></button>
+                        <div class="input-group">
+                            <input type="password" id="password" name="password" required>
+                            <button type="button" id="togglePassword" aria-label="Show password">
+                                <i class="fa fa-eye"></i>
+                            </button>
+                        </div>
+                        <div class="login-options">
+                            <div class="remember-me">
+                                <input type="checkbox" id="remember" name="remember">
+                                <label for="remember">Remember me</label>
+                            </div>
+                            <a href="javascript:void(0)" class="forgot-password">Forgot Password?</a>
                         </div>
                     </div>
-                    <div class="form-group remember-me">
-                        <input type="checkbox" id="remember" name="remember">
-                        <label for="remember">Remember me</label>
-                    </div>
-                    <button type="submit" class="btn">Login</button>
+                    <button type="submit" class="btn-login">Login</button>
                     <div class="form-footer">
-                        <a href="javascript:void(0)" class="forgot-password">Forgot Password?</a>
                         <p>Don't have an account? <a href="register.html" class="register-link">Register</a></p>
                     </div>
                 </form>

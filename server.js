@@ -23,6 +23,10 @@ app.use('/api/auth', require('./server/routes/auth'));
 app.use('/api/products', require('./server/routes/products'));
 app.use('/api/orders', require('./server/routes/orders'));
 
+app.get('/api/test', (req, res) => {
+    res.json({ msg: 'API is working', time: new Date() });
+});
+
 // Serve index.html for root
 app.get('/', (req, res) => {
     res.sendFile(path.join(__dirname, 'public', 'index.html'));

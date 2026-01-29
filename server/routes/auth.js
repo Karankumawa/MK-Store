@@ -35,6 +35,39 @@ router.get('/users', verifyAdmin, async (req, res) => {
     }
 });
 
+// Update User (Admin Only)
+router.put('/users/:id', verifyAdmin, async (req, res) => {
+    try {
+        const { username, email, role } = req.body;
+        let user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        if (username) user.username = username;
+        if (email) user.email = email;
+        if (role) user.role = role;
+
+        await user.save();
+        res.json({ msg: 'User updated', user: { id: user.id, username: user.username, email: user.email, role: user.role } });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Delete User (Admin Only)
+router.delete('/users/:id', verifyAdmin, async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        await User.findByIdAndDelete(req.params.id);
+        res.json({ msg: 'User removed' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // Register
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
