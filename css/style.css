@@ -796,39 +796,8 @@ footer {
 
 .form-group label {
     display: block;
-
-    /* Slider Layout (Home & Global) */
-    .product-slider {
-        display: flex;
-        gap: 1.5rem;
-        overflow-x: auto;
-        padding: 1rem 0.5rem 1.5rem 0.5rem;
-        scroll-behavior: smooth;
-        scrollbar-width: thin;
-    }
-
-    .product-slider::-webkit-scrollbar {
-        height: 6px;
-    }
-
-    .product-slider::-webkit-scrollbar-thumb {
-        background: #cbd5e1;
-        border-radius: 10px;
-    }
-
-    .product-slider::-webkit-scrollbar-track {
-        background: #f1f5f9;
-    }
-
-    /* Ensure cards in slider have fixed width */
-    /* Supporting both .product (shop) and .product-card-enhanced (home) */
-    .product-slider .product,
-    .product-slider .product-card-enhanced {
-        min-width: 260px;
-        max-width: 260px;
-        flex-shrink: 0;
-    }
-
+    margin-bottom: 0.5rem;
+    color: var(--text-muted);
     font-weight: 500;
 }
 
@@ -918,4 +887,98 @@ footer {
 
 .social-btn.facebook {
     color: #1877f2;
+}
+
+/* =========================================
+   Slider Layout & Controls (Fixed)
+========================================= */
+
+/* Product Slider Container */
+.product-slider {
+    display: flex;
+    gap: 1.5rem;
+    overflow-x: auto;
+    padding: 1rem 0.5rem 1.5rem 0.5rem;
+    scroll-behavior: smooth;
+    scrollbar-width: thin;
+    /* Ensure the slider itself doesn't clip the buttons if they are inside (they are outside in HTML structure though) */
+}
+
+.product-slider::-webkit-scrollbar {
+    height: 6px;
+}
+
+.product-slider::-webkit-scrollbar-thumb {
+    background: #cbd5e1;
+    border-radius: 10px;
+}
+
+.product-slider::-webkit-scrollbar-track {
+    background: #f1f5f9;
+}
+
+/* Product Card Sizing in Slider */
+.product-slider .product,
+.product-slider .product-card-enhanced {
+    min-width: 260px;
+    max-width: 260px;
+    flex-shrink: 0;
+}
+
+/* Slider Navigation Buttons (Premium Look) */
+.slider-btn {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: white;
+    border: 1px solid var(--border);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    z-index: 20;
+    color: var(--text-main);
+    transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    font-size: 1.1rem;
+}
+
+.slider-btn:hover {
+    background: var(--brand);
+    color: white;
+    border-color: var(--brand);
+    transform: translateY(-50%) scale(1.1);
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.3);
+}
+
+.slider-btn:active {
+    transform: translateY(-50%) scale(0.95);
+}
+
+.prev-btn {
+    left: -22px;
+}
+
+.next-btn {
+    right: -22px;
+}
+
+/* Mobile Adjustment for Buttons */
+@media (max-width: 900px) {
+    .slider-btn {
+        width: 36px;
+        height: 36px;
+        font-size: 1rem;
+    }
+
+    .prev-btn {
+        left: -10px;
+    }
+
+    .next-btn {
+        right: -10px;
+    }
 }

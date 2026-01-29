@@ -41,23 +41,54 @@ async function fetchFeaturedProducts() {
             return;
         }
 
-        grid.innerHTML = featured.map(product => `
-            <div class="product-card-enhanced" onclick="window.location.href='product.html?id=${product._id}'" style="cursor:pointer">
-                <div class="wishlist-icon" onclick="event.stopPropagation()"><i class="fa fa-heart"></i></div>
-                <div class="product-img-container">
-                    <img src="${product.image}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
+        grid.innerHTML = featured.map(product => {
+            // Replicating the Shop Page card structure for consistency
+            const imageSrc = product.image || 'assets/placeholder.png';
+            const rating = product.rating || 4.5;
+
+            // Random Badges for visual interest
+            let badgeHtml = '';
+            if (product.price > 50 && product.price < 100) badgeHtml = '<span class="badge sale" style="position:absolute; top:1rem; left:1rem;">Sale</span>';
+            else if (Math.random() > 0.8) badgeHtml = '<span class="badge new" style="position:absolute; top:1rem; left:1rem;">New</span>';
+
+            // Generate stars
+            let starsHtml = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) starsHtml += '<i class="fa fa-star"></i>';
+                else if (i - 0.5 <= rating) starsHtml += '<i class="fa fa-star-half-stroke"></i>';
+                else starsHtml += '<i class="fa-regular fa-star"></i>';
+            }
+
+            return `
+            <div class="product" onclick="window.location.href = 'product.html?id=${product._id}'" style="cursor:pointer; position:relative;">
+                <div class="product-image-wrapper">
+                    ${badgeHtml}
+                    <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
+                    <div class="product-actions">
+                         <button class="action-btn" onclick="event.stopPropagation(); console.log('Wishlist ${product._id}')">
+                            <i class="fa-regular fa-heart"></i>
+                         </button>
+                         <button class="action-btn" onclick="event.stopPropagation(); window.location.href='product.html?id=${product._id}'">
+                            <i class="fa-regular fa-eye"></i>
+                         </button>
+                    </div>
                 </div>
-                <h3 class="product-title">${product.name}</h3>
-                <div class="product-rating">4.5 <i class="fa fa-star" style="font-size:0.7rem"></i></div>
-                <div style="margin-top:5px;">
-                    <span class="product-price">$${product.price}</span>
-                    <span class="product-discount">20% off</span>
+                <div class="product-info">
+                    <div class="product-category" style="font-size:0.75rem; text-transform:uppercase; color:#64748b; font-weight:600; margin-bottom:0.4rem;">${product.category || 'General'}</div>
+                    <h3 class="product-title" style="font-size:1.1rem; font-weight:600; color:#0f172a; margin-bottom:0.5rem;">${product.name}</h3>
+                    <div class="rating-stars" style="color:#fbbf24; font-size:0.85rem; margin-bottom:0.75rem; display:flex; gap:4px;">
+                        ${starsHtml} <span class="rating-text" style="color:#64748b;">(${Math.floor(Math.random() * 200) + 50})</span>
+                    </div>
+                    <div class="price-row" style="display:flex; justify-content:space-between; items-align:center;">
+                        <div class="product-price" style="font-size:1.25rem; font-weight:700; color:#0f172a;">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
+                        <button class="add-btn" style="background:#4f46e5; color:white; border:none; padding:0.6rem 1rem; border-radius:8px; font-weight:600; cursor:pointer;" onclick="event.stopPropagation(); addToCartHome({_id: '${product._id}', name: '${product.name.replace(/'/g, "\\'")}', price: ${product.price}, image: '${product.image}'})">
+                             Add
+                        </button>
+                    </div>
                 </div>
-                 <button class="add-to-cart-btn" style="margin-top:10px; width:100%; padding:8px; background:#ff9f00; border:none; color:white; font-weight:600; cursor:pointer;" onclick='event.stopPropagation(); addToCartHome(${JSON.stringify(product).replace(/\'/g, "''")})'>
-                    ADD TO CART
-                </button>
             </div>
-        `).join('');
+            `;
+        }).join('');
 
     } catch (err) {
         console.error(err);
