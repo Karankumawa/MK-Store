@@ -39,21 +39,32 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 async function loadDashboard() {
-    const main = document.querySelector('.admin-content');
-    main.innerHTML = `
-        <h1>Dashboard Overview</h1>
-        <div class="dashboard-stats" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1.5rem; margin-top: 2rem;">
-             <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3>Total Products</h3>
-                <div class="value" id="dash-products">Loading...</div>
+    const dynamicContent = document.getElementById('dynamic-content');
+    dynamicContent.innerHTML = `
+        <div class="page-header">
+            <h2>Dashboard Overview</h2>
+        </div>
+        <div class="dashboard-stats">
+             <div class="stat-card">
+                <div class="stat-card-header">
+                    <h3>Total Products</h3>
+                    <div class="icon-box"><i class="fa fa-box"></i></div>
+                </div>
+                <div class="value" id="dash-products">...</div>
             </div>
-            <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3>Total Users</h3>
-                <div class="value" id="dash-users">Loading...</div>
+            <div class="stat-card">
+                <div class="stat-card-header">
+                    <h3>Total Users</h3>
+                    <div class="icon-box"><i class="fa fa-users"></i></div>
+                </div>
+                <div class="value" id="dash-users">...</div>
             </div>
-             <div class="stat-card" style="background: white; padding: 1.5rem; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <h3>Total Orders</h3>
-                <div class="value" id="dash-orders">Loading...</div>
+             <div class="stat-card">
+                <div class="stat-card-header">
+                    <h3>Total Orders</h3>
+                    <div class="icon-box"><i class="fa fa-shopping-cart"></i></div>
+                </div>
+                <div class="value" id="dash-orders">...</div>
             </div>
         </div>
     `;
@@ -79,40 +90,60 @@ async function loadDashboard() {
 }
 
 function loadSection(section) {
-    const main = document.querySelector('.admin-content');
+    const dynamicContent = document.getElementById('dynamic-content');
 
-    if (section === 'dashboard') {
-        loadDashboard();
-    } else if (section === 'products') {
-        loadProducts(main);
-    } else if (section === 'orders') {
-        loadOrders(main);
-    } else if (section === 'users') {
-        loadUsers(main);
-    }
+    // Smooth transition out
+    dynamicContent.style.opacity = '0';
+    dynamicContent.style.transform = 'translateY(10px)';
+
+    setTimeout(async () => {
+        if (section === 'dashboard') {
+            await loadDashboard();
+        } else if (section === 'products') {
+            await loadProducts(dynamicContent);
+        } else if (section === 'orders') {
+            await loadOrders(dynamicContent);
+        } else if (section === 'users') {
+            await loadUsers(dynamicContent);
+        }
+
+        // Smooth transition in
+        dynamicContent.style.opacity = '1';
+        dynamicContent.style.transform = 'translateY(0)';
+    }, 200);
 }
+
+// Ensure dynamicContent starts with transition properties
+document.addEventListener('DOMContentLoaded', () => {
+    const dynamicContent = document.getElementById('dynamic-content');
+    if (dynamicContent) {
+        dynamicContent.style.transition = 'all 0.4s ease';
+    }
+});
 
 async function loadOrders(container) {
     container.innerHTML = `
-        <div class="section-header" style="margin-bottom:2rem;">
+        <div class="page-header">
             <h2>Order Management</h2>
         </div>
-        <div class="order-table-container">
-            <table class="admin-table" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <thead style="background: #f1f5f9;">
-                    <tr>
-                        <th style="padding: 1rem; text-align: left;">Order ID</th>
-                        <th style="padding: 1rem; text-align: left;">Customer</th>
-                        <th style="padding: 1rem; text-align: left;">Total</th>
-                        <th style="padding: 1rem; text-align: left;">Status</th>
-                        <th style="padding: 1rem; text-align: left;">Date</th>
-                        <th style="padding: 1rem; text-align: left;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="order-tbody">
-                    <tr><td colspan="6" style="padding: 1rem;">Loading...</td></tr>
-                </tbody>
-            </table>
+        <div class="content-section">
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Order ID</th>
+                            <th>Customer</th>
+                            <th>Total</th>
+                            <th>Status</th>
+                            <th>Date</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="order-tbody">
+                        <tr><td colspan="6" style="text-align:center; padding: 2rem;">Loading orders...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     `;
 
@@ -124,56 +155,77 @@ async function loadOrders(container) {
         const tbody = document.getElementById('order-tbody');
 
         if (orders.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="6" style="padding: 1rem;">No orders found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem;">No orders found.</td></tr>';
             return;
         }
 
         tbody.innerHTML = orders.map(o => `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 1rem;">${o._id}</td>
-                <td style="padding: 1rem;">${o.shippingDetails.name}</td>
-                <td style="padding: 1rem;">$${o.totalAmount}</td>
-                <td style="padding: 1rem;">
-                    <select class="status-select" onchange="updateOrderStatus('${o._id}', this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1;">
-                        <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>Processing</option>
-                        <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>Shipped</option>
-                        <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>Delivered</option>
-                        <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>Cancelled</option>
-                    </select>
+            <tr>
+                <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--admin-text-muted); opacity: 0.6; letter-spacing: 0.1em;">#${o._id.slice(-6)}</td>
+                <td>
+                    <div style="font-weight:700; font-size: 1rem; color: var(--admin-text);">${o.shippingDetails.name}</div>
+                    <div style="font-size: 0.75rem; color: var(--admin-text-muted); font-weight: 500;">${o.shippingDetails.city}</div>
                 </td>
-                <td style="padding: 1rem;">${new Date(o.date).toLocaleDateString()}</td>
-                <td style="padding: 1rem;">
-                    <button class="btn-sm btn-delete" onclick="deleteOrder('${o._id}')" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"><i class="fa fa-trash"></i></button>
+                <td><div style="color: var(--admin-brand); font-weight:800; font-size: 1.2rem; letter-spacing: -0.02em;">$${o.totalAmount}</div></td>
+                <td>
+                    <span class="status-badge status-${o.status.toLowerCase()}" style="font-family: var(--font-heading); font-size: 0.7rem; letter-spacing: 0.05em;">${o.status}</span>
+                </td>
+                <td style="color: var(--admin-text-muted); font-size: 0.85rem; line-height: 1.4;">
+                    <div style="font-weight: 600; color: var(--admin-text);">${new Date(o.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                    <small style="opacity: 0.7;">${new Date(o.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+                </td>
+                <td>
+                    <div class="action-group">
+                        <div class="status-select-wrapper">
+                            <select onchange="updateOrderStatus('${o._id}', this.value)">
+                                <option value="" disabled selected>Change Status</option>
+                                <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>⏳ Processing</option>
+                                <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>🚀 Shipped</option>
+                                <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>✅ Delivered</option>
+                                <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>❌ Cancelled</option>
+                            </select>
+                        </div>
+                        <button class="btn-action btn-action-view" onclick="alert('Order Details Loading...')">
+                            <i class="fa fa-eye"></i>
+                        </button>
+                        <button class="btn-action btn-action-delete" onclick="deleteOrder('${o._id}')">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `).join('');
 
     } catch (err) {
-        container.innerHTML = `<p class="error">Error loading orders: ${err.message}</p>`;
+        container.innerHTML = `<p class="error" style="color:var(--admin-danger); margin-top:1rem;">Error loading orders: ${err.message}</p>`;
     }
 }
 
 async function loadProducts(container) {
     container.innerHTML = `
-        <div class="section-header" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:2rem;">
+        <div class="page-header">
             <h2>Product Management</h2>
-            <button class="btn-primary" onclick="showAddProductModal()">+ Add Product</button>
+            <button class="btn-primary" onclick="showAddProductModal()">
+                <i class="fa fa-plus"></i> Add Product
+            </button>
         </div>
-        <div class="product-table-container">
-            <table class="admin-table" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <thead style="background: #f1f5f9;">
-                    <tr>
-                        <th style="padding: 1rem; text-align: left;">Image</th>
-                        <th style="padding: 1rem; text-align: left;">Name</th>
-                        <th style="padding: 1rem; text-align: left;">Category</th>
-                        <th style="padding: 1rem; text-align: left;">Price</th>
-                        <th style="padding: 1rem; text-align: left;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="product-tbody">
-                    <tr><td colspan="5" style="padding: 1rem;">Loading...</td></tr>
-                </tbody>
-            </table>
+        <div class="content-section">
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Image</th>
+                            <th>Name</th>
+                            <th>Category</th>
+                            <th>Price</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="product-tbody">
+                        <tr><td colspan="5" style="text-align:center; padding: 2rem;">Loading products...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     `;
 
@@ -183,47 +235,61 @@ async function loadProducts(container) {
 
         const tbody = document.getElementById('product-tbody');
         if (products.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="5" style="padding: 1rem;">No products found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="5" style="text-align:center; padding: 2rem;">No products found.</td></tr>';
             return;
         }
 
         tbody.innerHTML = products.map(p => `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 1rem;"><img src="${p.image}" alt="${p.name}" style="width:40px; height:40px; object-fit:contain;"></td>
-                <td style="padding: 1rem;">${p.name}</td>
-                <td style="padding: 1rem;">${p.category || '-'}</td>
-                <td style="padding: 1rem;">$${p.price}</td>
-                <td style="padding: 1rem;">
-                    <button class="btn-sm btn-edit" onclick="editProduct('${p._id}')" style="margin-right: 5px; background: #3b82f6; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"><i class="fa fa-edit"></i></button>
-                    <button class="btn-sm btn-delete" onclick="deleteProduct('${p._id}')" style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"><i class="fa fa-trash"></i></button>
+            <tr>
+                <td>
+                    <div style="width: 50px; height: 50px; background: white; border-radius: 12px; display: flex; align-items: center; justify-content: center; padding: 5px; box-shadow: 0 4px 10px rgba(0,0,0,0.2);">
+                        <img src="${p.image}" alt="${p.name}" style="max-width: 100%; max-height: 100%; object-fit: contain;">
+                    </div>
+                </td>
+                <td><div style="font-weight:700; font-size: 1.05rem; color: var(--admin-text);">${p.name}</div></td>
+                <td><span style="background: rgba(255,255,255,0.05); padding: 5px 12px; border-radius: 8px; font-size: 0.75rem; color: var(--admin-text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.05em;">${p.category || 'General'}</span></td>
+                <td><div style="color: var(--admin-brand); font-weight:800; font-size: 1.25rem; letter-spacing: -0.03em;">$${p.price}</div></td>
+                <td>
+                    <div style="display: flex; gap: 8px;">
+                        <button class="btn-sm" onclick="editProduct('${p._id}')" 
+                            style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: none; padding: 10px; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="fa fa-edit"></i>
+                        </button>
+                        <button class="btn-sm" onclick="deleteProduct('${p._id}')" 
+                            style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; padding: 10px; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;">
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `).join('');
 
     } catch (err) {
-        container.innerHTML += `<p class="error">Error loading products: ${err.message}</p>`;
+        container.innerHTML += `<p class="error" style="color:var(--admin-danger);">Error loading products: ${err.message}</p>`;
     }
 }
 
 async function loadUsers(container) {
     container.innerHTML = `
-        <div class="section-header" style="margin-bottom:2rem;">
+        <div class="page-header">
             <h2>User Management</h2>
         </div>
-        <div class="user-table-container">
-            <table class="admin-table" style="width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 1px 3px rgba(0,0,0,0.1);">
-                <thead style="background: #f1f5f9;">
-                    <tr>
-                        <th style="padding: 1rem; text-align: left;">Name</th>
-                        <th style="padding: 1rem; text-align: left;">Email</th>
-                        <th style="padding: 1rem; text-align: left;">Role</th>
-                        <th style="padding: 1rem; text-align: left;">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="user-tbody">
-                    <tr><td colspan="4" style="padding: 1rem;">Loading...</td></tr>
-                </tbody>
-            </table>
+        <div class="content-section">
+            <div class="table-container">
+                <table class="admin-table">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Role</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="user-tbody">
+                        <tr><td colspan="4" style="text-align:center; padding: 2rem;">Loading users...</td></tr>
+                    </tbody>
+                </table>
+            </div>
         </div>
     `;
 
@@ -238,28 +304,42 @@ async function loadUsers(container) {
         const tbody = document.getElementById('user-tbody');
 
         if (users.length === 0) {
-            tbody.innerHTML = '<tr><td colspan="4" style="padding: 1rem;">No users found.</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" style="text-align:center; padding: 2rem;">No users found.</td></tr>';
             return;
         }
 
         tbody.innerHTML = users.map(u => `
-            <tr style="border-bottom: 1px solid #e2e8f0;">
-                <td style="padding: 1rem;">${u.username}</td>
-                <td style="padding: 1rem;">${u.email}</td>
-                <td style="padding: 1rem;">
-                    <select class="role-select" onchange="updateUserRole('${u._id}', this.value)" style="padding: 4px 8px; border-radius: 4px; border: 1px solid #cbd5e1;">
-                        <option value="user" ${u.role === 'user' ? 'selected' : ''}>User</option>
-                        <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin</option>
-                    </select>
+            <tr>
+                <td>
+                    <div style="display: flex; align-items: center; gap: 12px;">
+                        <div style="width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #3b82f6, #8b5cf6); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; text-transform: uppercase;">
+                            ${u.username.charAt(0)}
+                        </div>
+                        <div style="font-weight:700; font-size: 1.1rem; color: var(--admin-text);">${u.username}</div>
+                    </div>
                 </td>
-                <td style="padding: 1rem;">
-                    <button class="btn-sm btn-delete" onclick="deleteUser('${u._id}')" ${u.email === 'karankumawat303@gmail.com' ? 'disabled style="opacity:0.5; cursor:not-allowed;"' : 'style="background: #ef4444; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;"'}><i class="fa fa-trash"></i></button>
+                <td><div style="color: var(--admin-text-muted); font-weight: 500; font-size: 0.95rem;">${u.email}</div></td>
+                <td>
+                    <span class="role-badge role-${u.role}" style="text-transform: uppercase; padding: 6px 12px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.05em; font-family: var(--font-heading);">${u.role}</span>
+                </td>
+                <td>
+                    <div style="display: flex; gap: 8px; align-items: center;">
+                        <select class="role-select" onchange="updateUserRole('${u._id}', this.value)" 
+                            style="background: var(--admin-glass); color: var(--admin-text); border: 1px solid var(--admin-glass-border); padding: 6px 12px; border-radius: 10px; outline: none; font-size: 0.85rem;">
+                            <option value="user" ${u.role === 'user' ? 'selected' : ''}>Role: User</option>
+                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Role: Admin</option>
+                        </select>
+                        <button class="btn-sm" onclick="deleteUser('${u._id}')" 
+                            ${u.email === 'karankumawat303@gmail.com' ? 'disabled style="opacity:0.2; cursor:not-allowed;"' : 'style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; padding: 10px; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;"'}>
+                            <i class="fa fa-trash"></i>
+                        </button>
+                    </div>
                 </td>
             </tr>
         `).join('');
 
     } catch (err) {
-        container.innerHTML = `<p class="error">Error loading users: ${err.message}</p>`;
+        container.innerHTML = `<p class="error" style="color:var(--admin-danger);">Error loading users: ${err.message}</p>`;
     }
 }
 
@@ -275,14 +355,12 @@ async function updateOrderStatus(id, status) {
             body: JSON.stringify({ status })
         });
 
-        // Check if response is JSON
         const contentType = res.headers.get("content-type");
         let data;
         if (contentType && contentType.indexOf("application/json") !== -1) {
             data = await res.json();
         } else {
             const text = await res.text();
-            console.error('Server returned non-JSON:', text);
             throw new Error('Server error: ' + text);
         }
 
@@ -361,3 +439,4 @@ function deleteProduct(id) {
         // fetch(`/api/products/${id}`, { method: 'DELETE' })...
     }
 }
+
