@@ -31,13 +31,23 @@ document.addEventListener('DOMContentLoaded', function () {
 
         if (searchQuery) {
             applySearchFilter(searchQuery);
-            // Update UI to show search term
             const header = document.querySelector('.shop-header h1');
             if (header) header.innerHTML = `Search Results: "${searchQuery}" <a href="shop.html" style="font-size:0.8rem; color:var(--brand); margin-left:10px;">(Clear)</a>`;
         } else if (categoryQuery) {
             applyCategoryFilter(categoryQuery);
             const header = document.querySelector('.shop-header h1');
             if (header) header.innerHTML = `Category: "${categoryQuery}" <a href="shop.html" style="font-size:0.8rem; color:var(--brand); margin-left:10px;">(Clear)</a>`;
+
+            // Highlight active pill
+            document.querySelectorAll('.cat-pill').forEach(pill => {
+                pill.classList.remove('active');
+                if (pill.dataset.cat && pill.dataset.cat.toLowerCase() === categoryQuery.toLowerCase()) {
+                    pill.classList.add('active');
+                }
+            });
+        } else {
+            // No queries - Show all products
+            displayProducts();
         }
 
         updateCartCount();
@@ -102,10 +112,9 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         }
 
-        // Filter change events
-        // New structure uses inputs inside labels with .chip class
-        const newFilterInputs = document.querySelectorAll('.filter-chips input');
-        newFilterInputs.forEach(option => {
+        // Filter change events - Support both shop.html (chips) and category pages (options)
+        const allFilterInputs = document.querySelectorAll('.filter-chips input, .filter-option input');
+        allFilterInputs.forEach(option => {
             option.addEventListener('change', applyFilters);
         });
 
@@ -137,25 +146,14 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Apply filters
     function applyFilters() {
-        // Collect active category pills
-        // Since pills are <a> tags with .active class, we need to handle them differently if they are not checkboxes anymore.
-        // However, the previous code assumed checkboxes. 
-        // For this new design, let's assume valid category selection is done via URL params for simplicity OR if we want SPA-like filtering, we need to add click listeners to the pills.
-        // But for now, let's update this function to check for the checked radio buttons (price/rating) which are still inputs.
-
-        // Note: The category pills in HTML are links (<a href="groceries.html">). 
-        // If we want them to filter IN PLACE on shop.html, we should prevent default and handle click.
-        // But looking at the HTML, they link to separate pages. So 'applyFilters' here is mostly for the Sidebar Price/Rating inputs.
-
         let selectedCategories = [];
-        // If we want to support multi-category filtering on the main shop page, we would need to change the HTML to be inputs or handle clicks.
-        // Current HTML: <a href="groceries.html">...</a> which implies page reload.
-        // But if we are on shop.html, we might want to respect the URL category param.
 
+        // Check URL param OR page context
         const urlParams = new URLSearchParams(window.location.search);
-        const currentCategory = urlParams.get('category');
+        const currentCategory = urlParams.get('category') || window.pageCategory;
         if (currentCategory) selectedCategories.push(currentCategory);
 
+        // Get selected price and rating from either input type
         const selectedPriceRange = document.querySelector('input[name="price"]:checked')?.value;
         const selectedRating = document.querySelector('input[name="rating"]:checked')?.value;
 
@@ -169,8 +167,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             // Price range filter
             if (selectedPriceRange) {
-                if (selectedPriceRange === '6+') {
-                    if (product.price < 6) return false;
+                // Handle "100+" or "6+" format
+                if (selectedPriceRange.includes('+')) {
+                    const min = parseFloat(selectedPriceRange.replace('+', ''));
+                    if (product.price < min) return false;
                 } else {
                     const [min, max] = selectedPriceRange.split('-').map(Number);
                     if (product.price < min || product.price > max) {

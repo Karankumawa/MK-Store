@@ -68,14 +68,14 @@
                 <div class="filter-group">
                     <h3>Categories</h3>
                     <div class="category-pills">
-                        <a href="shop.html" class="cat-pill active">All</a>
-                        <a href="groceries.html" class="cat-pill">Groceries</a>
-                        <a href="mobiles.html" class="cat-pill">Mobiles</a>
-                        <a href="fashion.html" class="cat-pill">Fashion</a>
-                        <a href="electronics.html" class="cat-pill">Electronics</a>
-                        <a href="home.html" class="cat-pill">Home</a>
-                        <a href="appliances.html" class="cat-pill">Appliances</a>
-                        <a href="toys.html" class="cat-pill">Toys</a>
+                        <a href="shop.html" class="cat-pill active" data-cat="all">All</a>
+                        <a href="shop.html?category=Groceries" class="cat-pill" data-cat="groceries">Groceries</a>
+                        <a href="shop.html?category=Mobiles" class="cat-pill" data-cat="mobiles">Mobiles</a>
+                        <a href="shop.html?category=Fashion" class="cat-pill" data-cat="fashion">Fashion</a>
+                        <a href="shop.html?category=Electronics" class="cat-pill" data-cat="electronics">Electronics</a>
+                        <a href="shop.html?category=Home" class="cat-pill" data-cat="home">Home</a>
+                        <a href="shop.html?category=Appliances" class="cat-pill" data-cat="appliances">Appliances</a>
+                        <a href="shop.html?category=Toys" class="cat-pill" data-cat="toys">Toys</a>
                     </div>
                 </div>
 
@@ -83,20 +83,24 @@
                     <h3>Price Range</h3>
                     <div class="filter-chips">
                         <label class="chip">
-                            <input type="radio" name="price" value="0-2">
-                            <span>$0 - $2</span>
+                            <input type="radio" name="price" value="0-10">
+                            <span>Under $10</span>
                         </label>
                         <label class="chip">
-                            <input type="radio" name="price" value="2-4">
-                            <span>$2 - $4</span>
+                            <input type="radio" name="price" value="10-50">
+                            <span>$10 - $50</span>
                         </label>
                         <label class="chip">
-                            <input type="radio" name="price" value="4-6">
-                            <span>$4 - $6</span>
+                            <input type="radio" name="price" value="50-200">
+                            <span>$50 - $200</span>
                         </label>
                         <label class="chip">
-                            <input type="radio" name="price" value="6+">
-                            <span>$6+</span>
+                            <input type="radio" name="price" value="200-500">
+                            <span>$200 - $500</span>
+                        </label>
+                        <label class="chip">
+                            <input type="radio" name="price" value="500+">
+                            <span>$500+</span>
                         </label>
                     </div>
                 </div>

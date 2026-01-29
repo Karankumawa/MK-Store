@@ -4,34 +4,33 @@ const OrderSchema = new mongoose.Schema({
     user: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        required: true
+        default: null
     },
     items: [
         {
-            product: {
-                type: mongoose.Schema.Types.ObjectId,
-                ref: 'Product'
-            },
-            quantity: {
-                type: Number,
-                required: true
-            },
-            price: {
-                type: Number,
-                required: true
-            }
+            name: { type: String, required: true },
+            price: { type: Number, required: true },
+            quantity: { type: Number, required: true },
+            image: { type: String }
         }
     ],
+    shippingDetails: {
+        name: { type: String, required: true },
+        address: { type: String, required: true },
+        city: { type: String, required: true },
+        zip: { type: String, required: true },
+        phone: { type: String, required: true }
+    },
     totalAmount: {
         type: Number,
         required: true
     },
     status: {
         type: String,
-        default: 'Pending',
-        enum: ['Pending', 'Processing', 'Shipped', 'Delivered']
+        default: 'Processing',
+        enum: ['Processing', 'Shipped', 'Delivered', 'Cancelled']
     },
-    createdAt: {
+    date: {
         type: Date,
         default: Date.now
     }

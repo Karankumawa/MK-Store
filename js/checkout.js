@@ -69,36 +69,51 @@ function handlePlaceOrder() {
         return;
     }
 
-    // Simulate Processing
+    // Processing
     btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
     btn.disabled = true;
 
-    setTimeout(() => {
-        // Success Logic
-        const cart = JSON.parse(localStorage.getItem('cart')) || [];
-        const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0).toFixed(2);
-        const orderId = Math.random().toString(36).substr(2, 9).toUpperCase();
+    const cart = JSON.parse(localStorage.getItem('cart')) || [];
+    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
 
-        // Save Order to History
-        const orders = JSON.parse(localStorage.getItem('orders')) || [];
-        orders.unshift({
-            id: orderId,
-            date: new Date().toISOString(),
-            total: total,
-            status: 'Processing',
-            items: cart
+    const shippingDetails = {
+        name: document.getElementById('chk-name').value,
+        address: document.getElementById('chk-address').value,
+        city: document.getElementById('chk-city').value,
+        zip: document.getElementById('chk-zip').value,
+        phone: document.getElementById('chk-phone').value
+    };
+
+    const token = localStorage.getItem('token');
+    const headers = { 'Content-Type': 'application/json' };
+    if (token) headers['x-auth-token'] = token;
+
+    fetch('/api/orders', {
+        method: 'POST',
+        headers: headers,
+        body: JSON.stringify({ items: cart, totalAmount: total, shippingDetails })
+    })
+        .then(res => res.json())
+        .then(data => {
+            if (data._id) {
+                // Success
+                localStorage.removeItem('cart');
+
+                // Show Success Modal
+                const user = JSON.parse(localStorage.getItem('user')) || {};
+                document.getElementById('success-email').textContent = user.email || 'your email';
+                document.getElementById('success-order-id').textContent = data._id;
+                document.getElementById('success-modal').style.display = 'flex';
+            } else {
+                alert('Order failed: ' + (data.msg || 'Unknown error'));
+                btn.disabled = false;
+                btn.textContent = 'Place Order';
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            alert('Error placing order');
+            btn.disabled = false;
+            btn.textContent = 'Place Order';
         });
-        localStorage.setItem('orders', JSON.stringify(orders));
-
-        // Clear Cart
-        localStorage.removeItem('cart');
-
-        // Show Success Modal
-        const user = JSON.parse(localStorage.getItem('user')) || {};
-        document.getElementById('success-email').textContent = user.email || 'your email';
-        document.getElementById('success-order-id').textContent = orderId;
-        document.getElementById('success-modal').style.display = 'flex';
-
-        // Confetti effect or sound could go here
-    }, 2000); // 2s simulated delay
 }
