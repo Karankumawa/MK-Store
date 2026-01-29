@@ -10,8 +10,8 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 
-// Serve static files from the root directory
-app.use(express.static(path.join(__dirname, '/')));
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI)
@@ -19,13 +19,13 @@ mongoose.connect(process.env.MONGO_URI)
     .catch(err => console.log(err));
 
 // Routes (Placeholder)
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/products', require('./routes/products'));
-app.use('/api/orders', require('./routes/orders'));
+app.use('/api/auth', require('./server/routes/auth'));
+app.use('/api/products', require('./server/routes/products'));
+app.use('/api/orders', require('./server/routes/orders'));
 
 // Serve index.html for root
 app.get('/', (req, res) => {
-    res.sendFile(path.join(__dirname, 'index.html'));
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
 });
 
 // Admin Route Protection (Basic) - Middleware to check admin role

@@ -2,7 +2,7 @@
 <html lang="en">
 
 <head>
-    <title>Appliances - M.K. Store</title>
+    <title>Electronics - M.K. Store</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
@@ -11,16 +11,16 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
         rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/shop.css">
-    <link rel="stylesheet" href="css/cart.css">
+    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="../css/shop.css">
+    <link rel="stylesheet" href="../css/cart.css">
 </head>
 
 <body>
     <header>
         <nav>
             <div class="logo">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+                <img src="../assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
                 <h1>M.K. Store</h1>
             </div>
             <div class="search-bar">
@@ -28,11 +28,12 @@
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html" class="active"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
+                <li><a href="../index.html"><i class="fa fa-home"></i> Home</a></li>
+                <li><a href="../shop.html" class="active"><i class="fa fa-shopping-bag"></i> Shop</a></li>
+                <li><a href="../cart.html"><i class="fa fa-shopping-cart"></i> Cart <span
+                            class="cart-count">0</span></a>
                 </li>
-                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="../login.html"><i class="fa fa-user"></i> Login</a></li>
             </ul>
         </nav>
     </header>
@@ -47,13 +48,13 @@
                 </div>
 
                 <div class="category-links">
-                    <a href="shop.html" class="cat-link">All Products</a>
+                    <a href="../shop.html" class="cat-link">All Products</a>
                     <a href="groceries.html" class="cat-link">Groceries</a>
                     <a href="mobiles.html" class="cat-link">Mobiles</a>
                     <a href="fashion.html" class="cat-link">Fashion</a>
-                    <a href="electronics.html" class="cat-link">Electronics</a>
+                    <a href="electronics.html" class="cat-link active">Electronics</a>
                     <a href="home.html" class="cat-link">Home</a>
-                    <a href="appliances.html" class="cat-link active">Appliances</a>
+                    <a href="appliances.html" class="cat-link">Appliances</a>
                     <a href="toys.html" class="cat-link">Toys</a>
                 </div>
 
@@ -68,7 +69,7 @@
             </aside>
             <section class="shop-content">
                 <div class="shop-header">
-                    <h1>Appliances</h1>
+                    <h1>Electronics</h1>
                     <div class="sort-options">
                         <select>
                             <option value="default">Sort by: Featured</option>
@@ -87,43 +88,43 @@
             </section>
         </div>
     </main>
-    <footer data-animate="fade-up">
-        <div class="footer-content">
-            <div class="footer-section">
-                <h3>About Us</h3>
-                <p>M.K. Store is your local destination for quality groceries and daily essentials. We focus on trusted
-                    brands, fair pricing, and dependable service.</p>
-                <a href="about.html">Learn more</a>
-            </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="index.html">Home</a></li>
-                    <li><a href="shop.html">Shop</a></li>
-                    <li><a href="about.html">About</a></li>
-                    <li><a href="contact.html">Contact</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p>M K Store, Rajsamand, Rajasthan, India</p>
-                <p>Phone: +91 7878005320</p>
-                <p>Email: mkstore5100@gmail.com</p>
-                <div class="socials">
-                    <a href="javascript:void(0)" aria-label="Instagram"><i class="fa fa-instagram"></i></a>
-                    <a href="javascript:void(0)" aria-label="Facebook"><i class="fa fa-facebook"></i></a>
-                    <a href="javascript:void(0)" aria-label="Twitter"><i class="fa fa-twitter"></i></a>
-                </div>
-            </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2024 M.K. Store. All rights reserved.</p>
-            <p>Built with care by Karan Kumawat</p>
-        </div>
-    </footer>
-    <script>window.pageCategory = 'Appliances';</script>
-    <script src="js/script.js"></script>
-    <script src="js/shop.js"></script>
+    <div id="footer-placeholder"></div>
+    <!-- Footer script must also be corrected to look for the component in the right place relative to THIS file -->
+    <!-- Actually, fetch() inside footer.js is relative to the PAGE URL. 
+         So if page is public/categories/electronics.html, fetch('components/footer.html') would look for 
+         public/categories/components/footer.html (Wrong). 
+         It needs to be ../components/footer.html. 
+         I might need a smarter footer loaded or just update the script tag and handle the path logic.
+    -->
+    <script>
+        // Temporary override for this page context until we make footer.js smarter
+        document.addEventListener("DOMContentLoaded", function () {
+            const footerPlaceholder = document.getElementById("footer-placeholder");
+            if (footerPlaceholder) {
+                fetch("../components/footer.html")
+                    .then(response => response.text())
+                    .then(data => {
+                        footerPlaceholder.innerHTML = data;
+                        // Start animation (simplified)
+                        const animatedFooter = footerPlaceholder.querySelector('[data-animate]');
+                        if (animatedFooter) animatedFooter.classList.add('in-view');
+
+                        // Fix links inside the loaded footer
+                        // (Because the footer HTML has relative links like "index.html" which are wrong for this subfolder)
+                        const links = footerPlaceholder.querySelectorAll('a');
+                        links.forEach(link => {
+                            const href = link.getAttribute('href');
+                            if (href && !href.startsWith('http') && !href.startsWith('javascript') && !href.startsWith('#')) {
+                                link.setAttribute('href', '../' + href);
+                            }
+                        });
+                    });
+            }
+        });
+    </script>
+    <script>window.pageCategory = 'Electronics';</script>
+    <script src="../js/script.js"></script>
+    <script src="../js/shop.js"></script>
 </body>
 
 </html>
