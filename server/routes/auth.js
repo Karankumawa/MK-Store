@@ -72,10 +72,18 @@ router.delete('/users/:id', verifyAdmin, async (req, res) => {
 router.post('/register', async (req, res) => {
     const { username, email, password } = req.body;
     try {
-        let user = await User.findOne({ email });
-        if (user) return res.status(400).json({ msg: 'User already exists' });
+        // Check if user already exists (by email OR username)
+        let userByEmail = await User.findOne({ email });
+        if (userByEmail) {
+            return res.status(400).json({ msg: 'An account with this email already exists' });
+        }
 
-        user = new User({ username, email, password });
+        let userByUsername = await User.findOne({ username });
+        if (userByUsername) {
+            return res.status(400).json({ msg: 'This username is already taken' });
+        }
+
+        const user = new User({ username, email, password });
 
         const salt = await bcrypt.genSalt(10);
         user.password = await bcrypt.hash(password, salt);
@@ -88,8 +96,8 @@ router.post('/register', async (req, res) => {
             res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
         });
     } catch (err) {
-        console.error(err.message);
-        res.status(500).send('Server error');
+        console.error('Registration Error:', err.message);
+        res.status(500).json({ msg: 'Server registration error', error: err.message });
     }
 });
 

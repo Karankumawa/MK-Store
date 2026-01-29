@@ -323,14 +323,16 @@ async function loadUsers(container) {
                     <span class="role-badge role-${u.role}" style="text-transform: uppercase; padding: 6px 12px; font-size: 0.7rem; font-weight: 800; letter-spacing: 0.05em; font-family: var(--font-heading);">${u.role}</span>
                 </td>
                 <td>
-                    <div style="display: flex; gap: 8px; align-items: center;">
-                        <select class="role-select" onchange="updateUserRole('${u._id}', this.value)" 
-                            style="background: var(--admin-glass); color: var(--admin-text); border: 1px solid var(--admin-glass-border); padding: 6px 12px; border-radius: 10px; outline: none; font-size: 0.85rem;">
-                            <option value="user" ${u.role === 'user' ? 'selected' : ''}>Role: User</option>
-                            <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Role: Admin</option>
-                        </select>
-                        <button class="btn-sm" onclick="deleteUser('${u._id}')" 
-                            ${u.email === 'karankumawat303@gmail.com' ? 'disabled style="opacity:0.2; cursor:not-allowed;"' : 'style="background: rgba(239, 68, 68, 0.1); color: #ef4444; border: none; padding: 10px; border-radius: 12px; cursor: pointer; transition: all 0.3s ease;"'}>
+                    <div class="action-group">
+                        <div class="status-select-wrapper">
+                            <select onchange="updateUserRole('${u._id}', this.value)">
+                                <option value="" disabled selected>Change Role</option>
+                                <option value="user" ${u.role === 'user' ? 'selected' : ''}>User Role</option>
+                                <option value="admin" ${u.role === 'admin' ? 'selected' : ''}>Admin Role</option>
+                            </select>
+                        </div>
+                        <button class="btn-action btn-action-delete" onclick="deleteUser('${u._id}')" 
+                            ${u.email === 'karankumawat303@gmail.com' ? 'disabled style="opacity:0.2; cursor:not-allowed;"' : ''}>
                             <i class="fa fa-trash"></i>
                         </button>
                     </div>

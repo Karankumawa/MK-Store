@@ -1,4 +1,4 @@
-const API_URL = 'http://localhost:5000/api/auth';
+const API_URL = '/api/auth';
 
 // Firebase Configuration
 const firebaseConfig = {
@@ -10,66 +10,74 @@ const firebaseConfig = {
     appId: "YOUR_APP_ID"
 };
 
-// Initialize Firebase
-try {
-    firebase.initializeApp(firebaseConfig);
-    console.log('Firebase initialized');
-} catch (error) {
-    console.error('Firebase initialization error:', error);
+// Initialize Firebase safely
+if (typeof firebase !== 'undefined') {
+    try {
+        firebase.initializeApp(firebaseConfig);
+        console.log('Firebase initialized');
+    } catch (error) {
+        console.error('Firebase initialization error:', error);
+    }
 }
 
 // Google Login Function
 function googleLogin() {
+    if (typeof firebase === 'undefined') {
+        showNotification('Firebase not loaded', 'error');
+        return;
+    }
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider)
         .then((result) => {
             const user = result.user;
-            console.log("Google Login User:", user);
-
-            // Store basic user info
             const userData = {
-                name: user.displayName,
+                username: user.displayName,
                 email: user.email,
-                photo: user.photoURL,
-                uid: user.uid,
-                role: 'user' // Default to user
+                role: 'user'
             };
 
-            // You might want to send this token to your backend to verify and create a session
             user.getIdToken().then((idToken) => {
-                // Determine API endpoint - optionally send to backend for verification
-                // For now, client-side only demo logic:
                 localStorage.setItem('token', idToken);
                 localStorage.setItem('user', JSON.stringify(userData));
-
-                alert(`Welcome, ${user.displayName}!`);
-                window.location.href = 'index.html';
+                showNotification(`Welcome, ${user.displayName}!`, 'success');
+                setTimeout(() => window.location.href = 'index.html', 1000);
             });
-
         }).catch((error) => {
             console.error("Google Login Error:", error);
-            alert("Google Login Failed: " + error.message);
+            showNotification("Google Login Failed: " + error.message, 'error');
         });
 }
 
 document.addEventListener('DOMContentLoaded', () => {
-    const loginForm = document.getElementById('login-form');
-    // ... existing event listeners preserved implicitly if not overlapping
-    // Re-verify existing logic if needed, but we are just appending/prepending mostly.
+    const loginForm = document.getElementById('loginForm');
+    const registerForm = document.getElementById('registerForm');
 
-    // Existing Login Handling
-    const form = document.getElementById('loginForm'); // Note: ID in HTML says 'loginForm', but JS was 'login-form'. Let's fix that mismatch if it exists or use correct ID.
-    // Looking at login.html line 47: <form id="loginForm">.
-    // The previous JS had: const loginForm = document.getElementById('login-form');
-    // This looks like a bug in the original code, but I will fix it here to match HTML 'loginForm'.
+    // Password Toggle Linkage
+    const toggleBtns = document.querySelectorAll('#togglePassword, .togglePassword');
+    toggleBtns.forEach(btn => {
+        btn.addEventListener('click', function () {
+            const input = this.closest('.form-group, .input-group, div').querySelector('input');
+            const icon = this.querySelector('i');
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.classList.replace('fa-eye', 'fa-eye-slash');
+            } else {
+                input.type = 'password';
+                icon.classList.replace('fa-eye-slash', 'fa-eye');
+            }
+        });
+    });
 
-    if (form) {
-        form.addEventListener('submit', async (e) => {
+    // Login Handling
+    if (loginForm) {
+        loginForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+            const email = document.getElementById('email').value.trim();
+            const password = document.getElementById('password').value.trim();
+            const btn = loginForm.querySelector('button[type="submit"]');
 
             try {
+                setLoading(btn, true, 'Logging in...');
                 const res = await fetch(`${API_URL}/login`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -80,29 +88,39 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (res.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    alert('Login Successful');
-                    if (data.user.role === 'admin') window.location.href = 'admin.html';
-                    else window.location.href = 'index.html';
+                    showNotification('Login Successful', 'success');
+                    setTimeout(() => {
+                        window.location.href = data.user.role === 'admin' ? 'admin.html' : 'index.html';
+                    }, 1000);
                 } else {
-                    alert(data.msg);
+                    showNotification(data.msg || 'Login failed', 'error');
+                    setLoading(btn, false, 'Login');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Login failed');
+                showNotification('Login failed. Please try again.', 'error');
+                setLoading(btn, false, 'Login');
             }
         });
     }
 
-    const registerForm = document.getElementById('register-form');
-    // Register Handling (If we add a register form)
+    // Register Handling
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const username = document.getElementById('reg-username').value;
-            const email = document.getElementById('reg-email').value;
-            const password = document.getElementById('reg-password').value;
+            const username = document.getElementById('reg-name').value.trim();
+            const email = document.getElementById('reg-email').value.trim();
+            const password = document.getElementById('reg-password').value.trim();
+            const confirmPass = document.getElementById('reg-confirm').value.trim();
+            const btn = registerForm.querySelector('button[type="submit"]');
+
+            if (password !== confirmPass) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
 
             try {
+                setLoading(btn, true, 'Creating...');
                 const res = await fetch(`${API_URL}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -113,18 +131,54 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (res.ok) {
                     localStorage.setItem('token', data.token);
                     localStorage.setItem('user', JSON.stringify(data.user));
-                    alert('Registration Successful');
-                    window.location.href = 'index.html';
+                    showNotification('Registration Successful! Redirecting...', 'success');
+                    setTimeout(() => window.location.href = 'index.html', 1500);
                 } else {
-                    alert(data.msg);
+                    console.error('Registration failed:', data);
+                    showNotification(data.msg || 'Registration failed', 'error');
+                    setLoading(btn, false, 'Register');
                 }
             } catch (err) {
                 console.error(err);
-                alert('Registration failed');
+                showNotification('Registration failed', 'error');
+                setLoading(btn, false, 'Register');
             }
         });
     }
 });
+
+function setLoading(btn, isLoading, text) {
+    if (!btn) return;
+    btn.disabled = isLoading;
+    btn.innerHTML = isLoading ? `<i class="fa fa-spinner fa-spin"></i> ${text}` : text;
+}
+
+function showNotification(msg, type = 'success') {
+    const div = document.createElement('div');
+    div.className = `notification ${type}`;
+    div.textContent = msg;
+    div.style.cssText = `
+        position: fixed; bottom: 30px; right: 30px; padding: 15px 30px;
+        border-radius: 12px; color: white; z-index: 100000;
+        box-shadow: 0 10px 25px rgba(0,0,0,0.2); font-weight: 600;
+        background: ${type === 'error' ? '#ef4444' : '#10b981'};
+        animation: slideIn 0.3s ease-out;
+    `;
+    document.body.appendChild(div);
+    setTimeout(() => {
+        div.style.opacity = '0';
+        div.style.transform = 'translateY(20px)';
+        div.style.transition = 'all 0.3s ease';
+        setTimeout(() => div.remove(), 350);
+    }, 4000);
+}
+
+// Add CSS animation for notification
+const style = document.createElement('style');
+style.textContent = `
+    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+`;
+document.head.appendChild(style);
 
 function logout() {
     localStorage.removeItem('token');
