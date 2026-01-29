@@ -45,9 +45,9 @@
         </nav>
     </header>
 
-    <main>
-        <!-- Category Bar -->
-        <div class="category-bar-container">
+    <!-- Category Bar -->
+    <div class="category-bar-wrapper">
+        <div class="main-container">
             <div class="category-bar">
                 <a href="shop.html?category=Groceries" class="category-item">
                     <div class="cat-icon"><img
@@ -93,9 +93,11 @@
                 </a>
             </div>
         </div>
+    </div>
 
-        <!-- Hero Carousel -->
-        <section class="hero-carousel-container">
+    <!-- Hero Carousel -->
+    <section class="hero-carousel-section">
+        <div class="main-container">
             <div class="hero-carousel" id="hero-carousel">
                 <div class="slide active"
                     style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/354cb863cf0755b0.jpg?q=20');">
@@ -133,65 +135,52 @@
                 <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
                 <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
             </div>
-        </section>
+        </div>
+    </section>
+
+    <main>
+
 
         <!-- Dynamic Product Section with Header -->
-        <section class="featured-products" style="background:#f1f3f6; padding:1rem 0;">
-            <div class="section-container"
-                style="background:white; padding:1rem; max-width:1400px; margin:0 auto; box-shadow:0 1px 2px rgba(0,0,0,0.1);">
-                <div class="section-header"
-                    style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #f0f0f0; padding-bottom:10px; margin-bottom:15px;">
-                    <div>
-                        <h2 style="font-size:1.5rem; margin-bottom: 0.5rem;">Best of Electronics & Groceries</h2>
-                        <span style="color:#878787; font-size:0.9rem; display:block;">Items you cannot miss!</span>
+        <section class="featured-products">
+            <div class="main-container">
+                <div class="featured-products-inner">
+                    <div class="section-header">
+                        <div class="section-title-group">
+                            <h2>Best of Electronics & Groceries</h2>
+                            <span>Items you cannot miss!</span>
+                        </div>
+                        <a href="shop.html" class="view-all-btn">View All</a>
                     </div>
-                    <a href="shop.html" class="btn-primary"
-                        style="padding:10px 20px; text-decoration:none; border-radius:2px; font-weight:500; background-color: var(--brand); color: white;">View
-                        All</a>
-                </div>
 
-                <!-- Product Slider with Navigation -->
-                <div class="slider-wrapper" style="position:relative;">
-                    <button class="slider-btn prev-btn" id="home-prev-btn">&#10094;</button>
-                    <div class="product-slider" id="home-products-grid">
-                        <!-- Dynamic content loaded by js/home.js -->
+                    <!-- Product Slider with Navigation -->
+                    <div class="slider-wrapper" style="position:relative;">
+                        <button class="slider-btn prev-btn" id="home-prev-btn">&#10094;</button>
+                        <div class="product-slider" id="home-products-grid">
+                            <!-- Dynamic content loaded by js/home.js -->
+                        </div>
+                        <button class="slider-btn next-btn" id="home-next-btn">&#10095;</button>
                     </div>
-                    <button class="slider-btn next-btn" id="home-next-btn">&#10095;</button>
                 </div>
             </div>
         </section>
 
-        <!-- About section (moved from separate page) -->
-        <section id="about-section" class="featured-products" data-animate="fade-up">
-            <h2>About M.K. Store</h2>
-            <div class="product-grid" style="grid-template-columns: 1.2fr 1fr; align-items:center;">
-                <div>
-                    <p style="color:#4b5563; margin-bottom:1rem;">We make everyday shopping simple. From pantry staples
-                        to daily essentials, our mission is to bring you quality, value, and convenience in one place.
-                    </p>
-                    <ul style="list-style:none; padding:0; margin:0; color:#374151;">
-                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Trusted
-                            brands and fresh products</li>
-                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Fair
-                            pricing and weekly offers</li>
-                        <li style="margin:0.4rem 0;"><i class="fa fa-check" style="color:var(--brand);"></i> Fast,
-                            reliable service</li>
-                    </ul>
-                </div>
-                <div>
-                    <img src="https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=900&q=60"
-                        alt="About M.K. Store" style="width:100%; border-radius:12px; box-shadow: var(--shadow-md);">
-                </div>
-            </div>
-        </section>
-
-        <!-- Contact section (moved from separate page) -->
-        <!-- Contact section (moved from separate page) -->
-        <!-- Contact Section moved to AI Assistant -->
-
-
-        <!-- Special Offers moved to Shop Page -->
     </main>
+
+    <!-- Learn More About Us Section -->
+    <section class="about-teaser">
+        <div class="main-container">
+            <h2>Who We Are</h2>
+            <p>
+                M.K. Store is your trusted partner for daily essentials, bringing quality products directly to your
+                doorstep. We believe in quality, affordability, and exceptional service.
+            </p>
+            <a href="about.html" class="btn-about">
+                Read More About Us
+                <i class="fas fa-arrow-right"></i>
+            </a>
+        </div>
+    </section>
 
     <div id="footer-placeholder"></div>
 
