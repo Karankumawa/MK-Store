@@ -2,9 +2,9 @@
   "name": "m-k-store",
   "version": "1.0.0",
   "description": "M.K. Store is a modern, user-friendly e-commerce website designed to provide high-quality daily essentials at affordable prices. The platform offers a wide range of products including groceries, snacks, beverages, personal care items, and household supplies. With a focus on convenience, quality, and customer satisfaction, M.K. Store aims to make shopping for daily needs easy and accessible for everyone.",
-  "main": "server.js",
+  "main": "index.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
