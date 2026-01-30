@@ -9,6 +9,17 @@ document.addEventListener('DOMContentLoaded', function () {
     let currentPage = 1;
     const productsPerPage = 8;
 
+    const categoryIcons = {
+        'groceries': 'fa-basket-shopping',
+        'mobiles': 'fa-mobile-screen-button',
+        'fashion': 'fa-shirt',
+        'electronics': 'fa-microchip',
+        'home': 'fa-house',
+        'appliances': 'fa-plug',
+        'toys': 'fa-gamepad',
+        'other': 'fa-box-open'
+    };
+
     // DOM Elements
     const productGrid = document.querySelector('.product-grid');
     const filterOptions = document.querySelectorAll('.filter-option input');
@@ -19,6 +30,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const prevPageBtn = document.querySelector('.prev-page');
     const nextPageBtn = document.querySelector('.next-page');
     const pageNumbers = document.querySelector('.page-numbers');
+    const paginationContainer = document.getElementById('pagination-container');
 
     // Initialize the shop
     async function initShop() {
@@ -272,28 +284,80 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // Sort categories if needed, or just iterate properties
-        Object.keys(categories).sort().forEach(catName => {
+        Object.keys(categories).sort().forEach((catName, index) => {
             const catProducts = categories[catName];
             if (catProducts.length === 0) return;
 
             const section = document.createElement('div');
-            section.className = 'category-section';
+            section.className = `category-section ${index % 2 === 1 ? 'alt-bg' : ''}`;
 
+            const iconClass = categoryIcons[catName.toLowerCase()] || categoryIcons['other'];
             const productCardsHtml = catProducts.map(product => createProductCardHtml(product)).join('');
 
             section.innerHTML = `
                 <div class="category-title-row">
-                    <h2 class="category-title">${catName}</h2>
-                    <a href="shop.html?category=${encodeURIComponent(catName)}" class="view-all-link">View All</a>
+                    <h2 class="category-title">
+                        <i class="fa-solid ${iconClass}"></i>
+                        ${catName}
+                        <span class="product-count">${catProducts.length} Items</span>
+                    </h2>
+                    <div class="slider-controls">
+                        <button class="slider-btn prev" aria-label="Previous">
+                            <i class="fa fa-chevron-left"></i>
+                        </button>
+                        <button class="slider-btn next" aria-label="Next">
+                            <i class="fa fa-chevron-right"></i>
+                        </button>
+                        <a href="shop.html?category=${encodeURIComponent(catName)}" class="view-all-link">View All</a>
+                    </div>
                 </div>
-                <div class="product-slider">
-                    ${productCardsHtml}
+                <div class="slider-container">
+                    <div class="product-slider">
+                        ${productCardsHtml}
+                    </div>
                 </div>
             `;
             productGrid.appendChild(section);
         });
 
         attachAddToCartListeners();
+        initializeSliders();
+    }
+
+    function initializeSliders() {
+        const sections = document.querySelectorAll('.category-section');
+        sections.forEach(section => {
+            const slider = section.querySelector('.product-slider');
+            const prevBtn = section.querySelector('.slider-btn.prev');
+            const nextBtn = section.querySelector('.slider-btn.next');
+
+            if (!slider || !prevBtn || !nextBtn) return;
+
+            const scrollAmount = 300;
+
+            prevBtn.onclick = (e) => {
+                e.stopPropagation();
+                slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+            };
+
+            nextBtn.onclick = (e) => {
+                e.stopPropagation();
+                slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+            };
+
+            const updateButtons = () => {
+                const { scrollLeft, scrollWidth, clientWidth } = slider;
+                prevBtn.style.opacity = scrollLeft > 10 ? '1' : '0.3';
+                prevBtn.style.pointerEvents = scrollLeft > 10 ? 'auto' : 'none';
+
+                nextBtn.style.opacity = scrollLeft + clientWidth < scrollWidth - 10 ? '1' : '0.3';
+                nextBtn.style.pointerEvents = scrollLeft + clientWidth < scrollWidth - 10 ? 'auto' : 'none';
+            };
+
+            slider.addEventListener('scroll', updateButtons);
+            updateButtons();
+            window.addEventListener('resize', updateButtons);
+        });
     }
 
     function displayGridView() {
@@ -322,22 +386,64 @@ document.addEventListener('DOMContentLoaded', function () {
         });
 
         // Update pagination
-        if (pageNumbers) {
-            const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-            pageNumbers.textContent = totalPages > 0 ? `${currentPage} / ${totalPages}` : '0 / 0';
-        }
-
-        if (prevPageBtn) {
-            prevPageBtn.disabled = currentPage === 1;
-        }
-
-        if (nextPageBtn) {
-            const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-            nextPageBtn.disabled = currentPage >= totalPages || totalPages === 0;
-        }
+        updatePaginationUI();
 
         attachAddToCartListeners();
     }
+
+    function updatePaginationUI() {
+        if (!paginationContainer) return;
+
+        const totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+        paginationContainer.innerHTML = '';
+
+        if (totalPages <= 1) {
+            paginationContainer.style.display = 'none';
+            return;
+        }
+
+        paginationContainer.style.display = 'flex';
+
+        // Prev Button
+        const prevBtn = document.createElement('button');
+        prevBtn.className = `page-btn ${currentPage === 1 ? 'disabled' : ''}`;
+        prevBtn.innerHTML = '<i class="fa fa-chevron-left"></i>';
+        prevBtn.onclick = () => {
+            if (currentPage > 1) {
+                currentPage--;
+                displayProducts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+        paginationContainer.appendChild(prevBtn);
+
+        // Page Numbers
+        for (let i = 1; i <= totalPages; i++) {
+            const pageBtn = document.createElement('button');
+            pageBtn.className = `page-btn ${i === currentPage ? 'active' : ''}`;
+            pageBtn.textContent = i;
+            pageBtn.onclick = () => {
+                currentPage = i;
+                displayProducts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            };
+            paginationContainer.appendChild(pageBtn);
+        }
+
+        // Next Button
+        const nextBtn = document.createElement('button');
+        nextBtn.className = `page-btn ${currentPage === totalPages ? 'disabled' : ''}`;
+        nextBtn.innerHTML = '<i class="fa fa-chevron-right"></i>';
+        nextBtn.onclick = () => {
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayProducts();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        };
+        paginationContainer.appendChild(nextBtn);
+    }
+
 
     // Helper to generate full card HTML string (for slider)
     function createProductCardHtml(product) {

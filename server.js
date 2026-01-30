@@ -15,7 +15,10 @@ app.use(express.static(path.join(__dirname, 'public')));
 
 // Database Connection
 mongoose.connect(process.env.MONGO_URI)
-    .then(() => console.log('MongoDB Connected'))
+    .then(() => {
+        console.log(`Server PID: ${process.pid}`);
+        console.log(`MongoDB Connected: ${mongoose.connection.name}`);
+    })
     .catch(err => console.log(err));
 
 // Routes (Placeholder)
