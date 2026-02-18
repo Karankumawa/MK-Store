@@ -3,6 +3,7 @@ const router = express.Router();
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
+const admin = require('../config/firebase'); // Import Firebase Admin
 
 // Middleware to verify token and admin role
 const verifyAdmin = async (req, res, next) => {
@@ -119,6 +120,99 @@ router.post('/login', async (req, res) => {
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server error');
+    }
+});
+
+// Get Current User Profile
+router.get('/me', async (req, res) => {
+    try {
+        const token = req.header('x-auth-token');
+        if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const user = await User.findById(decoded.user.id).select('-password');
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Update Current User Profile
+router.put('/me', async (req, res) => {
+    try {
+        const token = req.header('x-auth-token');
+        if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const { address, city, zip, phone } = req.body;
+
+        const user = await User.findById(decoded.user.id);
+        if (!user) return res.status(404).json({ msg: 'User not found' });
+
+        if (address) user.address = address;
+        if (city) user.city = city;
+        if (zip) user.zip = zip;
+        if (phone) user.phone = phone;
+
+        await user.save();
+        res.json(user);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Google Login Verification Route
+router.post('/google', async (req, res) => {
+    const { token } = req.body;
+
+    try {
+        if (!admin.apps.length) {
+            return res.status(500).json({ msg: 'Firebase Admin not initialized. setup server/config/firebase-service-account.json' });
+        }
+
+        // Verify the ID token
+        const decodedToken = await admin.auth().verifyIdToken(token);
+        const { email, name, picture, uid } = decodedToken;
+
+        // Check if user exists
+        let user = await User.findOne({ email });
+
+        if (user) {
+            // User exists, update google specific info if missing
+            if (!user.googleId) user.googleId = uid;
+            if (!user.profilePicture && picture) user.profilePicture = picture;
+            await user.save();
+        } else {
+            // Create new user
+            const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
+            const salt = await bcrypt.genSalt(10);
+            const hashedPassword = await bcrypt.hash(randomPassword, salt);
+
+            user = new User({
+                username: name || email.split('@')[0],
+                email,
+                password: hashedPassword, // Dummy password
+                role: 'user', // Default role
+                googleId: uid,
+                profilePicture: picture
+            });
+            await user.save();
+        }
+
+        // Create JWT Payload
+        const payload = { user: { id: user.id, role: user.role } };
+
+        // Sign Token
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+            if (err) throw err;
+            res.json({ token, user: { id: user.id, username: user.username, role: user.role, picture } });
+        });
+
+    } catch (err) {
+        console.error('Google Auth Error:', err);
+        res.status(401).json({ msg: 'Google Sign-In failed', error: err.message });
     }
 });
 

@@ -2,12 +2,13 @@ const API_URL = '/api/auth';
 
 // Firebase Configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyDM8ljwNFw9NaIgNvF4By40hWR9vi7hyis",
-    authDomain: "m-k-store-b0fc9.firebaseapp.com",
-    projectId: "m-k-store-b0fc9",
-    storageBucket: "m-k-store-b0fc9.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyA4Efxee8aHyt_6Wx0K8DLRnpp-hF-jNzo",
+    authDomain: "login-shop-68cfc.firebaseapp.com",
+    projectId: "login-shop-68cfc",
+    storageBucket: "login-shop-68cfc.firebasestorage.app",
+    messagingSenderId: "22502036606",
+    appId: "1:22502036606:web:7e0cd91ad2818873a2f42f",
+    measurementId: "G-MJ8E9Z82QC"
 };
 
 // Initialize Firebase safely
@@ -30,17 +31,31 @@ function googleLogin() {
     firebase.auth().signInWithPopup(provider)
         .then((result) => {
             const user = result.user;
-            const userData = {
-                username: user.displayName,
-                email: user.email,
-                role: 'user'
-            };
 
-            user.getIdToken().then((idToken) => {
-                localStorage.setItem('token', idToken);
-                localStorage.setItem('user', JSON.stringify(userData));
-                showNotification(`Welcome, ${user.displayName}!`, 'success');
-                setTimeout(() => window.location.href = 'index.html', 1000);
+            // Get ID token
+            user.getIdToken().then(async (idToken) => {
+                try {
+                    // Send token to backend for verification
+                    const res = await fetch(`${API_URL}/google`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ token: idToken })
+                    });
+
+                    const data = await res.json();
+
+                    if (res.ok) {
+                        localStorage.setItem('token', data.token);
+                        localStorage.setItem('user', JSON.stringify(data.user));
+                        showNotification(`Welcome, ${data.user.username}!`, 'success');
+                        setTimeout(() => window.location.href = 'index.html', 1000);
+                    } else {
+                        throw new Error(data.msg || 'Backend verification failed');
+                    }
+                } catch (error) {
+                    console.error("Backend Verification Error:", error);
+                    showNotification("Login Failed: " + error.message, 'error');
+                }
             });
         }).catch((error) => {
             console.error("Google Login Error:", error);

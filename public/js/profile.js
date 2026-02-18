@@ -19,41 +19,64 @@ document.addEventListener('DOMContentLoaded', async () => {
     // We will simulate a fetch or use decoded values.
 
     try {
-        // Mock fetch for now as backend might not have /me endpoint ready
-        // Real implementation would be:
-        // const res = await fetch('http://localhost:5000/api/auth/me', { headers: { 'x-auth-token': token } });
+        // Fetch user data from backend
+        const res = await fetch('/api/auth/me', {
+            headers: { 'x-auth-token': token }
+        });
 
-        // Simulating data based on known admin or generic user
-        const userData = {
-            username: 'User',
-            email: 'user@example.com',
-            role: 'Member'
-        };
+        let userData;
+        if (res.ok) {
+            userData = await res.json();
+        } else {
+            console.warn('Failed to fetch profile, using local data if available');
+            userData = {};
+        }
 
-        // If it's the admin token we set earlier (karan@123 login)
-        // detailed logic could go here.
-
-        // Load saved shipping info if available
+        // Load saved shipping info if available locally (fallback/merge)
         const savedUser = JSON.parse(localStorage.getItem('user')) || {};
 
-        // Merge remote user data with local overrides if any
-        const fullProfile = { ...userData, ...savedUser };
+        // Merge backend data with local overrides (backend takes precedence for profile fields)
+        const fullProfile = { ...savedUser, ...userData };
 
         renderProfile(fullProfile);
 
         // Save Handling
-        document.getElementById('shipping-form').addEventListener('submit', (e) => {
+        document.getElementById('shipping-form').addEventListener('submit', async (e) => {
             e.preventDefault();
-            const updatedUser = {
-                ...fullProfile,
+
+            const updatedFields = {
                 address: document.getElementById('address').value,
                 city: document.getElementById('city').value,
                 zip: document.getElementById('zip').value,
                 phone: document.getElementById('phone').value
             };
 
-            localStorage.setItem('user', JSON.stringify(updatedUser)); // Persist locally
-            alert('Profile details saved successfully!');
+            // Optimistic UI Update
+            const updatedProfile = { ...fullProfile, ...updatedFields };
+            renderProfile(updatedProfile);
+
+            try {
+                // Send update to backend
+                const updateRes = await fetch('/api/auth/me', {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'x-auth-token': token
+                    },
+                    body: JSON.stringify(updatedFields)
+                });
+
+                if (updateRes.ok) {
+                    const savedData = await updateRes.json();
+                    localStorage.setItem('user', JSON.stringify(savedData));
+                    alert('Profile details saved successfully!');
+                } else {
+                    throw new Error('Failed to save to server');
+                }
+            } catch (error) {
+                console.error('Save error:', error);
+                alert('Failed to save profile. Please try again.');
+            }
         });
 
     } catch (err) {
@@ -85,8 +108,14 @@ function renderProfile(user) {
     if (user.phone) document.getElementById('phone').value = user.phone;
 
     // Avatar
-    const initial = (user.username || 'U')[0].toUpperCase();
-    document.getElementById('user-avatar').textContent = initial;
+    if (user.profilePicture) {
+        document.getElementById('user-avatar').innerHTML = `<img src="${user.profilePicture}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
+        document.getElementById('user-avatar').style.backgroundColor = 'transparent';
+    } else {
+        const initial = (user.username || 'U')[0].toUpperCase();
+        document.getElementById('user-avatar').textContent = initial;
+        document.getElementById('user-avatar').style.backgroundColor = 'var(--brand)';
+    }
 
     // Render Orders
     renderOrders();
