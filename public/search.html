@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <title>Search Results - M.K. Store</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/product.css">
+    <style>
+        .search-container {
+            max-width: 1200px;
+            margin: 3rem auto;
+            padding: 0 1.5rem;
+            min-height: 60vh;
+        }
+
+        .search-header {
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 1rem;
+        }
+
+        .search-header h1 {
+            font-size: 2rem;
+            color: var(--text-main);
+        }
+
+        .search-term {
+            color: var(--brand);
+            font-weight: 700;
+        }
+
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+            gap: 2rem;
+        }
+
+        .no-results {
+            text-align: center;
+            padding: 4rem;
+            color: var(--text-muted);
+            grid-column: 1 / -1;
+        }
+
+        .no-results i {
+            display: block;
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            opacity: 0.5;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <nav>
+            <div class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+                <h1>M.K. Store</h1>
+            </div>
+            <div class="search-bar">
+                <input type="text" id="search-input" placeholder="Search products...">
+                <button id="search-button"><i class="fa fa-search"></i></button>
+            </div>
+            <div class="menu-toggle">
+                <i class="fa fa-bars"></i>
+            </div>
+            <ul class="nav-links">
+                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
+                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a>
+                </li>
+                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main>
+        <div class="search-container">
+            <div class="search-header">
+                <h1>Search Results for <span class="search-term" id="search-term-display">...</span></h1>
+                <p id="result-count" style="color:var(--text-muted); margin-top:0.5rem;">Searching...</p>
+            </div>
+
+            <div class="product-grid" id="search-results-grid">
+                <!-- Results loaded here -->
+            </div>
+        </div>
+    </main>
+
+    <div id="footer-placeholder"></div>
+    <script src="js/footer.js"></script>
+
+    <script src="js/script.js"></script>
+    <script src="js/nav.js"></script>
+    <script src="js/search.js"></script>
+    <script src="js/livehelp.js"></script>
+</body>
+
+</html>

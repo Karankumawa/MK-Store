@@ -85,7 +85,7 @@ document.addEventListener('DOMContentLoaded', function () {
     const performSearch = () => {
         const searchTerm = (searchInput?.value || '').trim();
         if (searchTerm) {
-            window.location.href = `shop.html?search=${encodeURIComponent(searchTerm)}`;
+            window.location.href = `search.html?search=${encodeURIComponent(searchTerm)}`;
         }
     };
 
