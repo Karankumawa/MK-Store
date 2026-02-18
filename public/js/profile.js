@@ -6,18 +6,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         return;
     }
 
-    // Try to get user data from localStorage first for speed
-    // If you were storing full user object on login, you could use it.
-    // Assuming we might need to fetch it or decode it.
-
-    // For now, let's try to fetch user details from an API endpoint if it exists, 
-    // or just assume we have some stored info. 
-    // Since the original auth.js didn't store full user info, we'll try to decode the token 
-    // or just show a generic "User" if we can't verify.
-
-    // NOTE: In a real app, you would hit /api/auth/me using the token.
-    // We will simulate a fetch or use decoded values.
-
     try {
         // Fetch user data from backend
         const res = await fetch('/api/auth/me', {
@@ -41,43 +29,46 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderProfile(fullProfile);
 
         // Save Handling
-        document.getElementById('shipping-form').addEventListener('submit', async (e) => {
-            e.preventDefault();
+        const shippingForm = document.getElementById('shipping-form');
+        if (shippingForm) {
+            shippingForm.addEventListener('submit', async (e) => {
+                e.preventDefault();
 
-            const updatedFields = {
-                address: document.getElementById('address').value,
-                city: document.getElementById('city').value,
-                zip: document.getElementById('zip').value,
-                phone: document.getElementById('phone').value
-            };
+                const updatedFields = {
+                    address: document.getElementById('address').value,
+                    city: document.getElementById('city').value,
+                    zip: document.getElementById('zip').value,
+                    phone: document.getElementById('phone').value
+                };
 
-            // Optimistic UI Update
-            const updatedProfile = { ...fullProfile, ...updatedFields };
-            renderProfile(updatedProfile);
+                // Optimistic UI Update
+                const updatedProfile = { ...fullProfile, ...updatedFields };
+                renderProfile(updatedProfile);
 
-            try {
-                // Send update to backend
-                const updateRes = await fetch('/api/auth/me', {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'x-auth-token': token
-                    },
-                    body: JSON.stringify(updatedFields)
-                });
+                try {
+                    // Send update to backend
+                    const updateRes = await fetch('/api/auth/me', {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'x-auth-token': token
+                        },
+                        body: JSON.stringify(updatedFields)
+                    });
 
-                if (updateRes.ok) {
-                    const savedData = await updateRes.json();
-                    localStorage.setItem('user', JSON.stringify(savedData));
-                    alert('Profile details saved successfully!');
-                } else {
-                    throw new Error('Failed to save to server');
+                    if (updateRes.ok) {
+                        const savedData = await updateRes.json();
+                        localStorage.setItem('user', JSON.stringify(savedData));
+                        alert('Profile details saved successfully!');
+                    } else {
+                        throw new Error('Failed to save to server');
+                    }
+                } catch (error) {
+                    console.error('Save error:', error);
+                    alert('Failed to save profile. Please try again.');
                 }
-            } catch (error) {
-                console.error('Save error:', error);
-                alert('Failed to save profile. Please try again.');
-            }
-        });
+            });
+        }
 
     } catch (err) {
         console.error(err);
@@ -86,20 +77,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 });
 
 function showLoginPrompt() {
-    document.getElementById('loading-profile').style.display = 'none';
-    document.getElementById('profile-content').style.display = 'none';
-    document.getElementById('login-prompt').style.display = 'block';
+    const loading = document.getElementById('loading-profile');
+    const content = document.getElementById('profile-content');
+    const prompt = document.getElementById('login-prompt');
+
+    if (loading) loading.style.display = 'none';
+    if (content) content.style.display = 'none';
+    if (prompt) prompt.style.display = 'block';
 }
 
 function renderProfile(user) {
     document.getElementById('loading-profile').style.display = 'none';
-    document.getElementById('profile-content').style.display = 'block';
+    document.getElementById('profile-content').style.display = 'grid'; // Use grid for dashboard
 
-    // Update Text Info
-    document.getElementById('user-name').textContent = user.username || 'Valued Customer';
-    document.getElementById('user-email').textContent = user.email || 'No email provided';
-    document.getElementById('info-name').textContent = user.username || 'Valued Customer';
-    document.getElementById('info-email').textContent = user.email || 'No email provided';
+    // Sidebar Updates
+    const sidebarName = document.getElementById('user-name-sidebar');
+    if (sidebarName) sidebarName.textContent = user.username || 'User';
+
+    // Avatar
+    const avatarSmall = document.getElementById('user-avatar-small');
+    if (avatarSmall) {
+        if (user.profilePicture) {
+            avatarSmall.innerHTML = `<img src="${user.profilePicture}" alt="Avatar">`;
+            avatarSmall.style.backgroundColor = 'transparent';
+        } else {
+            const initial = (user.username || 'U')[0].toUpperCase();
+            avatarSmall.textContent = initial;
+            avatarSmall.style.backgroundColor = 'var(--brand)';
+        }
+    }
+
+    // Main Content Updates
+    const infoName = document.getElementById('info-name');
+    if (infoName) infoName.textContent = user.username || 'Valued Customer';
+
+    const infoEmail = document.getElementById('info-email');
+    if (infoEmail) infoEmail.textContent = user.email || 'No email provided';
 
     // Pre-fill Forms
     if (user.address) document.getElementById('address').value = user.address;
@@ -107,50 +120,164 @@ function renderProfile(user) {
     if (user.zip) document.getElementById('zip').value = user.zip;
     if (user.phone) document.getElementById('phone').value = user.phone;
 
-    // Avatar
-    if (user.profilePicture) {
-        document.getElementById('user-avatar').innerHTML = `<img src="${user.profilePicture}" alt="Avatar" style="width:100%; height:100%; object-fit:cover; border-radius:50%;">`;
-        document.getElementById('user-avatar').style.backgroundColor = 'transparent';
-    } else {
-        const initial = (user.username || 'U')[0].toUpperCase();
-        document.getElementById('user-avatar').textContent = initial;
-        document.getElementById('user-avatar').style.backgroundColor = 'var(--brand)';
-    }
-
     // Render Orders
     renderOrders();
 }
 
-function renderOrders() {
-    const orders = JSON.parse(localStorage.getItem('orders')) || [];
-    const container = document.getElementById('recent-orders-list');
+// Render Orders from Backend
+async function renderOrders() {
+    const ordersContainer = document.getElementById('recent-orders-list');
+    if (!ordersContainer) return;
 
-    if (orders.length === 0) {
-        container.innerHTML = `
-            <div class="info-card" style="text-align:center; padding:3rem; color:var(--text-muted);">
-                <i class="fa fa-box-open" style="font-size:2rem; margin-bottom:1rem; display:block;"></i>
-                No recent orders found.
-            </div>`;
-        return;
+    ordersContainer.innerHTML = '<p style="text-align:center; padding:1rem;">Loading orders...</p>';
+
+    try {
+        const token = localStorage.getItem('token');
+        if (!token) return;
+
+        const res = await fetch('/api/orders/myorders', {
+            headers: { 'x-auth-token': token }
+        });
+
+        if (!res.ok) throw new Error('Failed to fetch orders');
+
+        const orders = await res.json();
+
+        if (orders.length === 0) {
+            ordersContainer.innerHTML = `
+                <div class="info-card" style="text-align:center; padding:3rem; color:var(--text-muted);">
+                    <i class="fa fa-box-open" style="font-size:2rem; margin-bottom:1rem; display:block;"></i>
+                    No recent orders found.
+                </div>`;
+            return;
+        }
+
+        ordersContainer.innerHTML = orders.map(order => `
+            <div class="info-card" style="margin-bottom:1rem; border-left: 5px solid ${getStatusColor(order.status)};">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+                    <div>
+                        <strong>Order #${order._id.slice(-6).toUpperCase()}</strong> <br>
+                        <small style="color:var(--text-muted);">${new Date(order.date).toLocaleDateString()}</small>
+                    </div>
+                    <div>
+                        <span style="padding: 4px 10px; border-radius: 12px; font-size: 0.85rem; background: ${getStatusBg(order.status)}; color: ${getStatusTextColor(order.status)}; font-weight: 600;">
+                            ${order.status}
+                        </span>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 10px; border-top:1px solid #eee; border-bottom:1px solid #eee; padding:10px 0;">
+                    ${order.items.map(item => `
+                        <div style="display: flex; gap: 10px; margin-bottom: 5px; align-items:center;">
+                            <img src="${item.image || 'https://via.placeholder.com/40'}" alt="${item.name}" style="width: 40px; height: 40px; object-fit: cover; border-radius: 4px;">
+                            <div style="flex-grow:1;">
+                                <div style="font-size:0.9rem;">${item.name}</div>
+                                <small style="color:var(--text-muted);">x${item.quantity}</small>
+                            </div>
+                            <div style="font-weight:600;">₹${item.price}</div>
+                        </div>
+                    `).join('')}
+                </div>
+
+                <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 5px;">
+                    <div style="font-size: 1.1rem; font-weight: 700; color: var(--brand);">
+                        Total: ₹${order.totalAmount}
+                    </div>
+                    ${order.status === 'Processing' ? `
+                        <button onclick="cancelOrder('${order._id}')" style="background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 600; transition: 0.2s;">
+                            Cancel Order
+                        </button>
+                    ` : ''}
+                </div>
+            </div>
+        `).join('');
+
+    } catch (err) {
+        console.error(err);
+        ordersContainer.innerHTML = '<p style="color:red; text-align:center;">Error loading orders.</p>';
     }
-
-    container.innerHTML = orders.map(order => `
-        <div class="info-card" style="margin-bottom:1rem; display:flex; justify-content:space-between; align-items:center;">
-            <div>
-                <strong style="display:block;">Order #${order.id}</strong>
-                <span style="font-size:0.9rem; color:var(--text-muted);">${new Date(order.date).toLocaleDateString()}</span>
-            </div>
-            <div style="text-align:right;">
-                <strong style="display:block; color:var(--brand);">$${order.total}</strong>
-                <span style="font-size:0.8rem; padding:0.2rem 0.6rem; border-radius:10px; background:#dcfce7; color:#166534;">${order.status}</span>
-            </div>
-        </div>
-    `).join('');
 }
 
+function getStatusColor(status) {
+    switch (status) {
+        case 'Processing': return '#eab308'; // Yellow
+        case 'Shipped': return '#3b82f6';    // Blue
+        case 'Delivered': return '#22c55e';  // Green
+        case 'Cancelled': return '#ef4444';  // Red
+        default: return '#9ca3af';
+    }
+}
+
+function getStatusBg(status) {
+    switch (status) {
+        case 'Processing': return '#fef9c3';
+        case 'Shipped': return '#dbeafe';
+        case 'Delivered': return '#dcfce7';
+        case 'Cancelled': return '#fee2e2';
+        default: return '#f3f4f6';
+    }
+}
+
+function getStatusTextColor(status) {
+    switch (status) {
+        case 'Processing': return '#854d0e';
+        case 'Shipped': return '#1e40af';
+        case 'Delivered': return '#166534';
+        case 'Cancelled': return '#991b1b';
+        default: return '#374151';
+    }
+}
+
+async function cancelOrder(orderId) {
+    if (!confirm('Are you sure you want to cancel this order?')) return;
+
+    try {
+        const token = localStorage.getItem('token');
+        const res = await fetch(`/api/orders/${orderId}/cancel`, {
+            method: 'PUT',
+            headers: { 'x-auth-token': token }
+        });
+
+        const data = await res.json();
+
+        if (res.ok) {
+            alert('Order cancelled successfully');
+            renderOrders(); // Refresh list
+        } else {
+            alert(data.msg || 'Failed to cancel order');
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error cancelling order');
+    }
+}
+
+// Tab Switching Logic
+function switchTab(tabName) {
+    // Hide all contents
+    document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
+    // Deactivate all nav items
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+    // Show target
+    const target = document.getElementById(`tab-${tabName}`);
+    if (target) target.classList.add('active');
+
+    // Activate nav item
+    const navItem = Array.from(document.querySelectorAll('.nav-item')).find(el => el.getAttribute('onclick')?.includes(tabName));
+    if (navItem) navItem.classList.add('active');
+}
+
+// Make globally available
+window.switchTab = switchTab;
+window.cancelOrder = cancelOrder;
+
 // Logout
-document.getElementById('logout-btn').addEventListener('click', () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user'); // if we stored it
-    window.location.href = 'login.html';
-});
+const logoutBtn = document.getElementById('logout-btn');
+if (logoutBtn) {
+    logoutBtn.addEventListener('click', () => {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user'); // if we stored it
+        window.location.href = 'login.html';
+    });
+}

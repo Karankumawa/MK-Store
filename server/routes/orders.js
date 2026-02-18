@@ -40,6 +40,52 @@ router.post('/', auth, async (req, res) => {
     }
 });
 
+// Get Current User's Orders
+router.get('/myorders', async (req, res) => {
+    const token = req.header('x-auth-token');
+    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        // Find orders for this user
+        const orders = await Order.find({ user: decoded.user.id }).sort({ date: -1 });
+        res.json(orders);
+    } catch (err) {
+        console.error('Error fetching user orders:', err);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Cancel User Order
+router.put('/:id/cancel', async (req, res) => {
+    const token = req.header('x-auth-token');
+    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        const order = await Order.findById(req.params.id);
+
+        if (!order) return res.status(404).json({ msg: 'Order not found' });
+
+        // Ensure user owns this order
+        if (order.user.toString() !== decoded.user.id) {
+            return res.status(401).json({ msg: 'Not authorized' });
+        }
+
+        // Check status
+        if (order.status !== 'Processing') {
+            return res.status(400).json({ msg: `Cannot cancel order with status: ${order.status}` });
+        }
+
+        order.status = 'Cancelled';
+        await order.save();
+        res.json(order);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // Get All Orders (Admin only)
 router.get('/', async (req, res) => {
     const token = req.header('x-auth-token');
