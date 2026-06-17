@@ -581,9 +581,24 @@
 
 /* Ensure cards in slider have fixed width and snapping */
 .product-slider .product {
-    min-width: 280px;
-    max-width: 280px;
+    /* 3 items per view (1.5rem gap = 24px, adjusting mathematically) */
+    min-width: calc(33.333% - 1rem);
+    max-width: calc(33.333% - 1rem);
     flex-shrink: 0;
+}
+
+@media (max-width: 1200px) {
+    .product-slider .product {
+        min-width: calc(50% - 0.75rem);
+        max-width: calc(50% - 0.75rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .product-slider .product {
+        min-width: 100%;
+        max-width: 100%;
+    }
 }
 
 /* Specific overrides for when grid is active or not */
