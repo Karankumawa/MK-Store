@@ -1,12 +1,16 @@
 const express = require('express');
 const router = express.Router();
-const Product = require('../models/Product');
+const supabase = require('../config/supabase');
 
 // Get All Products
 router.get('/', async (req, res) => {
     try {
-        const products = await Product.find();
-        res.json(products);
+        const { data: products, error } = await supabase.from('products').select('*');
+        if (error) throw error;
+
+        // Map id to _id for frontend compatibility
+        const mappedProducts = products.map(p => ({ ...p, _id: p.id }));
+        res.json(mappedProducts);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -16,7 +20,9 @@ router.get('/', async (req, res) => {
 // Seed Products (One-time use to populate DB)
 router.post('/seed', async (req, res) => {
     try {
-        await Product.deleteMany({}); // Clear existing
+        // Clear existing (delete all where id is not null)
+        await supabase.from('products').delete().neq('id', '00000000-0000-0000-0000-000000000000');
+        
         const products = [
             // Groceries (5)
             { name: "Premium White Sugar", price: 1.5, image: "assets/products/sugar.png", category: "Groceries", rating: 4.5 },
@@ -67,7 +73,10 @@ router.post('/seed', async (req, res) => {
             { name: "Plush Teddy Bear", price: 18, image: "assets/products/teddy.png", category: "Toys", rating: 4.5 },
             { name: "Classic Puzzle Set", price: 10, image: "assets/products/puzzle.png", category: "Toys", rating: 4.4 }
         ];
-        await Product.insertMany(products);
+
+        const { error } = await supabase.from('products').insert(products);
+        if (error) throw error;
+
         res.json({ msg: 'Database standardizing to 5 products per category with local images.' });
     } catch (err) {
         console.error(err.message);

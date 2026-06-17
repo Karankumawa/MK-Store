@@ -1,8 +1,8 @@
 require('dotenv').config();
 const express = require('express');
-const mongoose = require('mongoose');
 const cors = require('cors');
 const path = require('path');
+const supabase = require('./server/config/supabase');
 
 const app = express();
 
@@ -13,15 +13,19 @@ app.use(cors());
 // Serve static files from the 'public' directory
 app.use(express.static(path.join(__dirname, 'public')));
 
-// Database Connection
-mongoose.connect(process.env.MONGO_URI)
-    .then(() => {
-        console.log(`Server PID: ${process.pid}`);
-        console.log(`MongoDB Connected: ${mongoose.connection.name}`);
+// Database Connection Check
+supabase.from('products').select('id').limit(1)
+    .then(({ error }) => {
+        if (error) {
+            console.error('Supabase connection error:', error.message);
+        } else {
+            console.log(`Server PID: ${process.pid}`);
+            console.log(`Supabase Connected successfully.`);
+        }
     })
     .catch(err => console.log(err));
 
-// Routes (Placeholder)
+// Routes
 app.use('/api/auth', require('./server/routes/auth'));
 app.use('/api/products', require('./server/routes/products'));
 app.use('/api/orders', require('./server/routes/orders'));

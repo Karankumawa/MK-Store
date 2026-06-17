@@ -1,8 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Order = require('../models/Order');
+const supabase = require('../config/supabase');
 const jwt = require('jsonwebtoken');
-const mongoose = require('mongoose');
 
 // Middleware to verify token (optional for creation, required for viewing)
 const auth = (req, res, next) => {
@@ -25,14 +24,19 @@ router.post('/', auth, async (req, res) => {
     try {
         const { items, totalAmount, shippingDetails } = req.body;
 
-        const newOrder = new Order({
-            user: req.user ? req.user.id : null,
-            items,
-            totalAmount,
-            shippingDetails
-        });
+        const newOrder = {
+            user_id: req.user ? req.user.id : null,
+            items: items,
+            total_amount: totalAmount,
+            shipping_details: shippingDetails
+        };
 
-        const order = await newOrder.save();
+        const { data: order, error } = await supabase.from('orders').insert(newOrder).select().single();
+        if (error) throw error;
+        
+        order._id = order.id; // Compatibility
+        order.shippingDetails = order.shipping_details;
+        order.totalAmount = order.total_amount;
         res.json(order);
     } catch (err) {
         console.error(err.message);
@@ -48,8 +52,15 @@ router.get('/myorders', async (req, res) => {
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         // Find orders for this user
-        const orders = await Order.find({ user: decoded.user.id }).sort({ date: -1 });
-        res.json(orders);
+        const { data: orders, error } = await supabase.from('orders')
+            .select('*')
+            .eq('user_id', decoded.user.id)
+            .order('date', { ascending: false });
+            
+        if (error) throw error;
+        
+        const mappedOrders = orders.map(o => ({ ...o, _id: o.id, shippingDetails: o.shipping_details, totalAmount: o.total_amount }));
+        res.json(mappedOrders);
     } catch (err) {
         console.error('Error fetching user orders:', err);
         res.status(500).send('Server Error');
@@ -63,12 +74,12 @@ router.put('/:id/cancel', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const order = await Order.findById(req.params.id);
-
-        if (!order) return res.status(404).json({ msg: 'Order not found' });
+        
+        const { data: order, error: fetchError } = await supabase.from('orders').select('*').eq('id', req.params.id).single();
+        if (fetchError || !order) return res.status(404).json({ msg: 'Order not found' });
 
         // Ensure user owns this order
-        if (order.user.toString() !== decoded.user.id) {
+        if (order.user_id !== decoded.user.id) {
             return res.status(401).json({ msg: 'Not authorized' });
         }
 
@@ -77,9 +88,18 @@ router.put('/:id/cancel', async (req, res) => {
             return res.status(400).json({ msg: `Cannot cancel order with status: ${order.status}` });
         }
 
-        order.status = 'Cancelled';
-        await order.save();
-        res.json(order);
+        const { data: updatedOrder, error: updateError } = await supabase.from('orders')
+            .update({ status: 'Cancelled' })
+            .eq('id', req.params.id)
+            .select()
+            .single();
+            
+        if (updateError) throw updateError;
+
+        updatedOrder._id = updatedOrder.id;
+        updatedOrder.shippingDetails = updatedOrder.shipping_details;
+        updatedOrder.totalAmount = updatedOrder.total_amount;
+        res.json(updatedOrder);
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');
@@ -93,14 +113,15 @@ router.get('/', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = decoded.user;
-
-        if (user.role !== 'admin') {
+        if (decoded.user.role !== 'admin') {
             return res.status(403).json({ msg: 'Access denied' });
         }
 
-        const orders = await Order.find().sort({ date: -1 });
-        res.json(orders);
+        const { data: orders, error } = await supabase.from('orders').select('*').order('date', { ascending: false });
+        if (error) throw error;
+
+        const mappedOrders = orders.map(o => ({ ...o, _id: o.id, shippingDetails: o.shipping_details, totalAmount: o.total_amount }));
+        res.json(mappedOrders);
     } catch (err) {
         console.error('Error fetching orders:', err);
         res.status(500).send('Server Error');
@@ -114,25 +135,28 @@ router.put('/:id/status', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = decoded.user;
-
-        if (user.role !== 'admin') {
+        if (decoded.user.role !== 'admin') {
             return res.status(403).json({ msg: 'Access denied: Requires Admin role' });
         }
 
         const { status } = req.body;
         if (!status) return res.status(400).json({ msg: 'Status is required' });
 
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({ msg: 'Invalid Order ID format' });
-        }
+        const { data: order, error: fetchError } = await supabase.from('orders').select('id').eq('id', req.params.id).single();
+        if (fetchError || !order) return res.status(404).json({ msg: 'Order not found' });
 
-        let order = await Order.findById(req.params.id);
-        if (!order) return res.status(404).json({ msg: 'Order not found' });
-
-        order.status = status;
-        await order.save();
-        res.json(order);
+        const { data: updatedOrder, error: updateError } = await supabase.from('orders')
+            .update({ status })
+            .eq('id', req.params.id)
+            .select()
+            .single();
+            
+        if (updateError) throw updateError;
+        
+        updatedOrder._id = updatedOrder.id;
+        updatedOrder.shippingDetails = updatedOrder.shipping_details;
+        updatedOrder.totalAmount = updatedOrder.total_amount;
+        res.json(updatedOrder);
     } catch (err) {
         console.error('Error in PUT /api/orders/:id/status:', err);
         if (err.name === 'TokenExpiredError') {
@@ -152,16 +176,13 @@ router.delete('/:id', async (req, res) => {
 
     try {
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const user = decoded.user;
-
-        if (user.role !== 'admin') {
+        if (decoded.user.role !== 'admin') {
             return res.status(403).json({ msg: 'Access denied' });
         }
 
-        const order = await Order.findById(req.params.id);
-        if (!order) return res.status(404).json({ msg: 'Order not found' });
+        const { error: deleteError } = await supabase.from('orders').delete().eq('id', req.params.id);
+        if (deleteError) return res.status(404).json({ msg: 'Order not found' });
 
-        await Order.findByIdAndDelete(req.params.id);
         res.json({ msg: 'Order removed' });
     } catch (err) {
         console.error(err.message);
