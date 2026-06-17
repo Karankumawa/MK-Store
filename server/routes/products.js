@@ -1,16 +1,93 @@
 const express = require('express');
 const router = express.Router();
 const supabase = require('../config/supabase');
+const jwt = require('jsonwebtoken');
+
+// Middleware to verify admin token
+const adminAuth = (req, res, next) => {
+    const token = req.header('x-auth-token');
+    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
+
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        if (decoded.user.role !== 'admin') {
+            return res.status(403).json({ msg: 'Access denied: Requires Admin role' });
+        }
+        req.user = decoded.user;
+        next();
+    } catch (err) {
+        return res.status(401).json({ msg: 'Token is not valid' });
+    }
+};
 
 // Get All Products
 router.get('/', async (req, res) => {
     try {
-        const { data: products, error } = await supabase.from('products').select('*');
+        const { data: products, error } = await supabase.from('products').select('*').order('name', { ascending: true });
         if (error) throw error;
 
         // Map id to _id for frontend compatibility
         const mappedProducts = products.map(p => ({ ...p, _id: p.id }));
         res.json(mappedProducts);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Create Product (Admin Only)
+router.post('/', adminAuth, async (req, res) => {
+    try {
+        const { name, price, image, category, rating } = req.body;
+        if (!name || !price) return res.status(400).json({ msg: 'Name and price are required' });
+
+        const newProduct = { name, price, image, category, rating };
+
+        const { data: product, error } = await supabase.from('products').insert(newProduct).select().single();
+        if (error) throw error;
+
+        product._id = product.id;
+        res.json(product);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Update Product (Admin Only)
+router.put('/:id', adminAuth, async (req, res) => {
+    try {
+        const { name, price, image, category, rating } = req.body;
+        
+        const updateData = {};
+        if (name !== undefined) updateData.name = name;
+        if (price !== undefined) updateData.price = price;
+        if (image !== undefined) updateData.image = image;
+        if (category !== undefined) updateData.category = category;
+        if (rating !== undefined) updateData.rating = rating;
+
+        const { data: product, error } = await supabase.from('products')
+            .update(updateData)
+            .eq('id', req.params.id)
+            .select()
+            .single();
+
+        if (error) throw error;
+        
+        product._id = product.id;
+        res.json(product);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
+// Delete Product (Admin Only)
+router.delete('/:id', adminAuth, async (req, res) => {
+    try {
+        const { error } = await supabase.from('products').delete().eq('id', req.params.id);
+        if (error) throw error;
+        res.json({ msg: 'Product removed' });
     } catch (err) {
         console.error(err.message);
         res.status(500).send('Server Error');

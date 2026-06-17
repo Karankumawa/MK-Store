@@ -562,3 +562,118 @@ body {
         margin-right: 0;
     }
 }
+
+/* ---------------- MODAL STYLES ---------------- */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6);
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+}
+.modal.show {
+    display: flex;
+}
+.modal-content {
+    background: var(--admin-bg);
+    border: 1px solid var(--admin-glass-border);
+    border-radius: 20px;
+    padding: 2rem;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    position: relative;
+    animation: modalSlideIn 0.3s ease-out;
+}
+@keyframes modalSlideIn {
+    from { transform: translateY(20px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    border-bottom: 1px solid var(--admin-glass-border);
+    padding-bottom: 1rem;
+}
+.modal-header h2 {
+    font-size: 1.5rem;
+    color: var(--admin-text);
+}
+.close-btn {
+    background: none;
+    border: none;
+    color: var(--admin-text-muted);
+    font-size: 2rem;
+    cursor: pointer;
+    transition: color 0.3s;
+    line-height: 1;
+}
+.close-btn:hover {
+    color: var(--admin-danger);
+}
+.form-group {
+    margin-bottom: 1.25rem;
+}
+.form-row {
+    display: flex;
+    gap: 1.5rem;
+}
+.form-row .form-group {
+    flex: 1;
+}
+.form-group label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--admin-text-muted);
+    font-size: 0.9rem;
+}
+.form-group input, .form-group select {
+    width: 100%;
+    padding: 0.8rem;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--admin-glass-border);
+    color: var(--admin-text);
+    font-family: inherit;
+    font-size: 1rem;
+}
+.form-group input:focus, .form-group select:focus {
+    outline: none;
+    border-color: var(--admin-brand);
+}
+.form-group select {
+    appearance: none;
+}
+.form-group select option {
+    background: var(--admin-bg);
+    color: var(--admin-text);
+}
+.modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--admin-glass-border);
+}
+.btn-secondary {
+    background: rgba(255, 255, 255, 0.1);
+    color: var(--admin-text);
+    border: none;
+    padding: 0.75rem 1.5rem;
+    border-radius: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+.btn-secondary:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
