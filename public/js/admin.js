@@ -232,6 +232,7 @@ async function loadProducts(container) {
     try {
         const res = await fetch('/api/products');
         const products = await res.json();
+        window.adminProducts = products;
 
         const tbody = document.getElementById('product-tbody');
         if (products.length === 0) {
@@ -428,17 +429,88 @@ async function deleteUser(id) {
 }
 
 function showAddProductModal() {
-    alert('Add Product Modal (Feature under construction - Requires API endpoint)');
+    document.getElementById('modalTitle').textContent = 'Add Product';
+    document.getElementById('productForm').reset();
+    document.getElementById('productId').value = '';
+    document.getElementById('productModal').classList.add('show');
 }
 
 function editProduct(id) {
-    alert(`Edit Product ${id} (Feature under construction)`);
+    const product = window.adminProducts.find(p => p._id === id);
+    if (!product) return alert('Product not found in local state');
+
+    document.getElementById('modalTitle').textContent = 'Edit Product';
+    document.getElementById('productId').value = product._id;
+    document.getElementById('productName').value = product.name;
+    document.getElementById('productPrice').value = product.price;
+    document.getElementById('productCategory').value = product.category || 'Groceries';
+    document.getElementById('productRating').value = product.rating || 4.5;
+    document.getElementById('productImage').value = product.image || '';
+
+    document.getElementById('productModal').classList.add('show');
 }
 
-function deleteProduct(id) {
-    if (confirm('Are you sure you want to delete this product?')) {
-        alert('Delete API call placeholder');
-        // fetch(`/api/products/${id}`, { method: 'DELETE' })...
+function closeProductModal() {
+    document.getElementById('productModal').classList.remove('show');
+}
+
+async function saveProduct(e) {
+    e.preventDefault();
+    
+    const id = document.getElementById('productId').value;
+    const name = document.getElementById('productName').value;
+    const price = document.getElementById('productPrice').value;
+    const category = document.getElementById('productCategory').value;
+    const rating = document.getElementById('productRating').value;
+    const image = document.getElementById('productImage').value;
+
+    const payload = { name, price: parseFloat(price), category, rating: parseFloat(rating), image };
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/products/${id}` : '/api/products';
+
+    try {
+        const res = await fetch(url, {
+            method,
+            headers: {
+                'Content-Type': 'application/json',
+                'x-auth-token': localStorage.getItem('token')
+            },
+            body: JSON.stringify(payload)
+        });
+
+        if (res.ok) {
+            alert(id ? 'Product updated successfully!' : 'Product added successfully!');
+            closeProductModal();
+            loadSection('products'); // Reload table
+        } else {
+            const data = await res.json();
+            alert('Failed: ' + (data.msg || 'Unknown error'));
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error saving product');
+    }
+}
+
+async function deleteProduct(id) {
+    if (!confirm('Are you sure you want to delete this product?')) return;
+    
+    try {
+        const res = await fetch(`/api/products/${id}`, { 
+            method: 'DELETE',
+            headers: { 'x-auth-token': localStorage.getItem('token') }
+        });
+        
+        if (res.ok) {
+            alert('Product deleted successfully!');
+            loadSection('products'); // Reload table
+        } else {
+            const data = await res.json();
+            alert('Failed to delete: ' + (data.msg || 'Unknown error'));
+        }
+    } catch (err) {
+        console.error(err);
+        alert('Error deleting product');
     }
 }
 
