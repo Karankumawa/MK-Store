@@ -301,20 +301,18 @@ document.addEventListener('DOMContentLoaded', function () {
                         ${catName}
                         <span class="product-count">${catProducts.length} Items</span>
                     </h2>
-                    <div class="slider-controls">
-                        <button class="slider-btn prev" aria-label="Previous">
-                            <i class="fa fa-chevron-left"></i>
-                        </button>
-                        <button class="slider-btn next" aria-label="Next">
-                            <i class="fa fa-chevron-right"></i>
-                        </button>
-                        <a href="shop.html?category=${encodeURIComponent(catName)}" class="view-all-link">View All</a>
-                    </div>
+                    <a href="shop.html?category=${encodeURIComponent(catName)}" class="view-all-link">View All</a>
                 </div>
-                <div class="slider-container">
+                <div class="slider-wrapper">
+                    <button class="slider-btn prev-btn prev" aria-label="Previous">
+                        <i class="fa-solid fa-chevron-left"></i>
+                    </button>
                     <div class="product-slider">
                         ${productCardsHtml}
                     </div>
+                    <button class="slider-btn next-btn next" aria-label="Next">
+                        <i class="fa-solid fa-chevron-right"></i>
+                    </button>
                 </div>
             `;
             productGrid.appendChild(section);
@@ -335,28 +333,17 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const scrollAmount = 300;
 
-            prevBtn.onclick = (e) => {
+            prevBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
-            };
+            });
 
-            nextBtn.onclick = (e) => {
+            nextBtn.addEventListener('click', (e) => {
+                e.preventDefault();
                 e.stopPropagation();
                 slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-            };
-
-            const updateButtons = () => {
-                const { scrollLeft, scrollWidth, clientWidth } = slider;
-                prevBtn.style.opacity = scrollLeft > 10 ? '1' : '0.3';
-                prevBtn.style.pointerEvents = scrollLeft > 10 ? 'auto' : 'none';
-
-                nextBtn.style.opacity = scrollLeft + clientWidth < scrollWidth - 10 ? '1' : '0.3';
-                nextBtn.style.pointerEvents = scrollLeft + clientWidth < scrollWidth - 10 ? 'auto' : 'none';
-            };
-
-            slider.addEventListener('scroll', updateButtons);
-            updateButtons();
-            window.addEventListener('resize', updateButtons);
+            });
         });
     }
 

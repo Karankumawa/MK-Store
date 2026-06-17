@@ -1,184 +1,143 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <title>M.K. Store — Daily Essentials & Groceries</title>
+    <title>M.K. Store — Next Gen E-Commerce</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description"
-        content="Shop daily essentials, groceries, snacks, and more at M.K. Store. Quality products at great prices with a smooth shopping experience.">
+    <meta name="description" content="Experience the future of shopping at M.K. Store.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/product.css">
-    <link rel="stylesheet" href="css/cart.css">
-    <link rel="stylesheet" href="css/login.css">
-    <link rel="stylesheet" href="css/shop.css">
-    <link rel="stylesheet" href="css/checkout.css">
+    
+    <!-- Link the newly updated modern CSS -->
+    <link rel="stylesheet" href="css/style.css?v=2">
+    <!-- Existing separate stylesheets can remain if they don't break, but style.css overrides global rules -->
+    <link rel="stylesheet" href="css/product.css?v=2">
+    <link rel="stylesheet" href="css/cart.css?v=2">
+    <link rel="stylesheet" href="css/login.css?v=2">
+    <link rel="stylesheet" href="css/shop.css?v=2">
 </head>
 
 <body>
-    <header>
+    <header id="main-header">
         <nav>
-            <div class="logo">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+            <a href="index.html" class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo">
                 <h1>M.K. Store</h1>
-            </div>
+            </a>
+            
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
+                <input type="text" id="search-input" placeholder="Search premium products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
-            <div class="menu-toggle">
+            
+            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <i class="fa fa-bars"></i>
             </div>
+            
             <ul class="nav-links">
-                <li><a href="index.html" class="active"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
-                </li>
-                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
-                <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
+                <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa-solid fa-compass"></i> Discover</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart <span class="cart-count">0</span></a></li>
+                <li><a href="login.html" id="nav-login-btn"><i class="fa-regular fa-user"></i> Sign In</a></li>
             </ul>
         </nav>
     </header>
 
-    <!-- Category Bar -->
+    <!-- Floating Category Pill Menu -->
     <div class="category-bar-wrapper">
         <div class="main-container">
             <div class="category-bar">
                 <a href="shop.html?category=Groceries" class="category-item">
-                    <div class="cat-icon"><img
-                            src="https://rukminim1.flixcart.com/flap/128/128/image/29327f40e9c4d26b.png" alt="Grocery">
-                    </div>
-                    <span>Grocery</span>
+                    <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/29327f40e9c4d26b.png" alt="Grocery"></div>
+                    <span>Fresh Grocery</span>
                 </a>
                 <a href="shop.html?category=Mobiles" class="category-item">
-                    <div class="cat-icon"><img
-                            src="https://rukminim1.flixcart.com/flap/128/128/image/22fddf3c7da4c4f4.png" alt="Mobiles">
-                    </div>
-                    <span>Mobiles</span>
+                    <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/22fddf3c7da4c4f4.png" alt="Mobiles"></div>
+                    <span>Smartphones</span>
                 </a>
                 <a href="shop.html?category=Fashion" class="category-item">
-                    <div class="cat-icon"><img
-                            src="https://rukminim1.flixcart.com/flap/128/128/image/c12afc017e6f24cb.png" alt="Fashion">
-                    </div>
+                    <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/c12afc017e6f24cb.png" alt="Fashion"></div>
                     <span>Fashion</span>
                 </a>
                 <a href="shop.html?category=Electronics" class="category-item">
-                    <div class="cat-icon"><img
-                            src="https://rukminim1.flixcart.com/flap/128/128/image/69c6589653afdb9a.png"
-                            alt="Electronics"></div>
+                    <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/69c6589653afdb9a.png" alt="Electronics"></div>
                     <span>Electronics</span>
                 </a>
                 <a href="shop.html?category=Home" class="category-item">
-                    <div class="cat-icon"><img
-                            src="https://rukminim1.flixcart.com/flap/128/128/image/ab7e2b022a4587dd.jpg" alt="Home">
-                    </div>
-                    <span>Home</span>
-                </a>
-                <a href="shop.html?category=Appliances" class="category-item">
-                    <div class="cat-icon"><img
-                            src="https://rukminim1.flixcart.com/flap/128/128/image/0ff199d1bd27eb98.png"
-                            alt="Appliances"></div>
-                    <span>Appliances</span>
+                    <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/ab7e2b022a4587dd.jpg" alt="Home"></div>
+                    <span>Home & Living</span>
                 </a>
                 <a href="shop.html?category=Toys" class="category-item">
-                    <div class="cat-icon"><img
-                            src="https://rukminim1.flixcart.com/flap/128/128/image/dff3f7adcf3a90c6.png" alt="Toys">
-                    </div>
+                    <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/dff3f7adcf3a90c6.png" alt="Toys"></div>
                     <span>Toys & Beauty</span>
                 </a>
             </div>
         </div>
     </div>
 
-    <!-- Hero Carousel -->
+    <!-- Immersive Hero Carousel -->
     <section class="hero-carousel-section">
-        <div class="main-container">
-            <div class="hero-carousel" id="hero-carousel">
-                <div class="slide active"
-                    style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('https://rukminim1.flixcart.com/fk-p-flap/1600/270/image/354cb863cf0755b0.jpg?q=20');">
-                    <div class="hero-slide-content">
-                        <h2>Big Savings on Electronics</h2>
-                        <p>Up to 40% off on latest gadgets</p>
-                        <a href="shop.html?category=Electronics" class="btn-hero">Shop Now</a>
-                    </div>
+        <div class="hero-carousel" id="hero-carousel">
+            <div class="slide active" style="background-image: url('https://images.unsplash.com/photo-1550009158-9efff6c623a5?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');">
+                <div class="hero-slide-content">
+                    <h2>Next Gen Tech</h2>
+                    <p>Discover the latest gadgets and accessories with immersive augmented reality experiences.</p>
+                    <a href="shop.html?category=Electronics" class="btn-hero">Explore Now</a>
                 </div>
-                <div class="slide"
-                    style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('assets/3.png');">
-                    <div class="hero-slide-content">
-                        <h2>Fresh Groceries Daily</h2>
-                        <p>Farm fresh delivered to your doorstep</p>
-                        <a href="shop.html?category=Groceries" class="btn-hero">Order Now</a>
-                    </div>
-                </div>
-                <div class="slide"
-                    style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('assets/Slide1.png');">
-                    <div class="hero-slide-content">
-                        <h2>Fashion Trends</h2>
-                        <p>Upgrade your wardrobe with our latest collection</p>
-                        <a href="shop.html?category=Fashion" class="btn-hero">Explore</a>
-                    </div>
-                </div>
-                <div class="slide"
-                    style="background-image: linear-gradient(rgba(0,0,0,0.1), rgba(0,0,0,0.3)), url('assets/slide2.png');">
-                    <div class="hero-slide-content">
-                        <h2>Home Essentials</h2>
-                        <p>Everything you need for a happy home</p>
-                        <a href="shop.html?category=Home" class="btn-hero">Buy Now</a>
-                    </div>
-                </div>
-                <!-- Navigation Arrows -->
-                <button class="carousel-btn prev" onclick="moveSlide(-1)">&#10094;</button>
-                <button class="carousel-btn next" onclick="moveSlide(1)">&#10095;</button>
             </div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1542838132-92c53300491e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');">
+                <div class="hero-slide-content">
+                    <h2>Premium Groceries</h2>
+                    <p>Hand-picked organic produce delivered fresh to your door in under 30 minutes.</p>
+                    <a href="shop.html?category=Groceries" class="btn-hero">Order Fresh</a>
+                </div>
+            </div>
+            <div class="slide" style="background-image: url('https://images.unsplash.com/photo-1445205170230-053b83016050?ixlib=rb-4.0.3&auto=format&fit=crop&w=1600&q=80');">
+                <div class="hero-slide-content">
+                    <h2>Summer Collection</h2>
+                    <p>Elevate your style with our exclusive designer apparel and luxury fashion pieces.</p>
+                    <a href="shop.html?category=Fashion" class="btn-hero">Shop Fashion</a>
+                </div>
+            </div>
+            
+            <!-- Navigation -->
+            <button class="carousel-btn prev" onclick="moveSlide(-1)"><i class="fa-solid fa-arrow-left"></i></button>
+            <button class="carousel-btn next" onclick="moveSlide(1)"><i class="fa-solid fa-arrow-right"></i></button>
         </div>
     </section>
 
     <main>
-
-
-        <!-- Dynamic Product Section with Header -->
+        <!-- Dynamic Premium Product Grid -->
         <section class="featured-products">
             <div class="main-container">
-                <div class="featured-products-inner">
-                    <div class="section-header">
-                        <div class="section-title-group">
-                            <h2>Best of Electronics & Groceries</h2>
-                            <span>Items you cannot miss!</span>
-                        </div>
-                        <a href="shop.html" class="view-all-btn">View All</a>
+                <div class="section-header">
+                    <div class="section-title-group">
+                        <h2>Trending Now</h2>
+                        <span>Curated items just for you</span>
                     </div>
+                    <a href="shop.html" class="view-all-btn">View All Collection</a>
+                </div>
 
-                    <!-- Product Slider with Navigation -->
-                    <div class="slider-wrapper" style="position:relative;">
-                        <button class="slider-btn prev-btn" id="home-prev-btn">&#10094;</button>
-                        <div class="product-slider" id="home-products-grid">
-                            <!-- Dynamic content loaded by js/home.js -->
-                        </div>
-                        <button class="slider-btn next-btn" id="home-next-btn">&#10095;</button>
+                <div class="slider-wrapper">
+                    <button class="slider-btn prev-btn" id="home-prev-btn"><i class="fa-solid fa-chevron-left"></i></button>
+                    <div class="product-slider" id="home-products-grid">
+                        <!-- Loaded dynamically by home.js. The styles for cards are already in style.css -->
                     </div>
+                    <button class="slider-btn next-btn" id="home-next-btn"><i class="fa-solid fa-chevron-right"></i></button>
                 </div>
             </div>
         </section>
-
     </main>
 
-    <!-- Learn More About Us Section -->
+    <!-- Immersive About Section -->
     <section class="about-teaser">
         <div class="main-container">
-            <h2>Who We Are</h2>
-            <p>
-                M.K. Store is your trusted partner for daily essentials, bringing quality products directly to your
-                doorstep. We believe in quality, affordability, and exceptional service.
-            </p>
+            <h2>Experience The Future of Commerce</h2>
+            <p>At M.K. Store, we blend premium quality with seamless technology. Enjoy lightning-fast delivery, curated collections, and a truly modern shopping experience.</p>
             <a href="about.html" class="btn-about">
-                Read More About Us
-                <i class="fas fa-arrow-right"></i>
+                Discover Our Story <i class="fa-solid fa-arrow-right-long"></i>
             </a>
         </div>
     </section>
@@ -186,12 +145,20 @@
     <div id="footer-placeholder"></div>
 
     <script src="js/footer.js"></script>
-
     <script src="js/script.js"></script>
     <script src="js/nav.js"></script>
     <script src="js/home.js"></script>
-    <script src="js/livehelp.js"></script>
 
+    <script>
+        // Check Auth State to swap Login with Profile in Nav
+        document.addEventListener('DOMContentLoaded', () => {
+            const token = localStorage.getItem('token');
+            const loginBtn = document.getElementById('nav-login-btn');
+            if (token && loginBtn) {
+                loginBtn.href = 'profile.html';
+                loginBtn.innerHTML = '<i class="fa-regular fa-circle-user"></i> Profile';
+            }
+        });
+    </script>
 </body>
-
 </html>

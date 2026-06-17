@@ -60,7 +60,7 @@ async function fetchFeaturedProducts() {
             }
 
             return `
-            <div class="product" onclick="window.location.href = 'product.html?id=${product._id}'" style="cursor:pointer; position:relative;">
+            <div class="product" onclick="window.location.href = 'product.html?id=${product._id}'">
                 <div class="product-image-wrapper">
                     ${badgeHtml}
                     <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
@@ -74,14 +74,14 @@ async function fetchFeaturedProducts() {
                     </div>
                 </div>
                 <div class="product-info">
-                    <div class="product-category" style="font-size:0.75rem; text-transform:uppercase; color:#64748b; font-weight:600; margin-bottom:0.4rem;">${product.category || 'General'}</div>
-                    <h3 class="product-title" style="font-size:1.1rem; font-weight:600; color:#0f172a; margin-bottom:0.5rem;">${product.name}</h3>
-                    <div class="rating-stars" style="color:#fbbf24; font-size:0.85rem; margin-bottom:0.75rem; display:flex; gap:4px;">
-                        ${starsHtml} <span class="rating-text" style="color:#64748b;">(${Math.floor(Math.random() * 200) + 50})</span>
+                    <div class="product-category">${product.category || 'General'}</div>
+                    <h3 class="product-title">${product.name}</h3>
+                    <div class="rating-stars">
+                        ${starsHtml} <span class="rating-text">(${Math.floor(Math.random() * 200) + 50})</span>
                     </div>
-                    <div class="price-row" style="display:flex; justify-content:space-between; items-align:center;">
-                        <div class="product-price" style="font-size:1.25rem; font-weight:700; color:#0f172a;">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
-                        <button class="add-btn" style="background:#4f46e5; color:white; border:none; padding:0.6rem 1rem; border-radius:8px; font-weight:600; cursor:pointer;" onclick="event.stopPropagation(); addToCartHome({_id: '${product._id}', name: '${product.name.replace(/'/g, "\\'")}', price: ${product.price}, image: '${product.image}'})">
+                    <div class="price-row">
+                        <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
+                        <button class="add-btn" onclick="event.stopPropagation(); addToCartHome({_id: '${product._id}', name: '${product.name.replace(/'/g, "\\'")}', price: ${product.price}, image: '${product.image}'})">
                              Add
                         </button>
                     </div>
