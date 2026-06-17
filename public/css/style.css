@@ -638,7 +638,7 @@ nav {
 /* ---------------- SLIDER LAYOUT ---------------- */
 .slider-wrapper {
     position: relative;
-    padding: 0 40px;
+    padding: 0;
 }
 
 .product-slider {
@@ -683,8 +683,8 @@ nav {
     transform: translateY(-50%) scale(1.1);
 }
 
-.prev-btn { left: 0px; }
-.next-btn { right: 0px; }
+.prev-btn { left: -25px; }
+.next-btn { right: -25px; }
 
 /* ---------------- ABOUT TEASER ---------------- */
 .about-teaser {

@@ -299,7 +299,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     <h2 class="category-title">
                         <i class="fa-solid ${iconClass}"></i>
                         ${catName}
-                        <span class="product-count">${catProducts.length} Items</span>
+                        <span class="product-count">${catProducts.length} Item${catProducts.length !== 1 ? 's' : ''}</span>
                     </h2>
                     <a href="shop.html?category=${encodeURIComponent(catName)}" class="view-all-link">View All</a>
                 </div>
@@ -331,18 +331,16 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!slider || !prevBtn || !nextBtn) return;
 
-            const scrollAmount = 300;
-
             prevBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                slider.scrollBy({ left: -scrollAmount, behavior: 'smooth' });
+                slider.scrollBy({ left: -slider.clientWidth, behavior: 'smooth' });
             });
 
             nextBtn.addEventListener('click', (e) => {
                 e.preventDefault();
                 e.stopPropagation();
-                slider.scrollBy({ left: scrollAmount, behavior: 'smooth' });
+                slider.scrollBy({ left: slider.clientWidth, behavior: 'smooth' });
             });
         });
     }
