@@ -57,7 +57,7 @@ document.addEventListener('DOMContentLoaded', async () => {
                     </div>
                     <div class="price-row">
                         <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
-                        <button class="btn" onclick="window.location.href='product.html?id=${product._id}'" style="padding:0.5rem 1rem; font-size:0.9rem;">
+                        <button class="add-btn" onclick="window.location.href='product.html?id=${product._id}'">
                             Shop Now
                         </button>
                     </div>
