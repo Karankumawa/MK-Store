@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
+    "build": "echo Frontend ready",
     "test": "node test_suite.js"
   },
   "repository": {
