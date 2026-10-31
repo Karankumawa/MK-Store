@@ -1,10 +1,28 @@
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     // Auth Check
     const token = localStorage.getItem('token');
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-
-    if (!token || user.role !== 'admin') {
+    if (!token) {
         window.location.href = 'login.html';
+        return;
+    }
+
+    let user = JSON.parse(localStorage.getItem('user') || '{}');
+
+    // Live check from database: if role is set to 'admin' in database, grant immediate access
+    try {
+        const res = await fetch('/api/auth/me', { headers: { 'x-auth-token': token } });
+        if (res.ok) {
+            const liveUser = await res.json();
+            user = { ...user, ...liveUser };
+            localStorage.setItem('user', JSON.stringify(user));
+        }
+    } catch (e) {
+        console.warn('Admin check fallback:', e);
+    }
+
+    if (user.role !== 'admin') {
+        alert('Access denied: You do not have administrator permissions.');
+        window.location.href = 'profile.html';
         return;
     }
 

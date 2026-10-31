@@ -4,6 +4,7 @@ const supabase = require('../config/supabase');
 const jwt = require('jsonwebtoken');
 const fs = require('fs');
 const path = require('path');
+const { verifyAdmin } = require('../middleware/adminAuth');
 
 // Helper to load rich metadata (description, specs) from catalog store
 function getCatalogMetaMap() {
@@ -22,22 +23,8 @@ function getCatalogMetaMap() {
     return {};
 }
 
-// Middleware to verify admin token
-const adminAuth = (req, res, next) => {
-    const token = req.header('x-auth-token');
-    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.user.role !== 'admin') {
-            return res.status(403).json({ msg: 'Access denied: Requires Admin role' });
-        }
-        req.user = decoded.user;
-        next();
-    } catch (err) {
-        return res.status(401).json({ msg: 'Token is not valid' });
-    }
-};
+// Middleware to verify admin token with live database role check
+const adminAuth = verifyAdmin;
 
 // Get All Products
 router.get('/', async (req, res) => {

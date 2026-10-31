@@ -4,24 +4,7 @@ const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
 const supabase = require('../config/supabase');
 const admin = require('../config/firebase'); // Import Firebase Admin
-
-// Middleware to verify token and admin role
-const verifyAdmin = async (req, res, next) => {
-    const token = req.header('x-auth-token');
-    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
-
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.user = decoded.user;
-
-        if (req.user.role !== 'admin') {
-            return res.status(403).json({ msg: 'Access denied: Admins only' });
-        }
-        next();
-    } catch (err) {
-        res.status(401).json({ msg: 'Token is not valid' });
-    }
-};
+const { verifyAdmin, syncUserToFirebase } = require('../middleware/adminAuth');
 
 // Get All Users (Admin Only)
 router.get('/users', verifyAdmin, async (req, res) => {
@@ -54,6 +37,11 @@ router.put('/users/:id', verifyAdmin, async (req, res) => {
             .single();
 
         if (error) return res.status(404).json({ msg: 'User not found' });
+
+        // Synchronize updated user role to Firebase Auth
+        if (user && user.email) {
+            syncUserToFirebase(user.email, null, user.username, user.role);
+        }
 
         res.json({ msg: 'User updated', user });
     } catch (err) {
@@ -111,6 +99,9 @@ router.post('/register', async (req, res) => {
         const { data: user, error } = await supabase.from('users').insert(newUser).select('id, username, email, role').single();
         if (error) throw error;
 
+        // Synchronize new account to Firebase Auth
+        syncUserToFirebase(user.email, password, user.username, user.role);
+
         const payload = { user: { id: user.id, role: user.role } };
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
@@ -162,6 +153,9 @@ router.post('/login', async (req, res) => {
         if (!isMatch) return res.status(400).json({ msg: 'Invalid Credentials' });
 
         const payload = { user: { id: user.id, role: role } };
+        // Sync to Firebase Auth if user or admin
+        syncUserToFirebase(user.email, null, user.username, role);
+
         jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
             res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: role } });
@@ -205,6 +199,11 @@ router.get('/me', async (req, res) => {
         user.profilePicture = user.profile_picture || null;
         user.googleId = user.google_id || null;
         user.createdAt = user.created_at;
+
+        // If user is admin in database, ensure Firebase custom claim is set
+        if (user.role === 'admin' && user.email) {
+            syncUserToFirebase(user.email, null, user.username, 'admin');
+        }
         
         res.json(user);
     } catch (err) {

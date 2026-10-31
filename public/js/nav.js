@@ -321,7 +321,6 @@ function updateNavigation() {
 
         const userInitial = (user.username || 'U').charAt(0).toUpperCase();
         const roleBadge = user.role === 'admin' ? '<span class="nav-role-badge">Admin</span>' : '';
-        const shortUid = user.id ? user.id.slice(0, 8) : 'usr';
 
         userLi.innerHTML = `
             <div class="user-dropdown-wrapper">
@@ -334,14 +333,13 @@ function updateNavigation() {
                 <div class="user-dropdown-menu" id="user-dropdown-menu">
                     <div class="user-dropdown-header">
                         <strong>${user.username}</strong>
-                        <small title="Unique Dataspace ID">UID: ${shortUid}...</small>
                         <span class="user-email-text">${user.email || ''}</span>
                     </div>
                     <div class="user-dropdown-divider"></div>
-                    <a href="/profile.html" class="dropdown-link"><i class="fa-solid fa-user-gear"></i> My Profile & Settings</a>
-                    <a href="/profile.html#orders" class="dropdown-link"><i class="fa-solid fa-box-open"></i> My Orders</a>
-                    <a href="/cart.html" class="dropdown-link"><i class="fa-solid fa-cart-shopping"></i> My Cart</a>
-                    ${user.role === 'admin' ? '<a href="/admin.html" class="dropdown-link admin-link"><i class="fa-solid fa-shield-halved"></i> Admin Dashboard</a>' : ''}
+                    <a href="profile.html" class="dropdown-link"><i class="fa-solid fa-user-gear"></i> My Profile & Details</a>
+                    <a href="orders.html" class="dropdown-link"><i class="fa-solid fa-box-open"></i> My Orders</a>
+                    <a href="cart.html" class="dropdown-link"><i class="fa-solid fa-cart-shopping"></i> My Cart</a>
+                    ${user.role === 'admin' ? '<a href="admin.html" class="dropdown-link admin-link"><i class="fa-solid fa-shield-halved"></i> Admin Dashboard</a>' : ''}
                     <div class="user-dropdown-divider"></div>
                     <button class="dropdown-link logout-link" onclick="UserAuth.logout()">
                         <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
@@ -391,42 +389,138 @@ function updateCartCount() {
     }
 }
 
-// Mobile Hamburger Menu Setup
+// Mobile Hamburger Menu Setup (Robust & Instant on Mobile/Tablet)
 function setupMobileMenu() {
     const menuToggle = document.querySelector('.menu-toggle');
     const navLinks = document.querySelector('.nav-links');
 
     if (menuToggle && navLinks) {
         menuToggle.onclick = function (e) {
+            e.preventDefault();
             e.stopPropagation();
-            navLinks.classList.toggle('active');
-            menuToggle.classList.toggle('active');
+            const isOpen = navLinks.classList.toggle('active');
+            menuToggle.classList.toggle('active', isOpen);
+            document.body.classList.toggle('nav-active', isOpen);
         };
 
+        // Close menu on navigation link click
+        navLinks.addEventListener('click', function (e) {
+            if (e.target.tagName === 'A' || e.target.closest('a')) {
+                navLinks.classList.remove('active');
+                menuToggle.classList.remove('active');
+                document.body.classList.remove('nav-active');
+            }
+        });
+
+        // Close menu when tapping anywhere outside
         document.addEventListener('click', function (e) {
             if (!navLinks.contains(e.target) && !menuToggle.contains(e.target)) {
                 navLinks.classList.remove('active');
                 menuToggle.classList.remove('active');
+                document.body.classList.remove('nav-active');
             }
         });
     }
 }
 
-// Global Search Bar Handler
+// Global Search Bar Handler with Live Instant Suggestions
+let _catalogCache = null;
+async function getCatalogCached() {
+    if (_catalogCache && _catalogCache.length) return _catalogCache;
+    try {
+        const res = await fetch('/api/products');
+        if (res.ok) {
+            _catalogCache = await res.json();
+            return _catalogCache;
+        }
+    } catch (e) {
+        console.debug('Catalog cache fetch err:', e);
+    }
+    return [];
+}
+
 function setupGlobalSearch() {
     const searchInputs = document.querySelectorAll('#search-input');
     const searchButtons = document.querySelectorAll('#search-button');
 
     function performSearch(query) {
         if (!query || !query.trim()) return;
-        window.location.href = `/search.html?q=${encodeURIComponent(query.trim())}`;
+        window.location.href = `search.html?q=${encodeURIComponent(query.trim())}`;
     }
 
     searchInputs.forEach(input => {
-        input.addEventListener('keypress', (e) => {
+        const wrapper = input.closest('.search-bar') || input.parentElement;
+        
+        // Create suggestion dropdown container if not present
+        let suggestBox = wrapper.querySelector('.search-suggestions-dropdown');
+        if (!suggestBox) {
+            suggestBox = document.createElement('div');
+            suggestBox.className = 'search-suggestions-dropdown';
+            wrapper.appendChild(suggestBox);
+        }
+
+        let debounceTimer = null;
+        input.addEventListener('input', () => {
+            clearTimeout(debounceTimer);
+            const query = input.value.trim().toLowerCase();
+            if (query.length < 2) {
+                suggestBox.classList.remove('active');
+                suggestBox.innerHTML = '';
+                return;
+            }
+
+            debounceTimer = setTimeout(async () => {
+                const products = await getCatalogCached();
+                const matches = products.filter(p => {
+                    const name = (p.name || '').toLowerCase();
+                    const cat = (p.category || '').toLowerCase();
+                    const desc = (p.description || '').toLowerCase();
+                    return name.includes(query) || cat.includes(query) || desc.includes(query);
+                }).slice(0, 5);
+
+                if (matches.length === 0) {
+                    suggestBox.innerHTML = `
+                        <div class="suggest-empty">No quick matches for "<b>${query}</b>"</div>
+                        <div class="suggest-footer" onclick="window.location.href='search.html?q=${encodeURIComponent(query)}'">
+                            <span>Search all products for "${query}"</span> <i class="fa fa-arrow-right"></i>
+                        </div>
+                    `;
+                } else {
+                    suggestBox.innerHTML = `
+                        <div class="suggest-header">Top Results</div>
+                        ${matches.map(p => `
+                            <a href="product.html?id=${p._id || p.id}" class="suggest-item">
+                                <img src="${p.image || 'assets/placeholder.png'}" alt="${p.name}" onerror="this.src='assets/placeholder.png'">
+                                <div class="suggest-info">
+                                    <div class="suggest-title">${p.name}</div>
+                                    <div class="suggest-meta">
+                                        <span class="suggest-cat">${p.category}</span>
+                                        <span class="suggest-price">$${Number(p.price || 0).toFixed(2)}</span>
+                                    </div>
+                                </div>
+                            </a>
+                        `).join('')}
+                        <div class="suggest-footer" onclick="window.location.href='search.html?q=${encodeURIComponent(query)}'">
+                            <span>View all results for "<b>${query}</b>"</span> <i class="fa fa-arrow-right"></i>
+                        </div>
+                    `;
+                }
+                suggestBox.classList.add('active');
+            }, 180);
+        });
+
+        input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
                 e.preventDefault();
+                suggestBox.classList.remove('active');
                 performSearch(input.value);
+            }
+        });
+
+        // Hide on outside click
+        document.addEventListener('click', (e) => {
+            if (!wrapper.contains(e.target)) {
+                suggestBox.classList.remove('active');
             }
         });
     });

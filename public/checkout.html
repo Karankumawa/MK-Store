@@ -233,9 +233,9 @@
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
             
-            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+            <button class="menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
                 <i class="fa fa-bars"></i>
-            </div>
+            </button>
             
             <ul class="nav-links">
                 <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
@@ -387,7 +387,7 @@
                 <small style="color:#64748b; display:block;">Your Unique Order Tracking ID:</small>
                 <code id="success-order-id" style="font-size:1rem; font-weight:700; color:#4f46e5;"></code>
             </div>
-            <button class="checkout-action-btn" onclick="window.location.href='profile.html#orders'" style="margin-top:0;">
+            <button class="checkout-action-btn" onclick="window.location.href='orders.html'" style="margin-top:0;">
                 <i class="fa-solid fa-box-open"></i> Track Order in Profile
             </button>
         </div>

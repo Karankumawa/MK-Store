@@ -43,9 +43,9 @@
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
             
-            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+            <button class="menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
                 <i class="fa fa-bars"></i>
-            </div>
+            </button>
             
             <ul class="nav-links">
                 <li><a href="index.html" class="active"><i class="fa-solid fa-house"></i> Home</a></li>
@@ -81,13 +81,83 @@
                     <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/ab7e2b022a4587dd.jpg" alt="Home"></div>
                     <span>Home & Living</span>
                 </a>
+                <a href="shop.html?category=Appliances" class="category-item">
+                    <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/0ff199d1bd27eb98.png" alt="Appliances"></div>
+                    <span>Appliances</span>
+                </a>
                 <a href="shop.html?category=Toys" class="category-item">
                     <div class="cat-icon"><img src="https://rukminim1.flixcart.com/flap/128/128/image/dff3f7adcf3a90c6.png" alt="Toys"></div>
-                    <span>Toys & Beauty</span>
+                    <span>Toys & Games</span>
                 </a>
             </div>
         </div>
     </div>
+
+    <!-- Attraction & High-Conversion Flash Deal Ribbon -->
+    <section class="flash-sale-ribbon">
+        <div class="main-container">
+            <div class="flash-ribbon-card">
+                <div class="flash-left">
+                    <span class="flash-fire-pill"><i class="fa-solid fa-bolt"></i> LIMITED TIME OFFER</span>
+                    <h3>Mega Festive Flash Sale is Live!</h3>
+                    <p>Save up to <b>50% OFF</b> across Mobiles, Electronics, Home & Organic Groceries.</p>
+                </div>
+                <div class="flash-timer-box">
+                    <span class="timer-label"><i class="fa-regular fa-clock"></i> Deals expire in:</span>
+                    <div class="timer-digits">
+                        <div class="time-part"><span id="flash-h">04</span><small>Hours</small></div>
+                        <span class="timer-colon">:</span>
+                        <div class="time-part"><span id="flash-m">38</span><small>Mins</small></div>
+                        <span class="timer-colon">:</span>
+                        <div class="time-part"><span id="flash-s">42</span><small>Secs</small></div>
+                    </div>
+                </div>
+                <div class="flash-coupon">
+                    <span class="coupon-tag">EXTRA 20% DISCOUNT</span>
+                    <div class="coupon-code-pill" onclick="if(window.showToast){navigator.clipboard.writeText('MKFIRST20'); showToast('Coupon <b>MKFIRST20</b> copied!', 'success');}">
+                        <code>MKFIRST20</code>
+                        <i class="fa-regular fa-copy" title="Copy code"></i>
+                    </div>
+                    <small>Tap coupon to copy</small>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Trending Deals Spotlight Cards -->
+    <section class="deal-spotlight-section">
+        <div class="main-container">
+            <div class="spotlight-grid">
+                <div class="spotlight-card card-mobiles" onclick="window.location.href='shop.html?category=Mobiles'">
+                    <span class="spotlight-badge">FLAGSHIP TECH</span>
+                    <h3>Smartphones & Audio</h3>
+                    <p>iPhone 15 Pro, S24 Ultra & Studio-Grade ANC Headphones.</p>
+                    <div class="spotlight-footer">
+                        <span class="spotlight-discount">Save Up to $200</span>
+                        <span class="spotlight-cta">Shop Mobiles <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="spotlight-card card-grocery" onclick="window.location.href='shop.html?category=Groceries'">
+                    <span class="spotlight-badge badge-green">100% PURE & FRESH</span>
+                    <h3>Organic Farm Pantry</h3>
+                    <p>Raw Wildflower Honey, Arabica Beans & Aged Basmati Rice.</p>
+                    <div class="spotlight-footer">
+                        <span class="spotlight-discount">Special 30% OFF</span>
+                        <span class="spotlight-cta">Shop Pantry <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+                <div class="spotlight-card card-fashion" onclick="window.location.href='shop.html?category=Fashion'">
+                    <span class="spotlight-badge badge-purple">LUXURY COLLECTION</span>
+                    <h3>Designer Fashion & Home</h3>
+                    <p>Genuine Leather Jackets, Cashmere Knits & High-Speed Blenders.</p>
+                    <div class="spotlight-footer">
+                        <span class="spotlight-discount">Starting at $39.99</span>
+                        <span class="spotlight-cta">Explore Style <i class="fa-solid fa-arrow-right"></i></span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
 
     <!-- Immersive Hero Carousel -->
     <section class="hero-carousel-section">

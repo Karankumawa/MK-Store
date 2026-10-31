@@ -1,19 +1,44 @@
+// ==========================================
+// M.K. STORE — Advanced Multi-Field Search Engine
+// ==========================================
+
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
-    const searchQuery = urlParams.get('search');
+    const rawQuery = urlParams.get('q') || urlParams.get('search') || '';
+    const cleanQuery = rawQuery.trim();
+
     const termDisplay = document.getElementById('search-term-display');
     const countDisplay = document.getElementById('result-count');
     const grid = document.getElementById('search-results-grid');
 
-    if (!searchQuery || !searchQuery.trim()) {
+    // Sync input in navbar
+    const headerSearchInputs = document.querySelectorAll('#search-input');
+    headerSearchInputs.forEach(inp => {
+        if (cleanQuery) inp.value = cleanQuery;
+    });
+
+    if (!cleanQuery) {
         if (termDisplay) termDisplay.textContent = '""';
         if (countDisplay) countDisplay.textContent = 'Please enter a search term above.';
-        if (grid) grid.innerHTML = '<div class="no-results"><i class="fa fa-search"></i><h2>No search term entered</h2><p>Use the search bar above to look for products.</p><a href="shop.html" class="btn" style="margin-top:1rem;display:inline-block;">Browse Shop</a></div>';
+        if (grid) {
+            grid.innerHTML = `
+                <div class="no-results-panel">
+                    <i class="fa fa-search"></i>
+                    <h2>Ready to explore?</h2>
+                    <p>Enter any keyword in the search bar above (e.g., "iphone", "coffee", "sneakers", "organic", "chair").</p>
+                    <a href="shop.html" class="mk-btn-primary" style="display:inline-flex; align-items:center; gap:8px;">
+                        <i class="fa fa-compass"></i> Browse Full Catalog
+                    </a>
+                </div>
+            `;
+        }
         return;
     }
 
-    const cleanQuery = searchQuery.trim();
     if (termDisplay) termDisplay.textContent = `"${cleanQuery}"`;
+    if (grid) {
+        grid.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:3rem;"><i class="fa fa-spinner fa-spin fa-2x" style="color:var(--brand-primary);"></i><p style="margin-top:10px; color:#64748b;">Searching catalog...</p></div>';
+    }
 
     try {
         const res = await fetch('/api/products');
@@ -22,27 +47,47 @@ document.addEventListener('DOMContentLoaded', async () => {
         const products = await res.json();
         window.searchResults = products;
 
-        const filtered = products.filter(p =>
-            (p.name && p.name.toLowerCase().includes(cleanQuery.toLowerCase())) ||
-            (p.category && p.category.toLowerCase().includes(cleanQuery.toLowerCase()))
-        );
+        const qLower = cleanQuery.toLowerCase();
+        const searchTokens = qLower.split(/\s+/).filter(Boolean);
 
-        if (countDisplay) countDisplay.textContent = `Found ${filtered.length} product${filtered.length === 1 ? '' : 's'}`;
+        const filtered = products.filter(p => {
+            const name = (p.name || '').toLowerCase();
+            const category = (p.category || '').toLowerCase();
+            const desc = (p.description || '').toLowerCase();
+            const detailsStr = p.details ? JSON.stringify(p.details).toLowerCase() : '';
+
+            const fullText = `${name} ${category} ${desc} ${detailsStr}`;
+
+            // Matches if whole query is included or every search token matches
+            if (fullText.includes(qLower)) return true;
+            return searchTokens.every(tok => fullText.includes(tok));
+        });
+
+        if (countDisplay) {
+            countDisplay.textContent = `Found ${filtered.length} product${filtered.length === 1 ? '' : 's'}`;
+        }
 
         if (filtered.length === 0) {
             grid.innerHTML = `
-                <div class="no-results">
-                    <i class="fa fa-search"></i>
-                    <h2>No products found for "${cleanQuery}"</h2>
-                    <p>Try checking your spelling or use different keywords like "groceries", "mobiles", "shoes".</p>
-                    <a href="shop.html" class="btn" style="margin-top:1rem; display:inline-block;">Browse Shop</a>
+                <div class="no-results-panel">
+                    <i class="fa fa-magnifying-glass"></i>
+                    <h2>No matching products found for "${cleanQuery}"</h2>
+                    <p>We couldn't find any products matching your query. Try checking your spelling or search by general categories like "Groceries", "Mobiles", "Fashion", "Electronics", or "Appliances".</p>
+                    <div style="display:flex; gap:12px; justify-content:center; flex-wrap:wrap; margin-top:1.5rem;">
+                        <a href="shop.html" class="mk-btn-primary">
+                            <i class="fa fa-compass"></i> Browse All Products
+                        </a>
+                        <a href="index.html" class="mk-btn-secondary">
+                            <i class="fa fa-house"></i> Return Home
+                        </a>
+                    </div>
                 </div>
             `;
             return;
         }
 
         grid.innerHTML = filtered.map(product => {
-            const rating = product.rating || 4.5;
+            const rating = Number(product.rating || 4.5);
             let starsHtml = '';
             for (let i = 1; i <= 5; i++) {
                 if (i <= rating) starsHtml += '<i class="fa fa-star"></i>';
@@ -50,12 +95,16 @@ document.addEventListener('DOMContentLoaded', async () => {
                 else starsHtml += '<i class="fa-regular fa-star"></i>';
             }
 
+            const imageSrc = product.image || 'assets/placeholder.png';
+            const priceFormatted = Number(product.price || 0).toFixed(2);
+            const itemId = product._id || product.id;
+
             return `
-            <div class="product" onclick="window.location.href='product.html?id=${product._id}'">
+            <div class="product" onclick="window.location.href='product.html?id=${itemId}'">
                 <div class="product-image-wrapper">
-                    <img src="${product.image || 'assets/placeholder.png'}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
+                    <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
                     <div class="product-actions">
-                         <button class="action-btn" title="View details" onclick="event.stopPropagation(); window.location.href='product.html?id=${product._id}'">
+                        <button class="action-btn" title="View details" onclick="event.stopPropagation(); window.location.href='product.html?id=${itemId}'">
                             <i class="fa-regular fa-eye"></i>
                         </button>
                     </div>
@@ -64,12 +113,12 @@ document.addEventListener('DOMContentLoaded', async () => {
                     <div class="product-category">${product.category || 'General'}</div>
                     <h3 class="product-title">${product.name}</h3>
                     <div class="rating-stars">
-                        ${starsHtml} <span class="rating-text">(${rating})</span>
+                        ${starsHtml} <span class="rating-text">(${rating.toFixed(1)})</span>
                     </div>
                     <div class="price-row">
-                        <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
-                        <button class="add-btn" id="search-add-${product._id}" onclick="event.stopPropagation(); addToCartSearch('${product._id}')">
-                            Add to Cart
+                        <div class="product-price">$${priceFormatted}</div>
+                        <button class="add-btn" id="search-add-${itemId}" onclick="event.stopPropagation(); addToCartSearch('${itemId}')">
+                            <i class="fa fa-cart-plus"></i> Add
                         </button>
                     </div>
                 </div>
@@ -78,8 +127,10 @@ document.addEventListener('DOMContentLoaded', async () => {
         }).join('');
 
     } catch (err) {
-        console.error(err);
-        if (grid) grid.innerHTML = '<p class="error-text" style="color:red; text-align:center;">Error loading search results. Please try again.</p>';
+        console.error('Search error:', err);
+        if (grid) {
+            grid.innerHTML = '<p class="error-text" style="color:#ef4444; text-align:center; padding:2rem;">Error executing search. Please refresh or try again.</p>';
+        }
     }
 });
 
@@ -102,15 +153,12 @@ function addToCartSearch(productId) {
         btn.innerHTML = '<i class="fa fa-check"></i> Added';
         btn.style.background = '#16a34a';
         btn.style.borderColor = '#16a34a';
+        btn.style.color = '#ffffff';
         setTimeout(() => {
             btn.innerHTML = originalText;
             btn.style.background = '';
             btn.style.borderColor = '';
-        }, 1200);
-    }
-}
-            btn.style.background = '';
-            btn.style.borderColor = '';
+            btn.style.color = '';
         }, 1200);
     }
 }

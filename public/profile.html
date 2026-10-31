@@ -298,9 +298,9 @@
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
             
-            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
+            <button class="menu-toggle" id="mobile-menu-toggle" aria-label="Toggle Navigation Menu">
                 <i class="fa fa-bars"></i>
-            </div>
+            </button>
             
             <ul class="nav-links">
                 <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
@@ -361,13 +361,16 @@
                     </div>
                     
                     <nav class="sidebar-nav-stack dashboard-nav">
-                        <button class="profile-nav-link nav-item active" onclick="switchTab('profile')">
+                        <a href="profile.html" class="profile-nav-link active">
                             <i class="fa-solid fa-user"></i> My Details
-                        </button>
-                        <button class="profile-nav-link nav-item" onclick="switchTab('orders')">
+                        </a>
+                        <a href="orders.html" class="profile-nav-link">
                             <i class="fa-solid fa-box-open"></i> My Orders
-                        </button>
-                        <button class="profile-nav-link nav-item logout-btn logout" id="logout-btn">
+                        </a>
+                        <a href="cart.html" class="profile-nav-link">
+                            <i class="fa-solid fa-cart-shopping"></i> My Cart
+                        </a>
+                        <button class="profile-nav-link logout-btn logout" id="logout-btn" onclick="if(window.UserAuth) UserAuth.logout(); else { localStorage.clear(); window.location.href='index.html'; }">
                             <i class="fa-solid fa-arrow-right-from-bracket"></i> Sign Out
                         </button>
                     </nav>
@@ -375,73 +378,71 @@
 
                 <!-- Main Section Content -->
                 <div class="profile-main-area dashboard-main">
-                    <!-- Tab: Personal Profile -->
-                    <div id="tab-profile" class="tab-content active">
-                        <!-- Account Details Card -->
-                        <div class="profile-section-card">
-                            <div class="section-card-title">
-                                <i class="fa-solid fa-id-card" style="color:#4f46e5;"></i> Personal Information
-                            </div>
-                            <div class="details-metric-grid">
-                                <div class="metric-item">
-                                    <label>Display Name</label>
-                                    <span id="info-name">--</span>
-                                </div>
-                                <div class="metric-item">
-                                    <label>Email Address</label>
-                                    <span id="info-email">--</span>
-                                </div>
-                                <div class="metric-item">
-                                    <label>Member Since</label>
-                                    <span id="info-member-since">Active Member</span>
-                                </div>
-                                <div class="metric-item">
-                                    <label>Dataspace UID</label>
-                                    <span id="info-uid" class="uid-badge" style="font-family:monospace; font-size:0.85rem;">--</span>
-                                </div>
-                            </div>
+                    <!-- Personal Profile Card -->
+                    <div class="profile-section-card">
+                        <div class="section-card-title">
+                            <i class="fa-solid fa-id-card" style="color:#4f46e5;"></i> Personal Information
                         </div>
-
-                        <!-- Saved Shipping Details Card -->
-                        <div class="profile-section-card">
-                            <div class="section-card-title">
-                                <i class="fa-solid fa-location-dot" style="color:#4f46e5;"></i> Default Delivery Address
+                        <div class="details-metric-grid">
+                            <div class="metric-item">
+                                <label>Display Name</label>
+                                <span id="info-name">--</span>
                             </div>
-                            <form id="shipping-form" class="shipping-inputs-grid">
-                                <div class="profile-field input-col-full">
-                                    <label for="address">Street Address / House No.</label>
-                                    <input type="text" id="address" placeholder="123 High Street, Landmark">
-                                </div>
-                                <div class="profile-field">
-                                    <label for="city">City</label>
-                                    <input type="text" id="city" placeholder="Rajsamand">
-                                </div>
-                                <div class="profile-field">
-                                    <label for="zip">PIN / Postal Code</label>
-                                    <input type="text" id="zip" placeholder="313324">
-                                </div>
-                                <div class="profile-field input-col-full">
-                                    <label for="phone">Phone Number (SMS Notifications)</label>
-                                    <input type="tel" id="phone" placeholder="+91 9876543210">
-                                </div>
-                                <div class="input-col-full">
-                                    <button type="submit" class="save-shipping-btn">
-                                        <i class="fa-solid fa-floppy-disk"></i> Save Address Changes
-                                    </button>
-                                </div>
-                            </form>
+                            <div class="metric-item">
+                                <label>Email Address</label>
+                                <span id="info-email">--</span>
+                            </div>
+                            <div class="metric-item">
+                                <label>Member Since</label>
+                                <span id="info-member-since">Active Member</span>
+                            </div>
+                            <div class="metric-item">
+                                <label>Account Status</label>
+                                <span id="info-status" style="color:#16a34a; font-weight:700;"><i class="fa-solid fa-circle-check"></i> Verified Member</span>
+                            </div>
                         </div>
                     </div>
 
-                    <!-- Tab: Orders List -->
-                    <div id="tab-orders" class="tab-content" style="display:none;">
-                        <div class="profile-section-card">
-                            <div class="section-card-title">
-                                <i class="fa-solid fa-box-open" style="color:#4f46e5;"></i> Order History & Tracking
+                    <!-- Saved Shipping Details Card -->
+                    <div class="profile-section-card">
+                        <div class="section-card-title">
+                            <i class="fa-solid fa-location-dot" style="color:#4f46e5;"></i> Default Delivery Address
+                        </div>
+                        <form id="shipping-form" class="shipping-inputs-grid">
+                            <div class="profile-field input-col-full">
+                                <label for="address">Street Address / House No.</label>
+                                <input type="text" id="address" placeholder="123 High Street, Landmark">
                             </div>
-                            <div id="recent-orders-list">
-                                <!-- Dynamically loaded from /api/orders/myorders by profile.js -->
+                            <div class="profile-field">
+                                <label for="city">City</label>
+                                <input type="text" id="city" placeholder="Rajsamand">
                             </div>
+                            <div class="profile-field">
+                                <label for="zip">PIN / Postal Code</label>
+                                <input type="text" id="zip" placeholder="313324">
+                            </div>
+                            <div class="profile-field input-col-full">
+                                <label for="phone">Phone Number (SMS Notifications)</label>
+                                <input type="tel" id="phone" placeholder="+91 9876543210">
+                            </div>
+                            <div class="input-col-full">
+                                <button type="submit" class="save-shipping-btn">
+                                    <i class="fa-solid fa-floppy-disk"></i> Save Address Changes
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Quick Orders Teaser Link -->
+                    <div class="profile-section-card" style="background: linear-gradient(135deg, #f8fafc 0%, #eef2ff 100%); border-color: #c7d2fe;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                            <div>
+                                <h3 style="font-size:1.15rem; color:#0f172a; margin-bottom:4px; font-weight:700;"><i class="fa-solid fa-box-open" style="color:#4f46e5;"></i> Track Your Purchases</h3>
+                                <p style="color:#64748b; font-size:0.9rem; margin:0;">View detailed status, invoices, and tracking for all past orders.</p>
+                            </div>
+                            <a href="orders.html" class="mk-btn-primary" style="padding:10px 20px; font-size:0.9rem;">
+                                Go to My Orders <i class="fa-solid fa-arrow-right"></i>
+                            </a>
                         </div>
                     </div>
                 </div>

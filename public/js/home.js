@@ -1,7 +1,27 @@
 document.addEventListener('DOMContentLoaded', () => {
     fetchFeaturedProducts();
     initSliderControls();
+    initFlashTimer();
 });
+
+// Live Flash Sale Countdown Timer
+function initFlashTimer() {
+    let secondsLeft = 4 * 3600 + 38 * 60 + 42;
+    const hEl = document.getElementById('flash-h');
+    const mEl = document.getElementById('flash-m');
+    const sEl = document.getElementById('flash-s');
+    if (!hEl || !mEl || !sEl) return;
+
+    setInterval(() => {
+        if (secondsLeft > 0) secondsLeft--;
+        const h = Math.floor(secondsLeft / 3600);
+        const m = Math.floor((secondsLeft % 3600) / 60);
+        const s = secondsLeft % 60;
+        hEl.textContent = String(h).padStart(2, '0');
+        mEl.textContent = String(m).padStart(2, '0');
+        sEl.textContent = String(s).padStart(2, '0');
+    }, 1000);
+}
 
 let slideIndex = 0;
 

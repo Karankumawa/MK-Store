@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const supabase = require('../config/supabase');
 const jwt = require('jsonwebtoken');
+const { verifyAdmin } = require('../middleware/adminAuth');
 
 // Middleware to verify token strictly (Login is REQUIRED to place orders or manage personal orders)
 const authStrict = (req, res, next) => {
@@ -130,16 +131,8 @@ router.put('/:id/cancel', async (req, res) => {
 });
 
 // Get All Orders (Admin only)
-router.get('/', async (req, res) => {
-    const token = req.header('x-auth-token');
-    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
-
+router.get('/', verifyAdmin, async (req, res) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.user.role !== 'admin') {
-            return res.status(403).json({ msg: 'Access denied' });
-        }
-
         const { data: orders, error } = await supabase.from('orders').select('*').order('date', { ascending: false });
         if (error) throw error;
 
@@ -160,16 +153,8 @@ router.get('/', async (req, res) => {
 });
 
 // Update Order Status (Admin only)
-router.put('/:id/status', async (req, res) => {
-    const token = req.header('x-auth-token');
-    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
-
+router.put('/:id/status', verifyAdmin, async (req, res) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.user.role !== 'admin') {
-            return res.status(403).json({ msg: 'Access denied: Requires Admin role' });
-        }
-
         const { status } = req.body;
         const validStatuses = ['Processing', 'Shipped', 'Delivered', 'Cancelled'];
         if (!status || !validStatuses.includes(status)) {
@@ -193,27 +178,13 @@ router.put('/:id/status', async (req, res) => {
         res.json(updatedOrder);
     } catch (err) {
         console.error('Error in PUT /api/orders/:id/status:', err);
-        if (err.name === 'TokenExpiredError') {
-            return res.status(401).json({ msg: 'Session expired, please login again' });
-        }
-        if (err.name === 'JsonWebTokenError') {
-            return res.status(401).json({ msg: 'Invalid token, please login again' });
-        }
         res.status(500).json({ msg: 'Server Error', error: err.message });
     }
 });
 
 // Delete Order (Admin only)
-router.delete('/:id', async (req, res) => {
-    const token = req.header('x-auth-token');
-    if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
-
+router.delete('/:id', verifyAdmin, async (req, res) => {
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        if (decoded.user.role !== 'admin') {
-            return res.status(403).json({ msg: 'Access denied' });
-        }
-
         const { error: deleteError } = await supabase.from('orders').delete().eq('id', req.params.id);
         if (deleteError) return res.status(404).json({ msg: 'Order not found' });
 
