@@ -2,6 +2,25 @@ const express = require('express');
 const router = express.Router();
 const supabase = require('../config/supabase');
 const jwt = require('jsonwebtoken');
+const fs = require('fs');
+const path = require('path');
+
+// Helper to load rich metadata (description, specs) from catalog store
+function getCatalogMetaMap() {
+    try {
+        const storePath = path.join(__dirname, '..', 'data', 'store.json');
+        if (fs.existsSync(storePath)) {
+            const db = JSON.parse(fs.readFileSync(storePath, 'utf8'));
+            const map = {};
+            (db.products || []).forEach(p => {
+                if (p.name) map[p.name.toLowerCase().trim()] = p;
+                if (p.id) map[p.id] = p;
+            });
+            return map;
+        }
+    } catch(e) {}
+    return {};
+}
 
 // Middleware to verify admin token
 const adminAuth = (req, res, next) => {
@@ -26,8 +45,24 @@ router.get('/', async (req, res) => {
         const { data: products, error } = await supabase.from('products').select('*').order('name', { ascending: true });
         if (error) throw error;
 
-        // Map id to _id for frontend compatibility
-        const mappedProducts = products.map(p => ({ ...p, _id: p.id }));
+        const metaMap = getCatalogMetaMap();
+
+        // Map id to _id and attach description & details for frontend compatibility
+        const mappedProducts = (products || []).map(p => {
+            const meta = metaMap[p.id] || metaMap[(p.name || '').toLowerCase().trim()] || {};
+            return {
+                ...p,
+                _id: p.id,
+                description: p.description || meta.description || `Experience premium quality with this verified ${p.category || 'store'} item. Carefully selected and 100% authentic.`,
+                details: p.details || meta.details || {
+                    "Category": p.category || "General",
+                    "Quality Assurance": "Verified Authentic",
+                    "Condition": "Brand New Factory Sealed",
+                    "Delivery": "Express 24-Hour Dispatch",
+                    "Customer Support": "24/7 Assistance"
+                }
+            };
+        });
         res.json(mappedProducts);
     } catch (err) {
         console.error(err.message);
@@ -42,7 +77,22 @@ router.get('/:id', async (req, res) => {
         if (error || !product) {
             return res.status(404).json({ msg: 'Product not found' });
         }
+        const metaMap = getCatalogMetaMap();
+        const meta = metaMap[product.id] || metaMap[(product.name || '').toLowerCase().trim()] || {};
+
         product._id = product.id;
+        if (!product.description) {
+            product.description = meta.description || `Experience premium quality with this verified ${product.category || 'store'} item. Carefully selected and 100% authentic.`;
+        }
+        if (!product.details) {
+            product.details = meta.details || {
+                "Category": product.category || "General",
+                "Quality Assurance": "Verified Authentic",
+                "Condition": "Brand New Factory Sealed",
+                "Delivery": "Express 24-Hour Dispatch",
+                "Customer Support": "24/7 Assistance"
+            };
+        }
         res.json(product);
     } catch (err) {
         console.error(err.message);

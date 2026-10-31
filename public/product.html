@@ -242,6 +242,36 @@
                     document.getElementById('img-original-price').textContent = '$' + (Number(product.price) * 1.25).toFixed(2);
                     document.getElementById('product-rating').textContent = product.rating || 4.5;
 
+                    const descShort = document.getElementById('product-desc-short');
+                    if (descShort && product.description) {
+                        descShort.textContent = product.description;
+                    }
+
+                    const tabDesc = document.getElementById('tab-desc');
+                    if (tabDesc && product.description) {
+                        let highlightsHtml = '';
+                        if (product.details && typeof product.details === 'object') {
+                            highlightsHtml = '<ul style="padding-left:1.5rem; margin-top:0.75rem; line-height:1.7;">' +
+                                Object.entries(product.details).map(([k, v]) => `<li><strong>${k}:</strong> ${v}</li>`).join('') +
+                                '</ul>';
+                        }
+                        tabDesc.innerHTML = `<p>${product.description}</p><br><p><strong>Product Highlights & Specifications:</strong></p>${highlightsHtml}`;
+                    }
+
+                    const tabSpec = document.getElementById('tab-spec');
+                    if (tabSpec && product.details && typeof product.details === 'object') {
+                        tabSpec.innerHTML = `
+                            <table style="width:100%; border-collapse: collapse;">
+                                ${Object.entries(product.details).map(([k, v]) => `
+                                    <tr>
+                                        <td style="padding:12px; border-bottom:1px solid #f1f5f9; font-weight:600; color:#334155; width:35%;">${k}</td>
+                                        <td style="padding:12px; border-bottom:1px solid #f1f5f9; color:#0f172a;">${v}</td>
+                                    </tr>
+                                `).join('')}
+                            </table>
+                        `;
+                    }
+
                     const mainImg = document.getElementById('main-product-img');
                     mainImg.src = product.image || 'assets/placeholder.png';
                     mainImg.onerror = () => { mainImg.src = 'assets/placeholder.png'; };

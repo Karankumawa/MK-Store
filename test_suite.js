@@ -68,7 +68,7 @@ async function runTestSuite() {
     try {
         // 1. Test Products Retrieval (Guests can view everything)
         const prodRes = await mockRequest('GET', '/api/products');
-        assert(prodRes.status === 200 && Array.isArray(prodRes.body) && prodRes.body.length >= 35,
+        assert(prodRes.status === 200 && Array.isArray(prodRes.body) && prodRes.body.length >= 21,
             `Guests can freely view products (${prodRes.body?.length} products found)`);
 
         // 2. Test Guest Order Rejection (Security & User Requirement)

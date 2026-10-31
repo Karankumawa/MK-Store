@@ -1,77 +1,130 @@
-<footer data-animate="fade-up">
-    <!-- Trust Badges Strip -->
-    <div class="footer-perks-strip">
-        <div class="footer-perk"><i class="fa-solid fa-truck-fast"></i> <span>Free Delivery Over $50</span></div>
-        <div class="footer-perk"><i class="fa-solid fa-shield-halved"></i> <span>100% Secure Checkout</span></div>
-        <div class="footer-perk"><i class="fa-solid fa-rotate-left"></i> <span>Easy 7-Day Returns</span></div>
-        <div class="footer-perk"><i class="fa-solid fa-award"></i> <span>Certified Genuine Quality</span></div>
-    </div>
-
-    <div class="footer-content">
-        <div class="footer-section brand-col">
-            <div class="footer-logo">
-                <img src="/assets/Logo.png" alt="M.K. Store Logo">
-                <h2>M.K. Store</h2>
+<footer class="mk-modern-footer">
+    <!-- Top Perks & Trust Strip -->
+    <div class="footer-perks-wrapper">
+        <div class="footer-perks-container">
+            <div class="footer-perk-card">
+                <div class="perk-icon-circle"><i class="fa-solid fa-truck-fast"></i></div>
+                <div class="perk-info">
+                    <strong>Express Doorstep Delivery</strong>
+                    <span>Free shipping on all orders over $50</span>
+                </div>
             </div>
-            <p>Your premier destination for daily essentials, organic groceries, smartphones, fashion, and home supplies with lightning-fast delivery.</p>
-            <div class="socials">
-                <a href="javascript:void(0)" aria-label="Instagram"><i class="fa-brands fa-instagram"></i></a>
-                <a href="javascript:void(0)" aria-label="Facebook"><i class="fa-brands fa-facebook"></i></a>
-                <a href="javascript:void(0)" aria-label="Twitter"><i class="fa-brands fa-x-twitter"></i></a>
-                <a href="javascript:void(0)" aria-label="WhatsApp"><i class="fa-brands fa-whatsapp"></i></a>
+            <div class="footer-perk-card">
+                <div class="perk-icon-circle"><i class="fa-solid fa-shield-halved"></i></div>
+                <div class="perk-info">
+                    <strong>Bank-Grade Security</strong>
+                    <span>256-bit encrypted checkout & private UID</span>
+                </div>
             </div>
-        </div>
-        <div class="footer-section">
-            <h3>Shop Categories</h3>
-            <ul>
-                <li><a href="/shop.html?category=Groceries">Fresh Grocery</a></li>
-                <li><a href="/shop.html?category=Mobiles">Smartphones</a></li>
-                <li><a href="/shop.html?category=Electronics">Electronics</a></li>
-                <li><a href="/shop.html?category=Fashion">Designer Fashion</a></li>
-                <li><a href="/shop.html?category=Home">Home & Living</a></li>
-                <li><a href="/shop.html?category=Toys">Toys & Beauty</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="/index.html">Home Page</a></li>
-                <li><a href="/shop.html">Discover Catalog</a></li>
-                <li><a href="/cart.html">My Shopping Cart</a></li>
-                <li><a href="/about.html">About M.K. Store</a></li>
-                <li><a href="/contact.html">Customer Care & Support</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h3>Contact & Support</h3>
-            <div class="footer-contact-item">
-                <i class="fa-solid fa-location-dot"></i>
-                <span>M K Store, Rajsamand, Rajasthan, India</span>
+            <div class="footer-perk-card">
+                <div class="perk-icon-circle"><i class="fa-solid fa-rotate-left"></i></div>
+                <div class="perk-info">
+                    <strong>Hassle-Free 7-Day Returns</strong>
+                    <span>100% money back on quality issues</span>
+                </div>
             </div>
-            <div class="footer-contact-item">
-                <i class="fa-solid fa-phone"></i>
-                <span>+91 7878005320</span>
-            </div>
-            <div class="footer-contact-item">
-                <i class="fa-solid fa-envelope"></i>
-                <span>mkstore5100@gmail.com</span>
-            </div>
-            <div class="footer-newsletter">
-                <p style="font-size:0.85rem; margin-top:1rem; margin-bottom:0.5rem; color:#94a3b8;">Subscribe for exclusive member deals:</p>
-                <div class="newsletter-box">
-                    <input type="email" placeholder="Your email address" id="footer-newsletter-input">
-                    <button type="button" onclick="window.showToast ? window.showToast('Subscribed to VIP deals!', 'success') : alert('Subscribed!')"><i class="fa-solid fa-paper-plane"></i></button>
+            <div class="footer-perk-card">
+                <div class="perk-icon-circle"><i class="fa-solid fa-award"></i></div>
+                <div class="perk-info">
+                    <strong>100% Certified Authentic</strong>
+                    <span>Direct from authorized producers</span>
                 </div>
             </div>
         </div>
     </div>
-    <div class="footer-bottom">
-        <p>&copy; 2026 M.K. Store. All rights reserved. Crafted with care by Karan Kumawat.</p>
-        <div class="payment-methods">
-            <span><i class="fa-brands fa-cc-visa"></i> Visa</span>
-            <span><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
-            <span><i class="fa-solid fa-money-bill-wave"></i> Cash on Delivery</span>
-            <span><i class="fa-solid fa-shield-halved"></i> SSL Encrypted</span>
+
+    <!-- Main Footer Content -->
+    <div class="footer-main-container">
+        <div class="footer-grid-layout">
+            <!-- Col 1: Brand & Bio -->
+            <div class="footer-col brand-col">
+                <a href="/index.html" class="footer-brand-logo">
+                    <img src="/assets/Logo.png" alt="M.K. Store Logo">
+                    <span>M.K. Store</span>
+                </a>
+                <p class="brand-tagline">
+                    Experience the future of commerce. Curating verified organic groceries, smartphones, apparel, and electronics with isolated customer dataspaces and instant dispatch.
+                </p>
+                <div class="footer-social-strip">
+                    <a href="https://instagram.com" target="_blank" aria-label="Instagram" class="social-icon-btn"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="https://facebook.com" target="_blank" aria-label="Facebook" class="social-icon-btn"><i class="fa-brands fa-facebook-f"></i></a>
+                    <a href="https://twitter.com" target="_blank" aria-label="Twitter" class="social-icon-btn"><i class="fa-brands fa-x-twitter"></i></a>
+                    <a href="https://wa.me/917878005320" target="_blank" aria-label="WhatsApp" class="social-icon-btn"><i class="fa-brands fa-whatsapp"></i></a>
+                </div>
+            </div>
+
+            <!-- Col 2: Shop Collections -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Collections</h4>
+                <ul class="footer-links-list">
+                    <li><a href="/shop.html?category=Groceries"><i class="fa-solid fa-chevron-right"></i> Fresh Groceries</a></li>
+                    <li><a href="/shop.html?category=Mobiles"><i class="fa-solid fa-chevron-right"></i> Flagship Smartphones</a></li>
+                    <li><a href="/shop.html?category=Fashion"><i class="fa-solid fa-chevron-right"></i> Designer Fashion</a></li>
+                    <li><a href="/shop.html?category=Electronics"><i class="fa-solid fa-chevron-right"></i> Audio & Electronics</a></li>
+                    <li><a href="/shop.html?category=Home"><i class="fa-solid fa-chevron-right"></i> Home & Living</a></li>
+                    <li><a href="/shop.html?category=Appliances"><i class="fa-solid fa-chevron-right"></i> Smart Appliances</a></li>
+                    <li><a href="/shop.html?category=Toys"><i class="fa-solid fa-chevron-right"></i> Toys & Learning</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 3: Customer Care & Quick Links -->
+            <div class="footer-col">
+                <h4 class="footer-heading">Customer Care</h4>
+                <ul class="footer-links-list">
+                    <li><a href="/shop.html"><i class="fa-solid fa-chevron-right"></i> Browse Full Catalog</a></li>
+                    <li><a href="/cart.html"><i class="fa-solid fa-chevron-right"></i> My Shopping Cart</a></li>
+                    <li><a href="/profile.html#orders"><i class="fa-solid fa-chevron-right"></i> Track My Orders</a></li>
+                    <li><a href="/about.html"><i class="fa-solid fa-chevron-right"></i> About Our Story</a></li>
+                    <li><a href="/contact.html"><i class="fa-solid fa-chevron-right"></i> 24/7 Help Concierge</a></li>
+                    <li><a href="/profile.html"><i class="fa-solid fa-chevron-right"></i> Account & Privacy</a></li>
+                </ul>
+            </div>
+
+            <!-- Col 4: Contact & VIP Newsletter -->
+            <div class="footer-col newsletter-col">
+                <h4 class="footer-heading">Direct Contact</h4>
+                <div class="footer-contact-stack">
+                    <div class="contact-pill-item">
+                        <i class="fa-solid fa-location-dot"></i>
+                        <span>M K Store, Rajsamand, Rajasthan, India</span>
+                    </div>
+                    <div class="contact-pill-item">
+                        <i class="fa-solid fa-phone"></i>
+                        <a href="tel:+917878005320">+91 78780 05320</a>
+                    </div>
+                    <div class="contact-pill-item">
+                        <i class="fa-solid fa-envelope"></i>
+                        <a href="mailto:mkstore5100@gmail.com">mkstore5100@gmail.com</a>
+                    </div>
+                </div>
+
+                <div class="newsletter-subscription-box">
+                    <h5>Join VIP Newsletter</h5>
+                    <p>Get exclusive drops and member-only secret discount codes.</p>
+                    <form class="newsletter-form" onsubmit="event.preventDefault(); if(window.showToast) window.showToast('Subscribed to M.K. Store VIP Deals!', 'success'); else alert('Subscribed!'); this.reset();">
+                        <input type="email" placeholder="Enter your email" required class="newsletter-input">
+                        <button type="submit" class="newsletter-submit-btn" aria-label="Subscribe">
+                            <i class="fa-solid fa-paper-plane"></i>
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Legal Bar -->
+    <div class="footer-legal-bar">
+        <div class="legal-inner-container">
+            <p class="copyright-text">
+                &copy; 2026 <strong>M.K. Store</strong>. All rights reserved. Crafted with care by Karan Kumawat.
+            </p>
+            <div class="trust-payment-badges">
+                <span class="trust-badge"><i class="fa-brands fa-cc-visa"></i> Visa</span>
+                <span class="trust-badge"><i class="fa-brands fa-cc-mastercard"></i> Mastercard</span>
+                <span class="trust-badge"><i class="fa-solid fa-mobile-screen"></i> UPI</span>
+                <span class="trust-badge"><i class="fa-solid fa-hand-holding-dollar"></i> COD</span>
+                <span class="trust-badge secure-badge"><i class="fa-solid fa-shield-halved"></i> 256-Bit SSL</span>
+            </div>
         </div>
     </div>
 </footer>
