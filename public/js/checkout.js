@@ -1,51 +1,85 @@
+// ==========================================
+// M.K. STORE — Checkout Logic (Protected, User-Scoped)
+// ==========================================
+
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Check Auth
+    // 1. Strict Auth Check
     const token = localStorage.getItem('token');
-    if (!token) {
-        alert('Please log in to checkout.');
-        window.location.href = 'login.html';
+    const user = JSON.parse(localStorage.getItem('user') || 'null');
+
+    if (!token || !user) {
+        if (window.showToast) {
+            window.showToast('Please sign in to access checkout.', 'warning');
+        } else {
+            alert('Please sign in to access checkout.');
+        }
+        window.location.href = 'login.html?redirect=checkout.html';
         return;
     }
 
-    // 2. Load User Info for Pre-fill
-    const user = JSON.parse(localStorage.getItem('user')) || {};
+    // 2. Pre-fill from User Profile Data
     if (user.username) document.getElementById('chk-name').value = user.username;
     if (user.address) document.getElementById('chk-address').value = user.address;
     if (user.city) document.getElementById('chk-city').value = user.city;
     if (user.zip) document.getElementById('chk-zip').value = user.zip;
     if (user.phone) document.getElementById('chk-phone').value = user.phone;
 
-    // 3. Load Cart
+    // 3. Load user's isolated cart
     loadCheckoutCart();
 
-    // 4. Handle Place Order
-    document.getElementById('place-order-btn').addEventListener('click', handlePlaceOrder);
+    // 4. Place order event listener
+    const placeOrderBtn = document.getElementById('place-order-btn');
+    if (placeOrderBtn) {
+        placeOrderBtn.addEventListener('click', handlePlaceOrder);
+    }
 });
 
-function loadCheckoutCart() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const container = document.getElementById('checkout-items');
-    const totalEl = document.getElementById('checkout-total');
-    let total = 0;
+function getCheckoutCart() {
+    if (window.UserCart) {
+        return window.UserCart.getCart();
+    }
+    const user = JSON.parse(localStorage.getItem('user') || '{}');
+    const key = user.id ? `mkstore_cart_${user.id}` : 'cart';
+    return JSON.parse(localStorage.getItem(key)) || [];
+}
 
-    if (cart.length === 0) {
-        alert('Your cart is empty.');
+function loadCheckoutCart() {
+    const cart = getCheckoutCart();
+    const container = document.getElementById('checkout-items');
+    const subtotalEl = document.getElementById('checkout-subtotal');
+    const shippingEl = document.getElementById('checkout-shipping');
+    const totalEl = document.getElementById('checkout-total');
+    let subtotal = 0;
+
+    if (!cart || cart.length === 0) {
+        alert('Your cart is empty. Please add items before checking out.');
         window.location.href = 'shop.html';
         return;
     }
 
-    container.innerHTML = cart.map(item => {
-        const itemTotal = item.price * item.quantity;
-        total += itemTotal;
-        return `
-            <div class="order-summary-item">
-                <span>${item.quantity}x ${item.name}</span>
-                <span>$${itemTotal.toFixed(2)}</span>
-            </div>
-        `;
-    }).join('');
+    if (container) {
+        container.innerHTML = cart.map(item => {
+            const itemTotal = ((parseFloat(item.price) || 0) * (item.quantity || 1));
+            subtotal += itemTotal;
+            return `
+                <div class="order-summary-item" style="align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid #f1f5f9;">
+                    <img src="${item.image || 'assets/placeholder.png'}" alt="${item.name}" style="width:48px;height:48px;object-fit:cover;border-radius:8px;border:1px solid #e2e8f0;" onerror="this.src='assets/placeholder.png'">
+                    <div style="flex-grow:1;">
+                        <div style="font-weight:600; color:#0f172a; font-size:0.95rem;">${item.name}</div>
+                        <small style="color:#64748b;">Qty: ${item.quantity || 1} &times; $${(parseFloat(item.price) || 0).toFixed(2)}</small>
+                    </div>
+                    <span style="font-weight:700; color:#0f172a;">$${itemTotal.toFixed(2)}</span>
+                </div>
+            `;
+        }).join('');
+    }
 
-    totalEl.textContent = `$${total.toFixed(2)}`;
+    const shipping = subtotal > 50 ? 0 : 5;
+    const total = subtotal + shipping;
+
+    if (subtotalEl) subtotalEl.textContent = `$${subtotal.toFixed(2)}`;
+    if (shippingEl) shippingEl.textContent = shipping === 0 ? 'FREE' : `$${shipping.toFixed(2)}`;
+    if (totalEl) totalEl.textContent = `$${total.toFixed(2)}`;
 }
 
 function handlePlaceOrder() {
@@ -53,67 +87,94 @@ function handlePlaceOrder() {
     const requiredIds = ['chk-name', 'chk-address', 'chk-city', 'chk-zip', 'chk-phone'];
     let isValid = true;
 
-    // Basic Validation
+    // Validation
     requiredIds.forEach(id => {
         const input = document.getElementById(id);
-        if (!input.value.trim()) {
-            input.style.borderColor = 'red';
+        if (!input || !input.value.trim()) {
+            if (input) input.style.borderColor = '#ef4444';
             isValid = false;
         } else {
-            input.style.borderColor = 'var(--border)';
+            if (input) input.style.borderColor = '#cbd5e1';
         }
     });
 
     if (!isValid) {
-        alert('Please fill in all shipping details.');
+        if (window.showToast) {
+            window.showToast('Please fill in all required shipping details.', 'error');
+        } else {
+            alert('Please fill in all shipping details.');
+        }
         return;
     }
 
-    // Processing
-    btn.innerHTML = '<i class="fa fa-spinner fa-spin"></i> Processing...';
+    const cart = getCheckoutCart();
+    if (!cart || cart.length === 0) {
+        alert('Your cart is empty.');
+        window.location.href = 'shop.html';
+        return;
+    }
+
+    const subtotal = cart.reduce((sum, item) => sum + ((parseFloat(item.price) || 0) * (item.quantity || 1)), 0);
+    const shipping = subtotal > 50 ? 0 : 5;
+    const total = parseFloat((subtotal + shipping).toFixed(2));
+
+    btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Securing Order...';
     btn.disabled = true;
 
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const total = cart.reduce((sum, item) => sum + (item.price * item.quantity), 0);
-
     const shippingDetails = {
-        name: document.getElementById('chk-name').value,
-        address: document.getElementById('chk-address').value,
-        city: document.getElementById('chk-city').value,
-        zip: document.getElementById('chk-zip').value,
-        phone: document.getElementById('chk-phone').value
+        name: document.getElementById('chk-name').value.trim(),
+        address: document.getElementById('chk-address').value.trim(),
+        city: document.getElementById('chk-city').value.trim(),
+        zip: document.getElementById('chk-zip').value.trim(),
+        phone: document.getElementById('chk-phone').value.trim()
     };
 
     const token = localStorage.getItem('token');
-    const headers = { 'Content-Type': 'application/json' };
-    if (token) headers['x-auth-token'] = token;
 
     fetch('/api/orders', {
         method: 'POST',
-        headers: headers,
+        headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+        },
         body: JSON.stringify({ items: cart, totalAmount: total, shippingDetails })
     })
-        .then(res => res.json())
-        .then(data => {
-            if (data._id) {
-                // Success
-                localStorage.removeItem('cart');
-
-                // Show Success Modal
-                const user = JSON.parse(localStorage.getItem('user')) || {};
-                document.getElementById('success-email').textContent = user.email || 'your email';
-                document.getElementById('success-order-id').textContent = data._id;
-                document.getElementById('success-modal').style.display = 'flex';
-            } else {
-                alert('Order failed: ' + (data.msg || 'Unknown error'));
-                btn.disabled = false;
-                btn.textContent = 'Place Order';
+        .then(async res => {
+            const data = await res.json();
+            if (!res.ok) {
+                throw new Error(data.msg || 'Order creation failed');
             }
+            return data;
+        })
+        .then(data => {
+            // Success
+            if (window.UserCart) {
+                window.UserCart.clearCart();
+            } else {
+                const user = JSON.parse(localStorage.getItem('user') || '{}');
+                if (user.id) localStorage.removeItem(`mkstore_cart_${user.id}`);
+            }
+
+            if (window.updateCartCount) window.updateCartCount();
+
+            // Show Success Modal
+            const user = JSON.parse(localStorage.getItem('user')) || {};
+            const emailEl = document.getElementById('success-email');
+            const orderIdEl = document.getElementById('success-order-id');
+            const modalEl = document.getElementById('success-modal');
+
+            if (emailEl) emailEl.textContent = user.email || shippingDetails.name || 'your email';
+            if (orderIdEl) orderIdEl.textContent = data._id || data.id;
+            if (modalEl) modalEl.style.display = 'flex';
         })
         .catch(err => {
-            console.error(err);
-            alert('Error placing order');
+            console.error('Order error:', err);
+            if (window.showToast) {
+                window.showToast(`Order failed: ${err.message}`, 'error');
+            } else {
+                alert(`Order failed: ${err.message}`);
+            }
             btn.disabled = false;
-            btn.textContent = 'Place Order';
+            btn.innerHTML = 'Pay & Place Order';
         });
 }

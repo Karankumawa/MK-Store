@@ -87,18 +87,48 @@ function showLoginPrompt() {
 }
 
 function renderProfile(user) {
-    document.getElementById('loading-profile').style.display = 'none';
-    document.getElementById('profile-content').style.display = 'grid'; // Use grid for dashboard
+    const loadingEl = document.getElementById('loading-profile');
+    const contentEl = document.getElementById('profile-content');
+    if (loadingEl) loadingEl.style.display = 'none';
+    if (contentEl) contentEl.style.display = 'grid';
 
     // Sidebar Updates
     const sidebarName = document.getElementById('user-name-sidebar');
     if (sidebarName) sidebarName.textContent = user.username || 'User';
 
+    const roleBadge = document.getElementById('user-role-badge');
+    if (roleBadge) {
+        if (user.role === 'admin') {
+            roleBadge.textContent = 'Admin';
+            roleBadge.style.background = '#fef3c7';
+            roleBadge.style.color = '#92400e';
+            roleBadge.style.fontWeight = '700';
+
+            // Add Admin Panel link in sidebar if not already present
+            if (!document.getElementById('sidebar-admin-link')) {
+                const adminBtn = document.createElement('a');
+                adminBtn.id = 'sidebar-admin-link';
+                adminBtn.href = 'admin.html';
+                adminBtn.className = 'nav-item';
+                adminBtn.style.color = '#d97706';
+                adminBtn.style.fontWeight = '700';
+                adminBtn.innerHTML = '<i class="fa fa-shield-halved"></i> Admin Panel';
+                const dashNav = document.querySelector('.dashboard-nav');
+                const logoutBtn = document.getElementById('logout-btn');
+                if (dashNav && logoutBtn) {
+                    dashNav.insertBefore(adminBtn, logoutBtn);
+                }
+            }
+        } else {
+            roleBadge.textContent = 'Customer';
+        }
+    }
+
     // Avatar
     const avatarSmall = document.getElementById('user-avatar-small');
     if (avatarSmall) {
         if (user.profilePicture) {
-            avatarSmall.innerHTML = `<img src="${user.profilePicture}" alt="Avatar">`;
+            avatarSmall.innerHTML = `<img src="${user.profilePicture}" alt="Avatar" onerror="this.src='assets/placeholder.png'">`;
             avatarSmall.style.backgroundColor = 'transparent';
         } else {
             const initial = (user.username || 'U')[0].toUpperCase();
@@ -110,9 +140,20 @@ function renderProfile(user) {
     // Main Content Updates
     const infoName = document.getElementById('info-name');
     if (infoName) infoName.textContent = user.username || 'Valued Customer';
+    const infoUid = document.getElementById('info-uid');
+    if (infoUid) infoUid.textContent = user.id || user._id || 'Assigned UID';
 
     const infoEmail = document.getElementById('info-email');
     if (infoEmail) infoEmail.textContent = user.email || 'No email provided';
+
+    const memberSinceEl = document.getElementById('info-member-since');
+    if (memberSinceEl) {
+        if (user.createdAt) {
+            memberSinceEl.textContent = new Date(user.createdAt).toLocaleDateString('en-US', { month: 'short', year: 'numeric' });
+        } else {
+            memberSinceEl.textContent = 'Active Member';
+        }
+    }
 
     // Pre-fill Forms
     if (user.address) document.getElementById('address').value = user.address;
@@ -174,14 +215,14 @@ async function renderOrders() {
                                 <div style="font-size:0.9rem;">${item.name}</div>
                                 <small style="color:var(--text-muted);">x${item.quantity}</small>
                             </div>
-                            <div style="font-weight:600;">₹${item.price}</div>
+                            <div style="font-weight:600;">${Number(item.price).toFixed(2)}</div>
                         </div>
                     `).join('')}
                 </div>
 
                 <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 5px;">
                     <div style="font-size: 1.1rem; font-weight: 700; color: var(--brand);">
-                        Total: ₹${order.totalAmount}
+                        Total: ${Number(order.totalAmount).toFixed(2)}
                     </div>
                     ${order.status === 'Processing' ? `
                         <button onclick="cancelOrder('${order._id}')" style="background: #ef4444; color: white; border: none; padding: 6px 14px; border-radius: 6px; cursor: pointer; font-size: 0.9em; font-weight: 600; transition: 0.2s;">
@@ -281,3 +322,10 @@ if (logoutBtn) {
         window.location.href = 'login.html';
     });
 }
+
+// Switch tab if #orders in url
+document.addEventListener('DOMContentLoaded', () => {
+    if (window.location.hash === '#orders' && typeof switchTab === 'function') {
+        setTimeout(() => switchTab('orders'), 100);
+    }
+});

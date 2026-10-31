@@ -484,75 +484,79 @@ document.addEventListener('DOMContentLoaded', function () {
                 const productId = this.getAttribute('data-product-id');
                 const product = products.find(p => p._id === productId);
                 if (product) {
-                    addToCart(product);
-                    showNotification(`${product.name} added to cart!`);
+                    addToCart(product, this);
                 }
             });
         });
     }
 
-    // Add to cart functionality
-    function addToCart(product) {
-        let cart = JSON.parse(localStorage.getItem('cart')) || [];
-        // Use _id for uniqueness since we have it now
-        const existingItem = cart.find(item => item._id === product._id);
-
-        if (existingItem) {
-            existingItem.quantity += 1;
+    // Add to cart functionality (Strictly authenticated; guests prompted to login)
+    function addToCart(product, btn) {
+        if (window.UserCart) {
+            const added = window.UserCart.addItem(product, 1);
+            if (!added) return; // Auth modal opened
         } else {
-            cart.push({
-                _id: product._id,
-                name: product.name,
-                price: product.price,
-                image: product.image,
-                quantity: 1
-            });
+            alert("Please log in to add items to cart.");
+            window.location.href = "login.html";
+            return;
         }
 
-        localStorage.setItem('cart', JSON.stringify(cart));
-        updateCartCount();
-
-        // Redirect to Cart Page as requested
-        window.location.href = 'cart.html';
+        if (btn) {
+            const originalText = btn.innerHTML;
+            btn.innerHTML = "<i class=\"fa fa-check\"></i> Added";
+            btn.style.background = "#16a34a";
+            btn.style.borderColor = "#16a34a";
+            setTimeout(() => {
+                btn.innerHTML = originalText;
+                btn.style.background = "";
+                btn.style.borderColor = "";
+            }, 1200);
+        }
     }
 
     // Update cart count
     function updateCartCount() {
+        if (window.updateCartCount) {
+            window.updateCartCount();
+            return;
+        }
         const cartCount = document.querySelector('.cart-count');
         if (cartCount) {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
             const totalItems = cart.reduce((total, item) => total + item.quantity, 0);
-            cartCount.textContent = totalItems > 0 ? `(${totalItems})` : '';
-            // Make sure it's visible if items exist
-            if (totalItems > 0) cartCount.style.display = 'inline';
+            cartCount.textContent = totalItems > 0 ? totalItems : '';
+            cartCount.style.display = totalItems > 0 ? 'inline-flex' : 'none';
         }
     }
 
     // Show notification
-    function showNotification(message) {
+    function showNotification(messageHtml) {
         const existing = document.querySelector('.notification');
         if (existing) existing.remove();
 
         const notification = document.createElement('div');
         notification.className = 'notification';
-        notification.textContent = message;
+        notification.innerHTML = messageHtml;
         document.body.appendChild(notification);
 
         // Inline styles for reliability
         Object.assign(notification.style, {
             position: 'fixed',
-            bottom: '20px',
-            right: '20px',
-            background: '#28a745',
+            bottom: '24px',
+            right: '24px',
+            background: '#1e293b',
             color: 'white',
-            padding: '12px 24px',
-            borderRadius: '8px',
+            padding: '12px 20px',
+            borderRadius: '12px',
             zIndex: '9999',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.15)',
-            fontSize: '1rem',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
+            fontSize: '0.95rem',
             opacity: '0',
             transform: 'translateY(20px)',
-            transition: 'all 0.3s ease'
+            transition: 'all 0.3s ease',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '8px'
         });
 
         // Trigger animation
@@ -567,7 +571,7 @@ document.addEventListener('DOMContentLoaded', function () {
             setTimeout(() => {
                 if (notification.parentNode) notification.parentNode.removeChild(notification);
             }, 300);
-        }, 3000);
+        }, 3500);
     }
 
     // Initialize the shop when the DOM is loaded

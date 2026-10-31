@@ -134,21 +134,7 @@
             </div>
         </section>
 
-        <!-- Live Chat/Help Widget -->
-        <div id="live-chat">
-            <button id="chat-toggle" aria-label="Open chat"><i class="fa fa-comments"></i></button>
-            <div id="chat-box">
-                <div class="chat-header">Live Help</div>
-                <div class="chat-messages" id="chat-messages">
-                    <div class="chat-bot-msg">Hi! How can we help you today? Please leave your message and our team will
-                        respond as soon as possible.</div>
-                </div>
-                <div class="chat-input-area">
-                    <input type="text" id="chat-input" placeholder="Type your message...">
-                    <button id="chat-send">Send</button>
-                </div>
-            </div>
-        </div>
+
 
         <section class="map-section">
             <div class="container" style="display:flex;flex-direction:column;align-items:center;">
@@ -177,7 +163,7 @@
             var subject = document.getElementById('subject').value.trim();
             var message = document.getElementById('message').value.trim();
             if (name && email && subject && message) {
-                document.getElementById('form-success').style.display = 'block';
+                var s = document.getElementById('form-success'); s.style.display = 'block'; s.innerHTML = '<i class="fa fa-check-circle"></i> Thank you, <b>' + name + '</b>! Your message has been received. We will respond soon.';
                 this.reset();
             }
         });
@@ -197,46 +183,9 @@
         });
         document.querySelectorAll('.faq-answer').forEach(function (a) { a.style.display = 'none'; });
 
-        // Live chat widget with simple bot
-        var chatToggle = document.getElementById('chat-toggle');
-        var chatBox = document.getElementById('chat-box');
-        var chatMessages = document.getElementById('chat-messages');
-        var chatInput = document.getElementById('chat-input');
-        var chatSend = document.getElementById('chat-send');
-        chatToggle.addEventListener('click', function () {
-            chatBox.style.display = chatBox.style.display === 'block' ? 'none' : 'block';
-            if (chatBox.style.display === 'block') chatInput.focus();
-        });
-        chatSend.addEventListener('click', sendChatMessage);
-        chatInput.addEventListener('keydown', function (e) { if (e.key === 'Enter') sendChatMessage(); });
-        function sendChatMessage() {
-            var msg = chatInput.value.trim();
-            if (msg) {
-                var userMsg = document.createElement('div');
-                userMsg.className = 'chat-user-msg';
-                userMsg.textContent = msg;
-                chatMessages.appendChild(userMsg);
-                chatInput.value = '';
-                setTimeout(function () {
-                    var botMsg = document.createElement('div');
-                    botMsg.className = 'chat-bot-msg';
-                    botMsg.textContent = getBotReply(msg);
-                    chatMessages.appendChild(botMsg);
-                    chatMessages.scrollTop = chatMessages.scrollHeight;
-                }, 800);
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-        }
-        function getBotReply(msg) {
-            msg = msg.toLowerCase();
-            if (msg.includes('order')) return 'You can track your order from your account dashboard or contact support.';
-            if (msg.includes('payment')) return 'We accept cards, UPI, net banking, and cash on delivery.';
-            if (msg.includes('return')) return 'To return a product, contact us within 7 days of delivery.';
-            if (msg.includes('address')) return 'You can update your address before shipping by contacting support.';
-            if (msg.includes('hello') || msg.includes('hi')) return 'Hello! How can I assist you today?';
-            return 'Thank you for your message! Our team will respond soon.';
-        }
+
     </script>
+    <script src="js/livehelp.js"></script>
 </body>
 
 </html>
