@@ -2,13 +2,12 @@ const { createClient } = require('@supabase/supabase-js');
 const dns = require('dns');
 const { localDbClient } = require('./localDb');
 
-// Read configured Supabase URL and Key
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL || 'https://lxijcsihpfryixariljg.supabase.co';
-const supabaseKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
+// Read configured Supabase URL and Key (Supports standard SUPABASE_URL / SUPABASE_SECRET_KEY)
+const supabaseUrl = process.env.SUPABASE_URL || process.env.NEXT_PUBLIC_SUPABASE_URL;
+const supabaseKey = process.env.SUPABASE_SECRET_KEY || process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-// Check if credentials are placeholders or if DNS fails
-const isDefaultPlaceholder = !process.env.NEXT_PUBLIC_SUPABASE_URL && 
-    (!supabaseKey || supabaseKey.startsWith('sb_secret_') || supabaseUrl.includes('lxijcsihpfryixariljg'));
+// Check if credentials are empty or legacy placeholder
+const isDefaultPlaceholder = !supabaseUrl || !supabaseKey || supabaseUrl.includes('lxijcsihpfryixariljg');
 
 let useLocal = isDefaultPlaceholder;
 let realClient = null;
@@ -20,7 +19,7 @@ if (!useLocal && supabaseUrl && supabaseKey) {
         const urlObj = new URL(supabaseUrl);
         dns.lookup(urlObj.hostname, (err) => {
             if (err) {
-                console.warn(`[DB] Supabase hostname ${urlObj.hostname} not reachable (${err.code}). Using local database.`);
+                console.warn(`[DB] Supabase hostname ${urlObj.hostname} not reachable (${err.code}). Using local database fallback.`);
                 useLocal = true;
             } else {
                 console.log(`[DB] Supabase hostname ${urlObj.hostname} resolved successfully.`);
