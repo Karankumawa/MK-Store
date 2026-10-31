@@ -2,232 +2,372 @@
 <html lang="en">
 
 <head>
-    <title>Checkout - M.K. Store</title>
+    <title>Secure Checkout — M.K. Store</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/cart.css">
+    
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/cart.css?v=3">
     <style>
-        .checkout-container {
-            max-width: 1200px;
-            margin: 2rem auto;
-            padding: 0 2rem;
-            display: grid;
-            grid-template-columns: 2fr 1fr;
-            gap: 2rem;
+        .checkout-page-container {
+            max-width: 1320px;
+            margin: 2.5rem auto 5rem;
+            padding: 0 1.5rem;
         }
 
-        .checkout-section {
-            background: white;
+        .checkout-grid-layout {
+            display: grid;
+            grid-template-columns: 1.35fr 1fr;
+            gap: 2.5rem;
+            align-items: start;
+        }
+
+        .checkout-box {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
             padding: 2rem;
-            border-radius: 12px;
-            border: 1px solid var(--border);
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
             margin-bottom: 2rem;
         }
 
-        .checkout-section h2 {
+        .box-heading {
+            display: flex;
+            align-items: center;
+            gap: 12px;
             margin-bottom: 1.5rem;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid #f1f5f9;
             padding-bottom: 1rem;
         }
 
-        .form-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
+        .box-heading h2 {
+            font-size: 1.25rem;
+            color: #0f172a;
+            font-weight: 700;
         }
 
-        .full-width {
+        .step-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: #ffffff;
+            font-weight: 700;
+            font-size: 0.9rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .input-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.25rem;
+            margin-bottom: 1.25rem;
+        }
+
+        .input-full {
             grid-column: span 2;
         }
 
-        .form-group label {
-            display: block;
-            margin-bottom: 0.5rem;
-            font-size: 0.9rem;
-            color: var(--text-muted);
+        .form-ctrl {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
         }
 
-        .form-group input {
-            width: 100%;
-            padding: 0.8rem;
-            border: 1px solid var(--border);
-            border-radius: 8px;
-            font-size: 1rem;
+        .form-ctrl label {
+            font-size: 0.88rem;
+            font-weight: 600;
+            color: #334155;
         }
 
-        .order-summary-item {
+        .form-ctrl input, .form-ctrl select {
+            padding: 12px 14px;
+            border: 1.5px solid #cbd5e1;
+            border-radius: 12px;
+            font-family: 'Inter', sans-serif;
+            font-size: 0.95rem;
+            color: #0f172a;
+            background: #ffffff;
+            transition: all 0.2s ease;
+        }
+
+        .form-ctrl input:focus, .form-ctrl select:focus {
+            outline: none;
+            border-color: #4f46e5;
+            box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
+        }
+
+        /* Order Summary Panel */
+        .summary-sticky-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 2rem;
+            box-shadow: 0 4px 20px -2px rgba(15, 23, 42, 0.04);
+            position: sticky;
+            top: 90px;
+        }
+
+        .summary-sticky-card h2 {
+            font-size: 1.3rem;
+            color: #0f172a;
+            font-weight: 700;
+            margin-bottom: 1.25rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+
+        .summary-line {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 1rem;
+            align-items: center;
+            margin-bottom: 0.85rem;
             font-size: 0.95rem;
+            color: #64748b;
         }
 
-        .total-row {
-            font-size: 1.2rem;
-            font-weight: 700;
-            border-top: 2px solid var(--border);
-            padding-top: 1rem;
-            margin-top: 1rem;
+        .summary-line.total-line {
+            border-top: 2px dashed #e2e8f0;
+            padding-top: 1.25rem;
+            margin-top: 1.25rem;
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: #0f172a;
         }
 
-        @media (max-width: 768px) {
-            .checkout-container {
-                grid-template-columns: 1fr;
-            }
+        .summary-line.total-line span:last-child {
+            color: #4f46e5;
         }
 
-        /* Modal for Success */
+        /* Success Modal Overlay */
         .modal-overlay {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.5);
+            background: rgba(15, 23, 42, 0.65);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
             display: none;
             justify-content: center;
             align-items: center;
-            z-index: 10000;
+            z-index: 100000;
+            padding: 1.5rem;
         }
 
-        .modal {
-            background: white;
-            padding: 3rem;
-            border-radius: 20px;
+        .modal-card {
+            background: #ffffff;
+            padding: 3rem 2.5rem;
+            border-radius: 24px;
             text-align: center;
-            max-width: 500px;
-            width: 90%;
-            animation: popIn 0.3s ease;
+            max-width: 520px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+            border: 1px solid #e2e8f0;
+            animation: popModal 0.35s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        @keyframes popIn {
+        @keyframes popModal {
             from {
-                transform: scale(0.8);
+                transform: scale(0.92) translateY(20px);
                 opacity: 0;
             }
-
             to {
-                transform: scale(1);
+                transform: scale(1) translateY(0);
                 opacity: 1;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .checkout-grid-layout {
+                grid-template-columns: 1fr;
+            }
+            .summary-sticky-card {
+                position: static;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .input-row {
+                grid-template-columns: 1fr;
+            }
+            .input-full {
+                grid-column: span 1;
+            }
+            .checkout-box {
+                padding: 1.25rem;
             }
         }
     </style>
 </head>
 
 <body>
-    <header>
+    <!-- Top Announcement Bar -->
+    <div class="top-announcement-bar">
+        <div>
+            <span class="announcement-badge">MEMBER EXCLUSIVE</span>
+            <span>Free Shipping on all orders over $50 | 100% Guaranteed Freshness & Quality</span>
+        </div>
+        <div class="top-links">
+            <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="contact.html"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+    </div>
+
+    <header id="main-header">
         <nav>
-            <div class="logo">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+            <a href="index.html" class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo">
                 <h1>M.K. Store</h1>
-            </div>
+            </a>
+            
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
+                <input type="text" id="search-input" placeholder="Search premium products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
-            <div class="menu-toggle">
+            
+            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <i class="fa fa-bars"></i>
             </div>
+            
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a>
-                </li>
-                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa-solid fa-compass"></i> Discover</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart <span class="cart-count"></span></a></li>
+                <li><a href="login.html" id="nav-login-btn"><i class="fa-regular fa-user"></i> Sign In</a></li>
                 <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <div class="page-header"
-            style="background:var(--brand-dark); padding:3rem 1rem; color:white; text-align:center;">
-            <h1>Checkout</h1>
-            <p>Secure Payment & Fast Delivery</p>
+        <!-- Page Hero Banner -->
+        <div class="page-hero-banner">
+            <div class="page-hero-content">
+                <span class="page-hero-badge"><i class="fa-solid fa-lock"></i> 256-bit Encrypted Checkout</span>
+                <h1 class="page-hero-title">Complete Your Order</h1>
+                <p class="page-hero-subtitle">Fast doorstep delivery straight to your address with isolated personal order history.</p>
+            </div>
         </div>
 
-        <div class="checkout-container">
-            <!-- Left Column: Forms -->
-            <div class="checkout-forms">
-                <div class="checkout-section">
-                    <h2><i class="fa fa-map-marker"></i> Shipping Address</h2>
-                    <form id="checkout-form">
-                        <div class="form-grid">
-                            <div class="form-group full-width">
-                                <label>Full Name</label>
-                                <input type="text" id="chk-name" required>
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Street Address</label>
-                                <input type="text" id="chk-address" required>
-                            </div>
-                            <div class="form-group">
-                                <label>City</label>
-                                <input type="text" id="chk-city" required>
-                            </div>
-                            <div class="form-group">
-                                <label>Zip Code</label>
-                                <input type="text" id="chk-zip" required>
-                            </div>
-                            <div class="form-group full-width">
-                                <label>Phone Number</label>
-                                <input type="tel" id="chk-phone" required>
-                            </div>
+        <div class="checkout-page-container">
+            <div class="checkout-grid-layout">
+                <!-- Left: Form inputs -->
+                <div class="checkout-forms">
+                    <!-- Step 1: Shipping Address -->
+                    <div class="checkout-box">
+                        <div class="box-heading">
+                            <span class="step-circle">1</span>
+                            <h2>Shipping & Contact Details</h2>
                         </div>
-                    </form>
+                        <form id="checkout-form" onsubmit="return false;">
+                            <div class="input-row">
+                                <div class="form-ctrl input-full">
+                                    <label for="chk-name">Full Name *</label>
+                                    <input type="text" id="chk-name" placeholder="e.g. Karan Kumar" required>
+                                </div>
+                                <div class="form-ctrl input-full">
+                                    <label for="chk-address">Street Address / Landmark *</label>
+                                    <input type="text" id="chk-address" placeholder="House / Flat No., Street, Landmark" required>
+                                </div>
+                                <div class="form-ctrl">
+                                    <label for="chk-city">City / District *</label>
+                                    <input type="text" id="chk-city" placeholder="City" required>
+                                </div>
+                                <div class="form-ctrl">
+                                    <label for="chk-zip">Postal / PIN Code *</label>
+                                    <input type="text" id="chk-zip" placeholder="313324" required>
+                                </div>
+                                <div class="form-ctrl input-full">
+                                    <label for="chk-phone">Mobile Phone (for delivery SMS & call) *</label>
+                                    <input type="tel" id="chk-phone" placeholder="+91 9876543210" required>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Step 2: Payment Details -->
+                    <div class="checkout-box">
+                        <div class="box-heading">
+                            <span class="step-circle">2</span>
+                            <h2>Select Payment Option</h2>
+                        </div>
+                        <div class="payment-methods-stack">
+                            <label class="payment-card-option active">
+                                <div class="payment-card-left">
+                                    <input type="radio" name="paymentMethod" value="card" checked>
+                                    <div class="payment-card-icon"><i class="fa-solid fa-credit-card"></i></div>
+                                    <div class="payment-card-text">
+                                        <strong>Credit / Debit Card</strong>
+                                        <small>Visa, MasterCard, RuPay, Maestro</small>
+                                    </div>
+                                </div>
+                                <span class="announcement-badge" style="background:#dcfce7; color:#166534; font-size:0.75rem;">Instant</span>
+                            </label>
+
+                            <label class="payment-card-option">
+                                <div class="payment-card-left">
+                                    <input type="radio" name="paymentMethod" value="upi">
+                                    <div class="payment-card-icon"><i class="fa-solid fa-mobile-screen-button"></i></div>
+                                    <div class="payment-card-text">
+                                        <strong>UPI / QR Code</strong>
+                                        <small>Google Pay, PhonePe, Paytm, BHIM</small>
+                                    </div>
+                                </div>
+                                <span class="announcement-badge" style="background:#eef2ff; color:#4338ca; font-size:0.75rem;">Fastest</span>
+                            </label>
+
+                            <label class="payment-card-option">
+                                <div class="payment-card-left">
+                                    <input type="radio" name="paymentMethod" value="cod">
+                                    <div class="payment-card-icon"><i class="fa-solid fa-hand-holding-dollar"></i></div>
+                                    <div class="payment-card-text">
+                                        <strong>Cash on Delivery (COD)</strong>
+                                        <small>Pay cash or QR on delivery</small>
+                                    </div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
                 </div>
 
-                <div class="checkout-section">
-                    <h2><i class="fa fa-credit-card"></i> Payment Details</h2>
-                    <div class="form-grid">
-                        <div class="form-group full-width">
-                            <label>Card Number</label>
-                            <input type="text" placeholder="0000 0000 0000 0000" maxlength="19">
+                <!-- Right: Order Summary -->
+                <div class="order-summary-sidebar">
+                    <div class="summary-sticky-card">
+                        <h2>Your Order Items</h2>
+                        <div id="checkout-items" style="max-height: 280px; overflow-y: auto; margin-bottom: 1.25rem;">
+                            <!-- Injected by checkout.js -->
                         </div>
-                        <div class="form-group">
-                            <label>Expiry Date</label>
-                            <input type="text" placeholder="MM/YY" maxlength="5">
-                        </div>
-                        <div class="form-group">
-                            <label>CVV</label>
-                            <input type="password" placeholder="123" maxlength="3">
-                        </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- Right Column: Order Summary -->
-            <div class="order-summary">
-                <div class="checkout-section" style="position:sticky; top:20px;">
-                    <h2>Your Order</h2>
-                    <div id="checkout-items">
-                        <!-- Injected by JS -->
+                        <div class="summary-line">
+                            <span>Subtotal</span>
+                            <span id="checkout-subtotal" style="font-weight:700; color:#0f172a;">$0.00</span>
+                        </div>
+                        <div class="summary-line">
+                            <span>Delivery Shipping</span>
+                            <span id="checkout-shipping" style="font-weight:600; color:#10b981;">$0.00</span>
+                        </div>
+                        <div class="summary-line total-line">
+                            <span>Total Due</span>
+                            <span id="checkout-total">$0.00</span>
+                        </div>
+
+                        <button id="place-order-btn" class="checkout-action-btn">
+                            <i class="fa-solid fa-shield-halved"></i> Place Order & Pay
+                        </button>
+
+                        <div class="cart-trust-badges" style="margin-top:1.5rem;">
+                            <span><i class="fa-solid fa-lock"></i> Bank Grade Security</span>
+                            <span><i class="fa-solid fa-truck-fast"></i> Express Dispatch</span>
+                        </div>
                     </div>
-                    <div class="order-summary-item" style="border-top: 1px solid var(--border); padding-top: 1rem; margin-top: 1rem;">
-                        <span>Subtotal</span>
-                        <span id="checkout-subtotal">$0.00</span>
-                    </div>
-                    <div class="order-summary-item">
-                        <span>Shipping</span>
-                        <span id="checkout-shipping">$0.00</span>
-                    </div>
-                    <div class="order-summary-item total-row">
-                        <span>Total to Pay</span>
-                        <span id="checkout-total">$0.00</span>
-                    </div>
-                    <button id="place-order-btn" class="checkout-btn" style="margin-top:2rem;">
-                        <i class="fa fa-lock"></i> Pay & Place Order
-                    </button>
-                    <p style="font-size:0.8rem; color:var(--text-muted); text-align:center; margin-top:1rem;">
-                        <i class="fa fa-shield"></i> Payments are processed securely.
-                    </p>
                 </div>
             </div>
         </div>
@@ -235,24 +375,30 @@
 
     <!-- Success Modal -->
     <div class="modal-overlay" id="success-modal">
-        <div class="modal">
-            <div
-                style="width:80px; height:80px; background:#dcfce7; color:#166534; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.5rem auto; font-size:2.5rem;">
-                <i class="fa fa-check"></i>
+        <div class="modal-card">
+            <div style="width:72px; height:72px; background:#dcfce7; color:#16a34a; border-radius:50%; display:flex; align-items:center; justify-content:center; margin:0 auto 1.25rem; font-size:2.2rem;">
+                <i class="fa-solid fa-check"></i>
             </div>
-            <h2>Order Placed Successfully!</h2>
-            <p style="color:var(--text-muted); margin:1rem 0;">Thank you for your purchase. We have sent a confirmation
-                email to <strong id="success-email"></strong>.</p>
-            <p style="color:var(--text-muted); font-size:0.9rem;">Order ID: <span id="success-order-id"
-                    style="font-family:monospace; background:#eee; padding:2px 6px; border-radius:4px;"></span></p>
-            <button class="btn" onclick="window.location.href='profile.html'" style="margin-top:2rem;">View Order in
-                Profile</button>
+            <h2 style="font-size:1.6rem; color:#0f172a; margin-bottom:0.5rem;">Order Placed Successfully!</h2>
+            <p style="color:#64748b; font-size:0.95rem; margin-bottom:1.25rem; line-height:1.5;">
+                Thank you for shopping at M.K. Store. Your order confirmation has been registered to <strong id="success-email" style="color:#0f172a;"></strong>.
+            </p>
+            <div style="background:#f8fafc; border:1px solid #e2e8f0; border-radius:12px; padding:10px 14px; margin-bottom:1.5rem;">
+                <small style="color:#64748b; display:block;">Your Unique Order Tracking ID:</small>
+                <code id="success-order-id" style="font-size:1rem; font-weight:700; color:#4f46e5;"></code>
+            </div>
+            <button class="checkout-action-btn" onclick="window.location.href='profile.html#orders'" style="margin-top:0;">
+                <i class="fa-solid fa-box-open"></i> Track Order in Profile
+            </button>
         </div>
     </div>
 
-    <script src="js/script.js"></script>
-    <script src="js/nav.js"></script>
-    <script src="js/checkout.js"></script>
+    <div id="footer-placeholder"></div>
+    <script src="js/footer.js"></script>
+
+    <script src="js/script.js?v=3"></script>
+    <script src="js/nav.js?v=3"></script>
+    <script src="js/checkout.js?v=3"></script>
     <script src="js/livehelp.js"></script>
 </body>
 

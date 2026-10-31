@@ -27,24 +27,27 @@
         </div>
     </div>
 
-    <header>
+    <header id="main-header">
         <nav>
-            <a href="index.html" class="logo" style="text-decoration:none;">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+            <a href="index.html" class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo">
                 <h1>M.K. Store</h1>
             </a>
+            
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
+                <input type="text" id="search-input" placeholder="Search premium products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
-            <div class="menu-toggle">
+            
+            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <i class="fa fa-bars"></i>
             </div>
+            
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a></li>
-                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa-solid fa-compass"></i> Discover</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart <span class="cart-count"></span></a></li>
+                <li><a href="login.html" id="nav-login-btn"><i class="fa-regular fa-user"></i> Sign In</a></li>
                 <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>

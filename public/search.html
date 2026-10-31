@@ -2,97 +2,152 @@
 <html lang="en">
 
 <head>
-    <title>Search Results - M.K. Store</title>
+    <title>Search Results — M.K. Store</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/product.css">
+    
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/product.css?v=3">
     <style>
-        .search-container {
-            max-width: 1200px;
-            margin: 3rem auto;
+        .search-results-page {
+            max-width: 1320px;
+            margin: 2.5rem auto 5rem;
             padding: 0 1.5rem;
             min-height: 60vh;
         }
 
-        .search-header {
-            margin-bottom: 2rem;
-            border-bottom: 1px solid var(--border);
-            padding-bottom: 1rem;
+        .search-feedback-strip {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 20px;
+            padding: 1.5rem 2rem;
+            margin-bottom: 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
         }
 
-        .search-header h1 {
-            font-size: 2rem;
-            color: var(--text-main);
+        .search-feedback-strip h1 {
+            font-size: 1.5rem;
+            color: #0f172a;
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
-        .search-term {
-            color: var(--brand);
-            font-weight: 700;
+        .search-term-highlight {
+            color: #4f46e5;
+            background: #eef2ff;
+            padding: 2px 10px;
+            border-radius: 8px;
         }
 
-        .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-            gap: 2rem;
+        .result-count-badge {
+            background: #f1f5f9;
+            color: #475569;
+            font-weight: 600;
+            padding: 6px 14px;
+            border-radius: 9999px;
+            font-size: 0.9rem;
         }
 
-        .no-results {
+        .no-results-panel {
             text-align: center;
-            padding: 4rem;
-            color: var(--text-muted);
+            padding: 4rem 2rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 24px;
+            max-width: 580px;
+            margin: 3rem auto;
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
             grid-column: 1 / -1;
         }
 
-        .no-results i {
-            display: block;
-            font-size: 3rem;
-            margin-bottom: 1rem;
-            opacity: 0.5;
+        .no-results-panel i {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: #f1f5f9;
+            color: #94a3b8;
+            font-size: 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 1.5rem;
+        }
+
+        .no-results-panel h2 {
+            font-size: 1.6rem;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+        }
+
+        .no-results-panel p {
+            color: #64748b;
+            font-size: 0.95rem;
+            margin-bottom: 1.75rem;
         }
     </style>
 </head>
 
 <body>
-    <header>
+    <!-- Top Announcement Bar -->
+    <div class="top-announcement-bar">
+        <div>
+            <span class="announcement-badge">MEMBER EXCLUSIVE</span>
+            <span>Free Shipping on all orders over $50 | 100% Guaranteed Freshness & Quality</span>
+        </div>
+        <div class="top-links">
+            <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="contact.html"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+    </div>
+
+    <header id="main-header">
         <nav>
-            <div class="logo">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+            <a href="index.html" class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo">
                 <h1>M.K. Store</h1>
-            </div>
+            </a>
+            
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
+                <input type="text" id="search-input" placeholder="Search premium products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
-            <div class="menu-toggle">
+            
+            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <i class="fa fa-bars"></i>
             </div>
+            
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a>
-                </li>
-                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa-solid fa-compass"></i> Discover</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart <span class="cart-count"></span></a></li>
+                <li><a href="login.html" id="nav-login-btn"><i class="fa-regular fa-user"></i> Sign In</a></li>
                 <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>
     </header>
 
     <main>
-        <div class="search-container">
-            <div class="search-header">
-                <h1>Search Results for <span class="search-term" id="search-term-display">...</span></h1>
-                <p id="result-count" style="color:var(--text-muted); margin-top:0.5rem;">Searching...</p>
+        <div class="search-results-page">
+            <div class="search-feedback-strip">
+                <h1>
+                    <i class="fa-solid fa-magnifying-glass" style="color:#4f46e5;"></i>
+                    Search: <span class="search-term-highlight" id="search-term-display">...</span>
+                </h1>
+                <span class="result-count-badge" id="result-count">Searching catalog...</span>
             </div>
 
             <div class="product-grid" id="search-results-grid">
-                <!-- Results loaded here -->
+                <!-- Products injected by search.js -->
             </div>
         </div>
     </main>
@@ -100,9 +155,9 @@
     <div id="footer-placeholder"></div>
     <script src="js/footer.js"></script>
 
-    <script src="js/script.js"></script>
-    <script src="js/nav.js"></script>
-    <script src="js/search.js"></script>
+    <script src="js/script.js?v=3"></script>
+    <script src="js/nav.js?v=3"></script>
+    <script src="js/search.js?v=3"></script>
     <script src="js/livehelp.js"></script>
 </body>
 

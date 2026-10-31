@@ -2,39 +2,52 @@
 <html lang="en">
 
 <head>
-    <title>Login - M.K. Store</title>
+    <title>Sign In — M.K. Store</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/login.css">
+    
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/login.css?v=3">
 </head>
 
 <body>
-    <header>
+    <!-- Top Announcement Bar -->
+    <div class="top-announcement-bar">
+        <div>
+            <span class="announcement-badge">MEMBER EXCLUSIVE</span>
+            <span>Free Shipping on all orders over $50 | 100% Guaranteed Freshness & Quality</span>
+        </div>
+        <div class="top-links">
+            <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="contact.html"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+    </div>
+
+    <header id="main-header">
         <nav>
-            <div class="logo">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+            <a href="index.html" class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo">
                 <h1>M.K. Store</h1>
-            </div>
+            </a>
+            
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
+                <input type="text" id="search-input" placeholder="Search premium products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
-            <div class="menu-toggle">
+            
+            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <i class="fa fa-bars"></i>
             </div>
+            
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a>
-                </li>
-                <li><a href="login.html" class="active"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa-solid fa-compass"></i> Discover</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart <span class="cart-count"></span></a></li>
+                <li><a href="login.html" id="nav-login-btn" class="active"><i class="fa-regular fa-user"></i> Sign In</a></li>
                 <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>
@@ -43,18 +56,24 @@
     <main>
         <div class="login-container">
             <div class="login-form">
-                <h1>Login to Your Account</h1>
+                <div style="text-align:center; margin-bottom:1.5rem;">
+                    <span class="announcement-badge" style="background:#eef2ff; color:#4f46e5; font-size:0.8rem;">SECURE ACCESS</span>
+                    <h1 style="margin: 0.5rem 0; font-size: 2.2rem;">Welcome Back</h1>
+                    <p style="color:#64748b; font-size:0.95rem;">Sign in to access your personal cart, orders, and saved preferences.</p>
+                </div>
+
                 <form id="loginForm" autocomplete="off">
                     <div class="form-group">
-                        <label for="email">Email</label>
-                        <input type="email" id="email" name="email" required autocomplete="off">
+                        <label for="email">Email Address</label>
+                        <input type="email" id="email" name="email" placeholder="name@example.com" required autocomplete="off">
                     </div>
+                    
                     <div class="form-group">
                         <label for="password">Password</label>
                         <div class="input-group">
-                            <input type="password" id="password" name="password" required autocomplete="new-password">
+                            <input type="password" id="password" name="password" placeholder="Enter your password" required autocomplete="new-password">
                             <button type="button" id="togglePassword" aria-label="Show password">
-                                <i class="fa fa-eye"></i>
+                                <i class="fa-regular fa-eye"></i>
                             </button>
                         </div>
                         <div class="login-options">
@@ -62,22 +81,27 @@
                                 <input type="checkbox" id="remember" name="remember">
                                 <label for="remember">Remember me</label>
                             </div>
-                            <a href="javascript:void(0)" class="forgot-password">Forgot Password?</a>
+                            <a href="javascript:void(0)" class="forgot-password" onclick="alert('Password reset link will be sent to your registered email.')">Forgot Password?</a>
                         </div>
                     </div>
-                    <button type="submit" class="btn-login">Login</button>
+                    
+                    <button type="submit" class="btn-login">
+                        <i class="fa-solid fa-arrow-right-to-bracket"></i> Sign In
+                    </button>
+                    
                     <div class="form-footer">
-                        <p>Don't have an account? <a href="register.html" class="register-link">Register</a></p>
+                        <p>Don't have an account yet? <a href="register.html" class="register-link">Create Account</a></p>
                     </div>
                 </form>
+
                 <div class="social-login">
-                    <p>Or login with</p>
+                    <p>Or continue with</p>
                     <div class="social-buttons">
                         <button class="social-btn google" onclick="googleLogin()">
-                            <i class="fa-brands fa-google"></i> Google
+                            <i class="fa-brands fa-google"></i> Google Login
                         </button>
-                        <button class="social-btn facebook">
-                            <i class="fa fa-facebook"></i> Facebook
+                        <button class="social-btn facebook" onclick="alert('Facebook sign-in coming soon! Use email or Google.')">
+                            <i class="fa-brands fa-facebook"></i> Facebook
                         </button>
                     </div>
                 </div>
@@ -88,27 +112,11 @@
     <div id="footer-placeholder"></div>
     <script src="js/footer.js"></script>
 
-
-
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/nav.js"></script>
-    <script src="js/auth.js"></script>
-    <script>
-        // Password visibility toggle
-        (function () {
-            var toggle = document.getElementById('togglePassword');
-            var pwd = document.getElementById('password');
-            if (toggle && pwd) {
-                toggle.addEventListener('click', function () {
-                    var isText = pwd.getAttribute('type') === 'text';
-                    pwd.setAttribute('type', isText ? 'password' : 'text');
-                    this.innerHTML = '<i class="fa ' + (isText ? 'fa-eye' : 'fa-eye-slash') + '"></i>';
-                });
-            }
-        })();
-    </script>
+    <script src="js/script.js?v=3"></script>
+    <script src="js/nav.js?v=3"></script>
+    <script src="js/auth.js?v=3"></script>
     <script src="js/livehelp.js"></script>
 </body>
 

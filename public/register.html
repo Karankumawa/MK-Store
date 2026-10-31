@@ -2,39 +2,52 @@
 <html lang="en">
 
 <head>
-    <title>Register - M.K. Store</title>
+    <title>Create Account — M.K. Store</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/login.css">
+    
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/login.css?v=3">
 </head>
 
 <body>
-    <header>
+    <!-- Top Announcement Bar -->
+    <div class="top-announcement-bar">
+        <div>
+            <span class="announcement-badge">MEMBER EXCLUSIVE</span>
+            <span>Free Shipping on all orders over $50 | 100% Guaranteed Freshness & Quality</span>
+        </div>
+        <div class="top-links">
+            <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="contact.html"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+    </div>
+
+    <header id="main-header">
         <nav>
-            <div class="logo">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+            <a href="index.html" class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo">
                 <h1>M.K. Store</h1>
-            </div>
+            </a>
+            
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
+                <input type="text" id="search-input" placeholder="Search premium products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
-            <div class="menu-toggle">
+            
+            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <i class="fa fa-bars"></i>
             </div>
+            
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a>
-                </li>
-                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa-solid fa-compass"></i> Discover</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart <span class="cart-count"></span></a></li>
+                <li><a href="login.html" id="nav-login-btn"><i class="fa-regular fa-user"></i> Sign In</a></li>
                 <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>
@@ -43,34 +56,44 @@
     <main>
         <div class="login-container">
             <div class="login-form">
-                <h1>Create Account</h1>
-                <form id="registerForm">
+                <div style="text-align:center; margin-bottom:1.5rem;">
+                    <span class="announcement-badge" style="background:#eef2ff; color:#4f46e5; font-size:0.8rem;">NEW MEMBER</span>
+                    <h1 style="margin: 0.5rem 0; font-size: 2.2rem;">Create Account</h1>
+                    <p style="color:#64748b; font-size:0.95rem;">Join M.K. Store to unlock isolated private storage, express checkout & tracking.</p>
+                </div>
+
+                <form id="registerForm" autocomplete="off">
                     <div class="form-group">
                         <label for="reg-name">Full Name</label>
-                        <input type="text" id="reg-name" required>
+                        <input type="text" id="reg-name" placeholder="Karan Kumar" required>
                     </div>
+                    
                     <div class="form-group">
-                        <label for="reg-email">Email</label>
-                        <input type="email" id="reg-email" required>
+                        <label for="reg-email">Email Address</label>
+                        <input type="email" id="reg-email" placeholder="name@example.com" required>
                     </div>
+                    
                     <div class="form-group">
                         <label for="reg-password">Password</label>
                         <div class="input-group">
-                            <input type="password" id="reg-password" required>
-                            <button type="button" id="toggleRegPassword" class="togglePassword"
-                                aria-label="Show password">
-                                <i class="fa fa-eye"></i>
+                            <input type="password" id="reg-password" placeholder="At least 6 characters" required>
+                            <button type="button" id="toggleRegPassword" class="togglePassword" aria-label="Show password">
+                                <i class="fa-regular fa-eye"></i>
                             </button>
                         </div>
                     </div>
+                    
                     <div class="form-group">
                         <label for="reg-confirm">Confirm Password</label>
-                        <input type="password" id="reg-confirm" required>
+                        <input type="password" id="reg-confirm" placeholder="Re-enter your password" required>
                     </div>
 
-                    <button type="submit" class="btn-login">Register</button>
+                    <button type="submit" class="btn-login">
+                        <i class="fa-solid fa-user-plus"></i> Register Account
+                    </button>
+                    
                     <div class="form-footer">
-                        <p>Already have an account? <a href="login.html">Login here</a></p>
+                        <p>Already have an account? <a href="login.html">Sign in here</a></p>
                     </div>
                 </form>
             </div>
@@ -80,11 +103,9 @@
     <div id="footer-placeholder"></div>
     <script src="js/footer.js"></script>
 
-
-
-    <script src="js/script.js"></script>
-    <script src="js/nav.js"></script>
-    <script src="js/auth.js"></script>
+    <script src="js/script.js?v=3"></script>
+    <script src="js/nav.js?v=3"></script>
+    <script src="js/auth.js?v=3"></script>
     <script src="js/livehelp.js"></script>
 </body>
 

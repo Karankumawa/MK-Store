@@ -2,40 +2,54 @@
 <html lang="en">
 
 <head>
-    <title>Shop - M.K. Store</title>
+    <title>Discover & Shop — M.K. Store</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Explore premium daily essentials, electronics, fashion, and groceries at M.K. Store.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css?v=2">
-    <link rel="stylesheet" href="css/product.css?v=2">
-    <link rel="stylesheet" href="css/shop.css?v=2">
+    
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/product.css?v=3">
+    <link rel="stylesheet" href="css/shop.css?v=3">
 </head>
 
 <body>
-    <header>
+    <!-- Top Announcement Bar -->
+    <div class="top-announcement-bar">
+        <div>
+            <span class="announcement-badge">MEMBER EXCLUSIVE</span>
+            <span>Free Shipping on all orders over $50 | 100% Guaranteed Freshness & Quality</span>
+        </div>
+        <div class="top-links">
+            <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="contact.html"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+    </div>
+
+    <header id="main-header">
         <nav>
-            <div class="logo">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+            <a href="index.html" class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo">
                 <h1>M.K. Store</h1>
-            </div>
+            </a>
+            
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
+                <input type="text" id="search-input" placeholder="Search premium products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
-            <div class="menu-toggle">
+            
+            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <i class="fa fa-bars"></i>
             </div>
+            
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html" class="active"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a>
-                </li>
-                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="shop.html" class="active"><i class="fa-solid fa-compass"></i> Discover</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart <span class="cart-count"></span></a></li>
+                <li><a href="login.html" id="nav-login-btn"><i class="fa-regular fa-user"></i> Sign In</a></li>
                 <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>
@@ -46,11 +60,12 @@
             <!-- Special Offers Banner -->
             <div class="offers-banner">
                 <div class="banner-content">
-                    <h2>Weekly Special Offers!</h2>
-                    <p>Get up to 50% off on selected daily essentials and snacks.</p>
+                    <span class="announcement-badge" style="background:rgba(255,255,255,0.2); color:#fff; margin-bottom:0.75rem; display:inline-block;">WEEKLY SPECIALS</span>
+                    <h2>Discover Premium Essentials</h2>
+                    <p>Hand-picked, high quality items across groceries, smartphones, home goods, and fashion.</p>
                     <button class="btn btn-white"
                         onclick="document.querySelector('.product-grid').scrollIntoView({behavior: 'smooth'})">
-                        Shop Deals Now
+                        Browse Collection <i class="fa-solid fa-arrow-down"></i>
                     </button>
                 </div>
                 <div class="banner-decoration d-1"></div>
@@ -58,7 +73,7 @@
             </div>
 
             <button class="filter-toggle">
-                <i class="fa fa-filter"></i> Filters
+                <i class="fa fa-filter"></i> Filters & Categories
             </button>
 
             <aside class="filters">
@@ -69,12 +84,12 @@
                 <div class="filter-group">
                     <h3>Categories</h3>
                     <div class="category-pills">
-                        <a href="shop.html" class="cat-pill active" data-cat="all">All</a>
+                        <a href="shop.html" class="cat-pill active" data-cat="all">All Items</a>
                         <a href="shop.html?category=Groceries" class="cat-pill" data-cat="groceries">Groceries</a>
                         <a href="shop.html?category=Mobiles" class="cat-pill" data-cat="mobiles">Mobiles</a>
                         <a href="shop.html?category=Fashion" class="cat-pill" data-cat="fashion">Fashion</a>
                         <a href="shop.html?category=Electronics" class="cat-pill" data-cat="electronics">Electronics</a>
-                        <a href="shop.html?category=Home" class="cat-pill" data-cat="home">Home</a>
+                        <a href="shop.html?category=Home" class="cat-pill" data-cat="home">Home & Living</a>
                         <a href="shop.html?category=Appliances" class="cat-pill" data-cat="appliances">Appliances</a>
                         <a href="shop.html?category=Toys" class="cat-pill" data-cat="toys">Toys</a>
                     </div>
@@ -107,11 +122,11 @@
                 </div>
 
                 <div class="filter-group">
-                    <h3>Rating</h3>
+                    <h3>Customer Rating</h3>
                     <div class="filter-chips">
                         <label class="chip">
                             <input type="radio" name="rating" value="5">
-                            <span>5 Stars</span>
+                            <span>5 Stars Only</span>
                         </label>
                         <label class="chip">
                             <input type="radio" name="rating" value="4+">
@@ -128,26 +143,26 @@
             <div class="shop-content">
                 <div class="shop-header">
                     <div>
-                        <h1>Our Products</h1>
-                        <p class="text-muted">Discover our premium collection</p>
+                        <h1>Curated Products</h1>
+                        <p class="text-muted">Showing live verified inventory from our verified suppliers</p>
                     </div>
                     <div class="sort-wrapper">
                         <label for="sort">Sort by:</label>
                         <select id="sort">
-                            <option value="featured">Featured</option>
+                            <option value="featured">Featured & Best Matches</option>
                             <option value="price-low">Price: Low to High</option>
                             <option value="price-high">Price: High to Low</option>
-                            <option value="rating">Rating</option>
+                            <option value="rating">Highest Rated</option>
                         </select>
                     </div>
                 </div>
 
                 <div class="product-grid">
-                    <!-- Products will be dynamically added here by shop-loader.js -->
+                    <!-- Products dynamically rendered by shop.js -->
                 </div>
 
                 <div class="pagination" id="pagination-container">
-                    <!-- Pagination buttons will be dynamically generated by shop.js -->
+                    <!-- Pagination buttons generated by shop.js -->
                 </div>
             </div>
         </div>
@@ -156,9 +171,9 @@
     <div id="footer-placeholder"></div>
     <script src="js/footer.js"></script>
 
-    <script src="js/script.js?v=2"></script>
-    <script src="js/nav.js?v=2"></script>
-    <script src="js/shop.js?v=2"></script>
+    <script src="js/script.js?v=3"></script>
+    <script src="js/nav.js?v=3"></script>
+    <script src="js/shop.js?v=3"></script>
     <script src="js/livehelp.js"></script>
 </body>
 

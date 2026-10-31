@@ -1,369 +1,184 @@
-.contact-container {
-    max-width: 1200px;
-    margin: 2rem auto;
-    padding: 0 1rem;
+/* ==========================================================================
+   M.K. STORE — MODERN CONTACT STYLES
+   ========================================================================== */
+
+.contact-page-wrapper {
+    padding-bottom: 5rem;
 }
 
-.contact-hero {
-    background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('../assets/wallpaper.jpg');
-    background-size: cover;
-    background-position: center;
-    color: white;
+.contact-hero-banner {
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #312e81 100%);
+    color: #ffffff;
+    padding: 3.5rem 1.5rem;
+    position: relative;
+    overflow: hidden;
+    margin-bottom: 3.5rem;
+    border-radius: 0 0 24px 24px;
     text-align: center;
-    padding: 6rem 2rem;
-    border-radius: 8px;
-    margin-bottom: 3rem;
 }
 
-.contact-hero h1 {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+.contact-hero-banner h1 {
+    font-size: 2.6rem;
+    font-weight: 800;
+    color: #ffffff;
+    letter-spacing: -0.03em;
+    margin-bottom: 0.5rem;
 }
 
-.contact-hero p {
-    font-size: 1.2rem;
+.contact-hero-banner p {
+    color: #94a3b8;
+    font-size: 1.1rem;
     max-width: 600px;
     margin: 0 auto;
 }
 
-.contact-content {
+.contact-main-grid {
+    max-width: 1320px;
+    margin: 0 auto 5rem;
+    padding: 0 1.5rem;
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: 1fr 1.3fr;
     gap: 3rem;
-    margin-bottom: 4rem;
+    align-items: start;
 }
 
-.contact-info {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-.contact-info h2 {
-    color: #333;
-    font-size: 2rem;
-    margin-bottom: 2rem;
-}
-
-.info-item {
+.contact-info-panel {
     display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    margin-bottom: 1.5rem;
-    padding: 1rem;
-    background: #f8f9fa;
-    border-radius: 8px;
-    transition: transform 0.3s ease;
+    flex-direction: column;
+    gap: 1.25rem;
 }
 
-.info-item:hover {
-    transform: translateX(10px);
+.contact-info-box {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    padding: 1.5rem 1.75rem;
+    display: flex;
+    align-items: flex-start;
+    gap: 18px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03);
+    transition: transform 0.25s ease, border-color 0.25s ease;
 }
 
-.info-item i {
-    font-size: 1.5rem;
-    color: #007bff;
-    width: 50px;
-    height: 50px;
-    background: white;
-    border-radius: 50%;
+.contact-info-box:hover {
+    transform: translateY(-3px);
+    border-color: #cbd5e1;
+}
+
+.contact-box-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    background: linear-gradient(135deg, #eef2ff 0%, #e0e7ff 100%);
+    color: #4f46e5;
+    font-size: 1.25rem;
     display: flex;
     align-items: center;
     justify-content: center;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+    flex-shrink: 0;
 }
 
-.info-text h3 {
-    color: #333;
-    font-size: 1.2rem;
+.contact-box-body h3 {
+    font-size: 1.05rem;
+    color: #0f172a;
+    margin-bottom: 4px;
+}
+
+.contact-box-body p {
+    color: #64748b;
+    font-size: 0.92rem;
+    line-height: 1.4;
+}
+
+.contact-box-body a {
+    color: #4f46e5;
+    font-weight: 600;
+}
+
+.contact-box-body a:hover {
+    text-decoration: underline;
+}
+
+.contact-form-panel {
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 24px;
+    padding: 2.5rem;
+    box-shadow: 0 8px 30px rgba(0, 0, 0, 0.04);
+}
+
+.contact-form-panel h2 {
+    font-size: 1.6rem;
+    color: #0f172a;
     margin-bottom: 0.5rem;
 }
 
-.info-text p {
-    color: #666;
-    line-height: 1.6;
-}
-
-.contact-form {
-    background: white;
-    padding: 2.5rem;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
-}
-
-.contact-form h2 {
-    color: #333;
-    font-size: 2rem;
+.contact-form-panel p {
+    color: #64748b;
+    font-size: 0.95rem;
     margin-bottom: 2rem;
 }
 
-.form-group {
-    margin-bottom: 1.5rem;
+.form-group-modern {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-bottom: 1.25rem;
 }
 
-.form-group label {
-    display: block;
-    color: #333;
-    margin-bottom: 0.5rem;
-    font-weight: 500;
+.form-group-modern label {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: #334155;
 }
 
-.form-group input,
-.form-group textarea {
-    width: 100%;
-    padding: 1rem;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    font-size: 1rem;
-    transition: border-color 0.3s ease;
+.form-group-modern input, .form-group-modern textarea {
+    padding: 12px 14px;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 12px;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.95rem;
+    color: #0f172a;
+    background: #ffffff;
+    transition: all 0.2s ease;
 }
 
-.form-group textarea {
-    height: 150px;
+.form-group-modern textarea {
+    min-height: 120px;
     resize: vertical;
 }
 
-.form-group input:focus,
-.form-group textarea:focus {
+.form-group-modern input:focus, .form-group-modern textarea:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: #4f46e5;
+    box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.15);
 }
 
-.submit-btn {
-    background: #007bff;
-    color: white;
-    padding: 1rem 2rem;
+.btn-contact-submit {
+    width: 100%;
+    padding: 14px 20px;
+    background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+    color: #ffffff;
     border: none;
-    border-radius: 8px;
+    border-radius: 14px;
+    font-weight: 700;
     font-size: 1rem;
-    cursor: pointer;
-    width: 100%;
-    transition: background 0.3s ease;
-}
-
-.submit-btn:hover {
-    background: #0056b3;
-}
-
-.map-section {
-    margin-top: 2rem;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.map-section .container {
-    width: 100%;
-    max-width: 900px;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-}
-.map-section .map {
-    width: 100%;
-    max-width: 700px;
-    margin: 0 auto;
-}
-.map-section iframe {
-    width: 100%;
-    height: 350px;
-    border: 0;
-    border-radius: 8px;
-}
-
-/* FAQ Section */
-.faq-section {
-    max-width: 900px;
-    margin: 3rem auto 0 auto;
-    padding: 2rem;
-    background: #fff;
-    border-radius: 8px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.08);
-}
-.faq-section h2 {
-    text-align: center;
-    margin-bottom: 2rem;
-    color: #007bff;
-}
-.faq-item {
-    margin-bottom: 1rem;
-    border-bottom: 1px solid #eee;
-}
-.faq-question {
-    width: 100%;
-    background: none;
-    border: none;
-    outline: none;
-    text-align: left;
-    font-size: 1.1rem;
-    font-weight: 600;
-    color: #333;
-    padding: 1rem 0;
-    cursor: pointer;
-    transition: color 0.2s;
-}
-.faq-question:hover {
-    color: #007bff;
-}
-.faq-answer {
-    display: none;
-    padding: 0 0 1rem 0.5rem;
-    color: #555;
-    font-size: 1rem;
-    background: #f8f9fa;
-    border-radius: 0 0 8px 8px;
-}
-
-/* Social Links */
-.social-links a {
-    display: inline-block;
-    margin: 0 10px;
-    transition: transform 0.2s;
-}
-.social-links a:hover {
-    transform: scale(1.2);
-}
-
-/* Chatbot Styles */
-#live-chat {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    z-index: 9999;
-}
-#chat-toggle {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 50%;
-    width: 60px;
-    height: 60px;
-    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
-    font-size: 2rem;
     cursor: pointer;
     display: flex;
     align-items: center;
     justify-content: center;
-    transition: background 0.2s;
-}
-#chat-toggle:hover {
-    background: #0056b3;
-}
-#chat-box {
-    display: none;
-    position: absolute;
-    bottom: 70px;
-    right: 0;
-    width: 320px;
-    background: #fff;
-    border-radius: 10px;
-    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
-    overflow: hidden;
-    flex-direction: column;
-}
-#chat-box .chat-header {
-    background: #007bff;
-    color: #fff;
-    padding: 1rem;
-    text-align: center;
-    font-weight: 600;
-}
-#chat-box .chat-messages {
-    padding: 1rem;
-    height: 180px;
-    overflow-y: auto;
-    font-size: 0.95rem;
-    background: #f8f9fa;
-}
-#chat-box .chat-input-area {
-    padding: 0.5rem 1rem 1rem 1rem;
-    display: flex;
-    gap: 0.5rem;
-    background: #fff;
-}
-#chat-input {
-    flex: 1;
-    padding: 0.5rem;
-    border: 1px solid #ddd;
-    border-radius: 5px;
-}
-#chat-send {
-    background: #007bff;
-    color: #fff;
-    border: none;
-    padding: 0.5rem 1rem;
-    border-radius: 5px;
-    transition: background 0.2s;
-}
-#chat-send:hover {
-    background: #0056b3;
+    gap: 10px;
+    box-shadow: 0 10px 25px -5px rgba(79, 70, 229, 0.4);
+    transition: all 0.25s ease;
 }
 
-@media (max-width: 1024px) {
-    .contact-content {
-        gap: 1.5rem;
-    }
-    .faq-section {
-        padding: 1rem;
-    }
-    #chat-box {
-        width: 90vw;
-        min-width: 220px;
-        max-width: 320px;
-    }
-    .contact-container-flex {
-        gap: 1.5rem;
-    }
+.btn-contact-submit:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px -5px rgba(79, 70, 229, 0.5);
 }
-@media (max-width: 900px) {
-    .contact-container-flex {
-        flex-direction: column;
-        gap: 2rem;
-        align-items: stretch;
-    }
-    .contact-container-flex .contact-info,
-    .contact-container-flex .contact-form {
-        max-width: 100%;
-        min-width: 0;
-    }
-}
-@media (max-width: 768px) {
-    .contact-content {
+
+@media (max-width: 992px) {
+    .contact-main-grid {
         grid-template-columns: 1fr;
-        gap: 1rem;
-    }
-    .contact-hero {
-        padding: 4rem 1rem;
-    }
-    .contact-hero h1 {
-        font-size: 2.5rem;
-    }
-    .contact-info,
-    .contact-form {
-        padding: 2rem;
-    }
-    .faq-section {
-        margin: 2rem 0 0 0;
-    }
-    #live-chat {
-        right: 10px;
-        bottom: 10px;
-    }
-    .map-section .map {
-        max-width: 100%;
-    }
-    .map-section iframe {
-        height: 220px;
     }
 }
-@media (max-width: 480px) {
-    .faq-section {
-        padding: 0.5rem;
-    }
-    #chat-box {
-        width: 98vw;
-        min-width: 180px;
-    }
-} 

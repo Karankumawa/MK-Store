@@ -2,135 +2,144 @@
 <html lang="en">
 
 <head>
-    <title>About Us - M.K. Store</title>
+    <title>About Us — M.K. Store</title>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Discover M.K. Store — our journey, core values, mission, and dedication to delivering premium daily essentials.">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="stylesheet" href="css/style.css">
-    <link rel="stylesheet" href="css/about.css">
+    
+    <link rel="stylesheet" href="css/style.css?v=3">
+    <link rel="stylesheet" href="css/about.css?v=3">
 </head>
 
 <body>
-    <header>
+    <!-- Top Announcement Bar -->
+    <div class="top-announcement-bar">
+        <div>
+            <span class="announcement-badge">MEMBER EXCLUSIVE</span>
+            <span>Free Shipping on all orders over $50 | 100% Guaranteed Freshness & Quality</span>
+        </div>
+        <div class="top-links">
+            <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="contact.html"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+    </div>
+
+    <header id="main-header">
         <nav>
-            <div class="logo">
-                <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+            <a href="index.html" class="logo">
+                <img src="assets/Logo.png" alt="M.K. Store Logo">
                 <h1>M.K. Store</h1>
-            </div>
+            </a>
+            
             <div class="search-bar">
-                <input type="text" id="search-input" placeholder="Search products...">
+                <input type="text" id="search-input" placeholder="Search premium products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
-            <div class="menu-toggle">
+            
+            <div class="menu-toggle" onclick="document.querySelector('.nav-links').classList.toggle('active')">
                 <i class="fa fa-bars"></i>
             </div>
+            
             <ul class="nav-links">
-                <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a>
-                </li>
-                <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="index.html"><i class="fa-solid fa-house"></i> Home</a></li>
+                <li><a href="shop.html"><i class="fa-solid fa-compass"></i> Discover</a></li>
+                <li><a href="cart.html"><i class="fa-solid fa-cart-shopping"></i> Cart <span class="cart-count"></span></a></li>
+                <li><a href="login.html" id="nav-login-btn"><i class="fa-regular fa-user"></i> Sign In</a></li>
                 <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>
     </header>
 
-    <main>
-        <!-- Modern About Hero -->
-        <section class="about-hero-modern">
-            <div class="main-container">
-                <div class="hero-glass">
-                    <h1>About M.K. Store</h1>
-                    <p>Elevating your daily essentials experience since our inception.</p>
+    <main class="about-page-wrapper">
+        <!-- Page Hero Banner -->
+        <div class="page-hero-banner">
+            <div class="page-hero-content">
+                <span class="page-hero-badge"><i class="fa-solid fa-sparkles"></i> Our Story & Purpose</span>
+                <h1 class="page-hero-title">Elevating Modern Commerce</h1>
+                <p class="page-hero-subtitle">We bridge premium authentic quality with lightning-fast logistics to bring daily essentials to your doorstep.</p>
+            </div>
+        </div>
+
+        <!-- Metrics Strip -->
+        <div class="about-stats-strip">
+            <div class="stat-metric-card">
+                <span class="stat-number">50K+</span>
+                <span class="stat-label">Happy Active Shoppers</span>
+            </div>
+            <div class="stat-metric-card">
+                <span class="stat-number">10K+</span>
+                <span class="stat-label">Curated Quality Products</span>
+            </div>
+            <div class="stat-metric-card">
+                <span class="stat-number">99.8%</span>
+                <span class="stat-label">On-Time Express Dispatch</span>
+            </div>
+            <div class="stat-metric-card">
+                <span class="stat-number">24/7</span>
+                <span class="stat-label">Human Support Assistance</span>
+            </div>
+        </div>
+
+        <!-- Mission Story Card -->
+        <section class="about-story-section">
+            <div class="story-image-wrapper">
+                <img src="https://images.unsplash.com/photo-1556742049-0a67c5574f73?auto=format&fit=crop&w=1000&q=80" alt="Customer fulfillment center">
+                <div class="story-badge-floating">
+                    <i class="fa-solid fa-award"></i>
+                    <div>
+                        <strong style="color:#0f172a; font-size:1rem; display:block;">Certified Standards</strong>
+                        <small style="color:#64748b;">100% Guaranteed Freshness</small>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="story-content">
+                <span class="page-hero-badge" style="background:#eef2ff; color:#4f46e5; border-color:#c7d2fe;">WHO WE ARE</span>
+                <h2>More Than Just an E-Commerce Platform</h2>
+                <p>
+                    Founded with a passion for quality and simplicity, <strong>M.K. Store</strong> was born to eliminate the compromise between fair pricing and premium standards. Whether it's groceries, electronics, smartphones, or fashion, our sourcing process guarantees authenticity.
+                </p>
+                <p>
+                    Every customer benefits from a strictly private, isolated user dataspace ensuring personal order history, secure saved addresses, and protected carts.
+                </p>
+                <div style="margin-top:2rem;">
+                    <a href="shop.html" class="mk-btn-primary" style="display:inline-flex; width:auto;">
+                        <i class="fa-solid fa-bag-shopping"></i> Explore Our Catalog
+                    </a>
                 </div>
             </div>
         </section>
 
-        <!-- Mission & Vision -->
-        <section class="about-mission">
-            <div class="main-container">
-                <div class="mission-grid">
-                    <div class="mission-image">
-                        <img src="https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&w=1200"
-                            alt="Our Workspace">
-                    </div>
-                    <div class="mission-text">
-                        <span class="subtitle">Our Mission</span>
-                        <h2>More than just a store</h2>
-                        <p>At M.K. Store, we believe that quality daily essentials should be accessible to everyone, no
-                            matter where they are. Our mission is to bridge the gap between quality and affordability,
-                            providing a seamless shopping experience for our customers.</p>
-                        <ul class="mission-list">
-                            <li><i class="fas fa-check-circle"></i> Quality Guaranteed</li>
-                            <li><i class="fas fa-check-circle"></i> Fast & Reliable Delivery</li>
-                            <li><i class="fas fa-check-circle"></i> Customer Centric Approach</li>
-                        </ul>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Core Values -->
-        <section class="about-values">
-            <div class="main-container">
-                <div class="section-header-centered">
+        <!-- Values Grid -->
+        <section class="values-section">
+            <div class="values-container">
+                <div class="section-centered-header">
                     <h2>Our Core Values</h2>
-                    <p>The principles that guide everything we do.</p>
+                    <p>The unshakeable pillars guiding how we treat our customers and curate every product.</p>
                 </div>
-                <div class="values-grid-modern">
-                    <div class="value-card-modern">
-                        <div class="icon-box"><i class="fas fa-gem"></i></div>
-                        <h3>Quality</h3>
-                        <p>We source only the best products for our customers, ensuring every item meets our high
-                            standards.</p>
+                
+                <div class="values-grid-3">
+                    <div class="value-card-box">
+                        <div class="value-icon-circle"><i class="fa-solid fa-gem"></i></div>
+                        <h3>Uncompromising Quality</h3>
+                        <p>We work directly with verified brands and manufacturers. If an item doesn't meet our rigorous freshness and durability test, it never hits our catalog.</p>
                     </div>
-                    <div class="value-card-modern">
-                        <div class="icon-box"><i class="fas fa-rocket"></i></div>
-                        <h3>Innovation</h3>
-                        <p>We constantly seek new ways to improve the shopping experience and reach more people.</p>
+                    
+                    <div class="value-card-box">
+                        <div class="value-icon-circle"><i class="fa-solid fa-bolt"></i></div>
+                        <h3>Speed & Reliability</h3>
+                        <p>Real-time inventory updates and optimized dispatch hubs ensure your packages arrive promptly, with full live tracking every step of the journey.</p>
                     </div>
-                    <div class="value-card-modern">
-                        <div class="icon-box"><i class="fas fa-heart"></i></div>
-                        <h3>Integrity</h3>
-                        <p>Honest pricing and reliable service are at the heart of our business model.</p>
+                    
+                    <div class="value-card-box">
+                        <div class="value-icon-circle"><i class="fa-solid fa-shield-halved"></i></div>
+                        <h3>Dataspace Security</h3>
+                        <p>Your orders and cart belong strictly to your unique account ID. We protect your privacy with bank-grade encryption and zero data leaks.</p>
                     </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Founder Section -->
-        <section class="about-founder">
-            <div class="main-container">
-                <div class="founder-card">
-                    <div class="founder-image-wrapper">
-                        <img src="assets/Logo.png" alt="Karan Kumawat" style="padding: 20px; background: #f8fafc; object-fit: contain;">
-                    </div>
-                    <div class="founder-content">
-                        <span class="subtitle">Founder & CEO</span>
-                        <h2>Karan Kumawat</h2>
-                        <p>"M.K. Store was born from a desire to simplify the way families shop for their daily needs.
-                            We aren't just selling products; we're providing reliability and peace of mind."</p>
-                        <div class="founder-socials">
-                            <a href="#"><i class="fab fa-linkedin"></i></a>
-                            <a href="#"><i class="fab fa-twitter"></i></a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </section>
-
-        <!-- Call to Action -->
-        <section class="about-cta">
-            <div class="cta-overlay">
-                <div class="main-container">
-                    <h2>Experience the Difference</h2>
-                    <p>Shop our curated collection of daily essentials today.</p>
-                    <a href="shop.html" class="btn-about">Shop Now <i class="fas fa-shopping-cart"></i></a>
                 </div>
             </div>
         </section>
@@ -139,8 +148,8 @@
     <div id="footer-placeholder"></div>
     <script src="js/footer.js"></script>
 
-    <script src="js/script.js"></script>
-    <script src="js/nav.js"></script>
+    <script src="js/script.js?v=3"></script>
+    <script src="js/nav.js?v=3"></script>
     <script src="js/livehelp.js"></script>
 </body>
 
