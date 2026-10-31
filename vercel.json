@@ -1,11 +1,13 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
+  "framework": null,
   "outputDirectory": "public",
   "cleanUrls": true,
   "rewrites": [
     {
       "source": "/api/:path*",
-      "destination": "https://mkstore-backend.onrender.com/:path*"
+      "destination": "https://mkstore-backend.onrender.com/api/:path*"
     }
   ]
 }
