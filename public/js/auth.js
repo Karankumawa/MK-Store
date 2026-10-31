@@ -1,21 +1,23 @@
 const API_URL = '/api/auth';
 
-// Firebase Configuration (Google Auth)
+// Your web app's Firebase configuration
 const firebaseConfig = {
-    apiKey: "AIzaSyA4Efxee8aHyt_6Wx0K8DLRnpp-hF-jNzo",
-    authDomain: "login-shop-68cfc.firebaseapp.com",
-    projectId: "login-shop-68cfc",
-    storageBucket: "login-shop-68cfc.firebasestorage.app",
-    messagingSenderId: "22502036606",
-    appId: "1:22502036606:web:7e0cd91ad2818873a2f42f",
-    measurementId: "G-MJ8E9Z82QC"
+  apiKey: "AIzaSyBO-zLaMLRtBIHEdOBr027EToMQ6AQ-fe0",
+  authDomain: "mkstore-web.firebaseapp.com",
+  projectId: "mkstore-web",
+  storageBucket: "mkstore-web.firebasestorage.app",
+  messagingSenderId: "385048443408",
+  appId: "1:385048443408:web:0f11ac4d06c6ffb3422895",
+  measurementId: "G-418WHPTVN4"
 };
 
-// Initialize Firebase safely
+// Initialize Firebase safely (using compat SDK in browser)
 if (typeof firebase !== 'undefined') {
     try {
-        firebase.initializeApp(firebaseConfig);
-        console.log('Firebase initialized');
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+            console.log('Firebase initialized');
+        }
     } catch (error) {
         console.error('Firebase initialization error:', error);
     }
