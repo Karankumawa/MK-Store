@@ -1,9 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
     fetchFeaturedProducts();
+    initSliderControls();
 });
 
+let slideIndex = 0;
+
 async function fetchFeaturedProducts() {
-    // Start Carousel
     startCarousel();
 
     const grid = document.getElementById('home-products-grid');
@@ -16,25 +18,23 @@ async function fetchFeaturedProducts() {
         if (!res.ok) throw new Error(`Server returned ${res.status}`);
         const products = await res.json();
 
-        // Filter for specific categories relevant to the section title
-        const targetedCategories = ['electronics', 'grocery', 'essentials', 'fashion'];
+        // Filter for specific categories relevant to deals
+        const targetedCategories = ['electronics', 'grocery', 'groceries', 'essentials', 'fashion'];
         let featured = products.filter(p =>
             p.category && targetedCategories.some(t => p.category.toLowerCase().includes(t))
         );
 
-        // If not enough targeted items, fill with others
         if (featured.length < 5) {
             const others = products.filter(p => !featured.includes(p));
             featured = [...featured, ...others];
         }
 
-        // Shuffle and slice
+        // Shuffle and slice 8 items
         featured = featured
             .sort(() => 0.5 - Math.random())
-        // Shuffle and slice
-        featured = featured
-            .sort(() => 0.5 - Math.random())
-            .slice(0, 8); // Show 8 items for a nice grid (2 rows of 4)
+            .slice(0, 8);
+
+        window.homeFeaturedProducts = featured;
 
         if (featured.length === 0) {
             grid.innerHTML = '<div class="no-products">No deals active right now.</div>';
@@ -42,14 +42,16 @@ async function fetchFeaturedProducts() {
         }
 
         grid.innerHTML = featured.map(product => {
-            // Replicating the Shop Page card structure for consistency
             const imageSrc = product.image || 'assets/placeholder.png';
             const rating = product.rating || 4.5;
 
-            // Random Badges for visual interest
+            // Badges
             let badgeHtml = '';
-            if (product.price > 50 && product.price < 100) badgeHtml = '<span class="badge sale" style="position:absolute; top:1rem; left:1rem;">Sale</span>';
-            else if (Math.random() > 0.8) badgeHtml = '<span class="badge new" style="position:absolute; top:1rem; left:1rem;">New</span>';
+            if (product.price > 50 && product.price < 100) {
+                badgeHtml = '<span class="badge sale" style="position:absolute; top:1rem; left:1rem;">Sale</span>';
+            } else if (rating >= 4.7) {
+                badgeHtml = '<span class="badge new" style="position:absolute; top:1rem; left:1rem;">Top Rated</span>';
+            }
 
             // Generate stars
             let starsHtml = '';
@@ -65,10 +67,7 @@ async function fetchFeaturedProducts() {
                     ${badgeHtml}
                     <img src="${imageSrc}" alt="${product.name}" onerror="this.src='assets/placeholder.png'">
                     <div class="product-actions">
-                         <button class="action-btn" onclick="event.stopPropagation(); console.log('Wishlist ${product._id}')">
-                            <i class="fa-regular fa-heart"></i>
-                         </button>
-                         <button class="action-btn" onclick="event.stopPropagation(); window.location.href='product.html?id=${product._id}'">
+                         <button class="action-btn" title="View Details" onclick="event.stopPropagation(); window.location.href='product.html?id=${product._id}'">
                             <i class="fa-regular fa-eye"></i>
                          </button>
                     </div>
@@ -77,11 +76,11 @@ async function fetchFeaturedProducts() {
                     <div class="product-category">${product.category || 'General'}</div>
                     <h3 class="product-title">${product.name}</h3>
                     <div class="rating-stars">
-                        ${starsHtml} <span class="rating-text">(${Math.floor(Math.random() * 200) + 50})</span>
+                        ${starsHtml} <span class="rating-text">(${rating})</span>
                     </div>
                     <div class="price-row">
                         <div class="product-price">$${product.price ? product.price.toFixed(2) : '0.00'}</div>
-                        <button class="add-btn" onclick="event.stopPropagation(); addToCartHome({_id: '${product._id}', name: '${product.name.replace(/'/g, "\\'")}', price: ${product.price}, image: '${product.image}'})">
+                        <button class="add-btn" id="home-add-${product._id}" onclick="event.stopPropagation(); addToCartHome('${product._id}')">
                              Add
                         </button>
                     </div>
@@ -92,16 +91,14 @@ async function fetchFeaturedProducts() {
 
     } catch (err) {
         console.error(err);
-        grid.innerHTML = '<div class="error-text">Failed to load deals. <button onclick="fetchFeaturedProducts()">Retry</button></div>';
+        grid.innerHTML = '<div class="error-text">Failed to load deals. <button class="btn" style="margin-top:10px;" onclick="fetchFeaturedProducts()">Retry</button></div>';
     }
 }
 
-let slideIndex = 0;
 function startCarousel() {
     const slides = document.querySelectorAll('.slide');
     if (slides.length === 0) return;
 
-    // Auto slide every 4 seconds
     setInterval(() => {
         moveSlide(1);
     }, 4000);
@@ -116,87 +113,94 @@ function moveSlide(n) {
     slides[slideIndex].classList.add('active');
 }
 
-// Simple Home Page Cart Logic (Synced with localStorage)
-function addToCartHome(product) {
-    let cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const existingItem = cart.find(item => item._id === product._id);
+// Add to Cart from Home Page (Restricted to logged-in users; prompts modal for guests)
+function addToCartHome(productId) {
+    const product = (window.homeFeaturedProducts || []).find(p => (p._id || p.id) === productId);
+    if (!product) return;
 
-    if (existingItem) {
-        existingItem.quantity += 1;
+    // Use global isolated UserCart manager
+    if (window.UserCart) {
+        const added = window.UserCart.addItem(product, 1);
+        if (!added) return; // Prompted guest modal
     } else {
-        cart.push({ ...product, quantity: 1 });
+        // Fallback
+        alert('Please log in to add items to cart.');
+        window.location.href = 'login.html';
+        return;
     }
 
-    localStorage.setItem('cart', JSON.stringify(cart));
-    updateCartCountHome();
-    showNotificationHome("Product added to cart! Redirecting...");
-
-    setTimeout(() => {
-        window.location.href = 'cart.html';
-    }, 800);
-}
-
-function updateCartCountHome() {
-    const cart = JSON.parse(localStorage.getItem('cart')) || [];
-    const count = cart.reduce((sum, item) => sum + item.quantity, 0);
-    document.querySelectorAll('.cart-count').forEach(el => el.textContent = count);
+    // Button visual feedback
+    const btn = document.getElementById(`home-add-${productId}`);
+    if (btn) {
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '<i class="fa fa-check"></i> Added';
+        btn.style.background = '#16a34a';
+        btn.style.borderColor = '#16a34a';
+        setTimeout(() => {
+            btn.innerHTML = originalText;
+            btn.style.background = '';
+            btn.style.borderColor = '';
+        }, 1200);
+    }
 }
 
 function showNotificationHome(message) {
-    const container = document.body;
+    const existing = document.querySelector('.toast-notification');
+    if (existing) existing.remove();
+
     const toast = document.createElement('div');
     toast.className = 'toast-notification';
-    toast.textContent = message;
+    toast.innerHTML = message;
 
     Object.assign(toast.style, {
         position: 'fixed',
-        bottom: '20px',
+        bottom: '24px',
         left: '50%',
-        transform: 'translateX(-50%)',
-        backgroundColor: '#2563eb', // Brand Blue
-        color: 'white',
+        transform: 'translateX(-50%) translateY(20px)',
+        backgroundColor: '#1e293b',
+        color: '#ffffff',
         padding: '12px 24px',
-        borderRadius: '8px',
-        boxShadow: '0 4px 6px rgba(0,0,0,0.1)',
+        borderRadius: '12px',
+        boxShadow: '0 10px 25px rgba(0,0,0,0.25)',
         zIndex: '10000',
-        fontSize: '1rem',
+        fontSize: '0.95rem',
         fontWeight: '500',
         opacity: '0',
-        transition: 'opacity 0.3s ease, transform 0.3s ease'
+        display: 'flex',
+        alignItems: 'center',
+        gap: '8px',
+        transition: 'all 0.3s cubic-bezier(0.16, 1, 0.3, 1)'
     });
 
-    container.appendChild(toast);
+    document.body.appendChild(toast);
 
-    // Animate In
     requestAnimationFrame(() => {
         toast.style.opacity = '1';
         toast.style.transform = 'translateX(-50%) translateY(0)';
     });
 
-    // Remove after 3s
     setTimeout(() => {
         toast.style.opacity = '0';
         toast.style.transform = 'translateX(-50%) translateY(20px)';
         setTimeout(() => toast.remove(), 300);
-    }, 3000);
+    }, 3500);
 }
 
-// Init Cart Count on Load
-document.addEventListener('DOMContentLoaded', updateCartCountHome);
-
-// Slider Navigation Logic
-document.addEventListener('DOMContentLoaded', () => {
+function initSliderControls() {
     const slider = document.getElementById('home-products-grid');
     const prevBtn = document.getElementById('home-prev-btn');
     const nextBtn = document.getElementById('home-next-btn');
 
     if (slider && prevBtn && nextBtn) {
         prevBtn.addEventListener('click', () => {
-            slider.scrollBy({ left: -300, behavior: 'smooth' });
+            slider.scrollBy({ left: -320, behavior: 'smooth' });
         });
 
         nextBtn.addEventListener('click', () => {
-            slider.scrollBy({ left: 300, behavior: 'smooth' });
+            slider.scrollBy({ left: 320, behavior: 'smooth' });
         });
     }
-});
+}
+
+window.addToCartHome = addToCartHome;
+window.moveSlide = moveSlide;

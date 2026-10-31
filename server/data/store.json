@@ -1,0 +1,350 @@
+{
+  "products": [
+    {
+      "id": "prod-groc-1",
+      "name": "Premium White Sugar",
+      "price": 1.5,
+      "image": "assets/products/sugar.png",
+      "category": "Groceries",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-groc-2",
+      "name": "Organic Atta 5kg",
+      "price": 2.2,
+      "image": "assets/products/atta.png",
+      "category": "Groceries",
+      "rating": 4.8
+    },
+    {
+      "id": "prod-groc-3",
+      "name": "Basmati Rice 5kg",
+      "price": 7.5,
+      "image": "assets/products/rice.png",
+      "category": "Groceries",
+      "rating": 4.6
+    },
+    {
+      "id": "prod-groc-4",
+      "name": "Toor Dal 1kg",
+      "price": 1.8,
+      "image": "assets/products/dal.png",
+      "category": "Groceries",
+      "rating": 4.4
+    },
+    {
+      "id": "prod-groc-5",
+      "name": "Sunflower Oil 1L",
+      "price": 2,
+      "image": "assets/products/oil.png",
+      "category": "Groceries",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-mob-1",
+      "name": "iPhone 14 Pro",
+      "price": 999,
+      "image": "assets/products/iphone.png",
+      "category": "Mobiles",
+      "rating": 4.9
+    },
+    {
+      "id": "prod-mob-2",
+      "name": "Samsung Galaxy S23",
+      "price": 899,
+      "image": "assets/products/samsung.png",
+      "category": "Mobiles",
+      "rating": 4.8
+    },
+    {
+      "id": "prod-mob-3",
+      "name": "Redmi Note 12",
+      "price": 299,
+      "image": "assets/products/redmi_note_12.png",
+      "category": "Mobiles",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-mob-4",
+      "name": "OnePlus 11R",
+      "price": 499,
+      "image": "assets/products/oneplus.png",
+      "category": "Mobiles",
+      "rating": 4.7
+    },
+    {
+      "id": "prod-mob-5",
+      "name": "Nothing Phone (1)",
+      "price": 399,
+      "image": "assets/products/nothing.png",
+      "category": "Mobiles",
+      "rating": 4.4
+    },
+    {
+      "id": "prod-fash-1",
+      "name": "Men's Casual Shirt",
+      "price": 25,
+      "image": "assets/products/shirt.png",
+      "category": "Fashion",
+      "rating": 4.2
+    },
+    {
+      "id": "prod-fash-2",
+      "name": "Women's Floral Dress",
+      "price": 35,
+      "image": "assets/products/dress.png",
+      "category": "Fashion",
+      "rating": 4.6
+    },
+    {
+      "id": "prod-fash-3",
+      "name": "Running Shoes",
+      "price": 45,
+      "image": "assets/products/shoes.png",
+      "category": "Fashion",
+      "rating": 4.4
+    },
+    {
+      "id": "prod-fash-4",
+      "name": "Classic Blue Jeans",
+      "price": 30,
+      "image": "assets/products/jeans.png",
+      "category": "Fashion",
+      "rating": 4.3
+    },
+    {
+      "id": "prod-fash-5",
+      "name": "Leather Wallet",
+      "price": 15,
+      "image": "assets/products/wallet.png",
+      "category": "Fashion",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-elec-1",
+      "name": "Wireless Earbuds",
+      "price": 49,
+      "image": "assets/products/earbuds.png",
+      "category": "Electronics",
+      "rating": 4.4
+    },
+    {
+      "id": "prod-elec-2",
+      "name": "Smart Watch",
+      "price": 199,
+      "image": "assets/products/watch.png",
+      "category": "Electronics",
+      "rating": 4.6
+    },
+    {
+      "id": "prod-elec-3",
+      "name": "Laptop Stand",
+      "price": 29,
+      "image": "assets/products/stand.png",
+      "category": "Electronics",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-elec-4",
+      "name": "HD Monitor 24 inch",
+      "price": 129,
+      "image": "assets/products/monitor.png",
+      "category": "Electronics",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-elec-5",
+      "name": "Mechanical Keyboard",
+      "price": 79,
+      "image": "assets/products/keyboard.png",
+      "category": "Electronics",
+      "rating": 4.8
+    },
+    {
+      "id": "prod-home-1",
+      "name": "Cotton Bedsheet Set",
+      "price": 22,
+      "image": "assets/products/bedsheet.png",
+      "category": "Home",
+      "rating": 4.3
+    },
+    {
+      "id": "prod-home-2",
+      "name": "Ceramic Flower Vase",
+      "price": 15,
+      "image": "assets/products/vase.png",
+      "category": "Home",
+      "rating": 4.7
+    },
+    {
+      "id": "prod-home-3",
+      "name": "Wall Clock Vintage",
+      "price": 18,
+      "image": "assets/products/clock.png",
+      "category": "Home",
+      "rating": 4.2
+    },
+    {
+      "id": "prod-home-4",
+      "name": "Soft Cushions Set",
+      "price": 25,
+      "image": "assets/products/cushion.png",
+      "category": "Home",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-home-5",
+      "name": "Aroma Diffuser",
+      "price": 35,
+      "image": "assets/products/diffuser.png",
+      "category": "Home",
+      "rating": 4.6
+    },
+    {
+      "id": "prod-app-1",
+      "name": "Electric Kettle 1.5L",
+      "price": 19,
+      "image": "assets/products/kettle.png",
+      "category": "Appliances",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-app-2",
+      "name": "Sandwich Maker",
+      "price": 25,
+      "image": "assets/products/sandwich.png",
+      "category": "Appliances",
+      "rating": 4.3
+    },
+    {
+      "id": "prod-app-3",
+      "name": "Portable Blender",
+      "price": 15,
+      "image": "assets/products/blender.png",
+      "category": "Appliances",
+      "rating": 4.4
+    },
+    {
+      "id": "prod-app-4",
+      "name": "Air Fryer",
+      "price": 85,
+      "image": "assets/products/airfryer.png",
+      "category": "Appliances",
+      "rating": 4.7
+    },
+    {
+      "id": "prod-app-5",
+      "name": "Coffee Maker",
+      "price": 45,
+      "image": "assets/products/coffee.png",
+      "category": "Appliances",
+      "rating": 4.6
+    },
+    {
+      "id": "prod-toy-1",
+      "name": "Action Figure Hero",
+      "price": 12,
+      "image": "assets/products/toy_hero.png",
+      "category": "Toys",
+      "rating": 4.8
+    },
+    {
+      "id": "prod-toy-2",
+      "name": "Building Blocks Set",
+      "price": 20,
+      "image": "assets/products/blocks.png",
+      "category": "Toys",
+      "rating": 4.7
+    },
+    {
+      "id": "prod-toy-3",
+      "name": "Remote Control Car",
+      "price": 35,
+      "image": "assets/products/rc_car.png",
+      "category": "Toys",
+      "rating": 4.6
+    },
+    {
+      "id": "prod-toy-4",
+      "name": "Plush Teddy Bear",
+      "price": 18,
+      "image": "assets/products/teddy.png",
+      "category": "Toys",
+      "rating": 4.5
+    },
+    {
+      "id": "prod-toy-5",
+      "name": "Classic Puzzle Set",
+      "price": 10,
+      "image": "assets/products/puzzle.png",
+      "category": "Toys",
+      "rating": 4.4
+    }
+  ],
+  "users": [
+    {
+      "id": "user-admin-1",
+      "username": "karankumawat",
+      "email": "karankumawat303@gmail.com",
+      "password": "$2b$10$GtNKu3qfxDDMPmDxIjt7N.miPKHr1yBC6KCzL5TJ0BCQEA2WFU8/m",
+      "role": "admin",
+      "google_id": null,
+      "address": "Main Street",
+      "city": "City Center",
+      "zip": "302001",
+      "phone": "+91 9876543210",
+      "profile_picture": "assets/Logo.png",
+      "created_at": "2026-09-25T09:46:26.055Z"
+    },
+    {
+      "id": "b5c896bd-12f5-4038-a18e-6bf762154caa",
+      "created_at": "2026-09-25T09:51:21.634Z",
+      "username": "shopper1",
+      "email": "customer_209739411@example.com",
+      "password": "$2b$10$yiJZSsgR1NdvOQEgkF.xkeefW31ZIJ43Gnq5yDbF7.VtWzqv8JVk2",
+      "role": "user"
+    }
+  ],
+  "admins": [
+    {
+      "id": "admin-1",
+      "username": "karankumawat",
+      "email": "karankumawat303@gmail.com",
+      "password": "$2b$10$GtNKu3qfxDDMPmDxIjt7N.miPKHr1yBC6KCzL5TJ0BCQEA2WFU8/m",
+      "created_at": "2026-09-25T09:46:26.054Z"
+    },
+    {
+      "id": "a4eff575-0dfd-460f-8c26-50012c39da47",
+      "created_at": "2026-10-31T06:14:28.297Z",
+      "username": "karankumawat",
+      "email": "karankumawat303@gmail.com",
+      "password": "$2b$10$ETiSljJdHkLFKhWyfPz1xuJAkVxADN0gqZGkFdP/mg13ouIIz09te"
+    }
+  ],
+  "orders": [
+    {
+      "id": "b4f850f4-d0c5-4362-aa26-ff8699e497d3",
+      "created_at": "2026-09-25T09:51:21.649Z",
+      "user_id": "b5c896bd-12f5-4038-a18e-6bf762154caa",
+      "items": [
+        {
+          "price": 12,
+          "quantity": 2,
+          "name": "Action Figure Hero",
+          "_id": "prod-toy-1"
+        }
+      ],
+      "total_amount": 24,
+      "shipping_details": {
+        "zip": "400001",
+        "phone": "9998887776",
+        "name": "Shopper One",
+        "address": "123 Test St",
+        "city": "Mumbai"
+      },
+      "date": "2026-09-25T09:51:21.649Z",
+      "status": "Shipped"
+    }
+  ],
+  "carts": []
+}

@@ -152,49 +152,59 @@ async function loadOrders(container) {
             headers: { 'x-auth-token': localStorage.getItem('token') }
         });
         const orders = await res.json();
+        window.adminOrders = Array.isArray(orders) ? orders : [];
         const tbody = document.getElementById('order-tbody');
 
-        if (orders.length === 0) {
+        if (!Array.isArray(orders) || orders.length === 0) {
             tbody.innerHTML = '<tr><td colspan="6" style="text-align:center; padding: 2rem;">No orders found.</td></tr>';
             return;
         }
 
-        tbody.innerHTML = orders.map(o => `
+        tbody.innerHTML = orders.map(o => {
+            const ship = o.shippingDetails || {};
+            const customerName = ship.name || 'Customer';
+            const customerCity = ship.city || 'Standard Delivery';
+            const total = Number(o.totalAmount || 0).toFixed(2);
+            const status = o.status || 'Processing';
+            const orderDate = o.date ? new Date(o.date) : new Date();
+
+            return `
             <tr>
-                <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--admin-text-muted); opacity: 0.6; letter-spacing: 0.1em;">#${o._id.slice(-6)}</td>
+                <td style="font-family: var(--font-mono); font-size: 0.8rem; color: var(--admin-text-muted); opacity: 0.6; letter-spacing: 0.1em;">#${(o._id || '').slice(-6).toUpperCase()}</td>
                 <td>
-                    <div style="font-weight:700; font-size: 1rem; color: var(--admin-text);">${o.shippingDetails.name}</div>
-                    <div style="font-size: 0.75rem; color: var(--admin-text-muted); font-weight: 500;">${o.shippingDetails.city}</div>
+                    <div style="font-weight:700; font-size: 1rem; color: var(--admin-text);">${customerName}</div>
+                    <div style="font-size: 0.75rem; color: var(--admin-text-muted); font-weight: 500;">${customerCity}</div>
                 </td>
-                <td><div style="color: var(--admin-brand); font-weight:800; font-size: 1.2rem; letter-spacing: -0.02em;">$${o.totalAmount}</div></td>
+                <td><div style="color: var(--admin-brand); font-weight:800; font-size: 1.2rem; letter-spacing: -0.02em;">${total}</div></td>
                 <td>
-                    <span class="status-badge status-${o.status.toLowerCase()}" style="font-family: var(--font-heading); font-size: 0.7rem; letter-spacing: 0.05em;">${o.status}</span>
+                    <span class="status-badge status-${status.toLowerCase()}" style="font-family: var(--font-heading); font-size: 0.7rem; letter-spacing: 0.05em;">${status}</span>
                 </td>
                 <td style="color: var(--admin-text-muted); font-size: 0.85rem; line-height: 1.4;">
-                    <div style="font-weight: 600; color: var(--admin-text);">${new Date(o.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
-                    <small style="opacity: 0.7;">${new Date(o.date).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
+                    <div style="font-weight: 600; color: var(--admin-text);">${orderDate.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' })}</div>
+                    <small style="opacity: 0.7;">${orderDate.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}</small>
                 </td>
                 <td>
                     <div class="action-group">
                         <div class="status-select-wrapper">
                             <select onchange="updateOrderStatus('${o._id}', this.value)">
                                 <option value="" disabled selected>Change Status</option>
-                                <option value="Processing" ${o.status === 'Processing' ? 'selected' : ''}>⏳ Processing</option>
-                                <option value="Shipped" ${o.status === 'Shipped' ? 'selected' : ''}>🚀 Shipped</option>
-                                <option value="Delivered" ${o.status === 'Delivered' ? 'selected' : ''}>✅ Delivered</option>
-                                <option value="Cancelled" ${o.status === 'Cancelled' ? 'selected' : ''}>❌ Cancelled</option>
+                                <option value="Processing" ${status === 'Processing' ? 'selected' : ''}>⏳ Processing</option>
+                                <option value="Shipped" ${status === 'Shipped' ? 'selected' : ''}>🚀 Shipped</option>
+                                <option value="Delivered" ${status === 'Delivered' ? 'selected' : ''}>✅ Delivered</option>
+                                <option value="Cancelled" ${status === 'Cancelled' ? 'selected' : ''}>❌ Cancelled</option>
                             </select>
                         </div>
-                        <button class="btn-action btn-action-view" onclick="alert('Order Details Loading...')">
+                        <button class="btn-action btn-action-view" title="View Order Details" onclick="viewOrderDetails('${o._id}')">
                             <i class="fa fa-eye"></i>
                         </button>
-                        <button class="btn-action btn-action-delete" onclick="deleteOrder('${o._id}')">
+                        <button class="btn-action btn-action-delete" title="Delete Order" onclick="deleteOrder('${o._id}')">
                             <i class="fa fa-trash"></i>
                         </button>
                     </div>
                 </td>
             </tr>
-        `).join('');
+            `;
+        }).join('');
 
     } catch (err) {
         container.innerHTML = `<p class="error" style="color:var(--admin-danger); margin-top:1rem;">Error loading orders: ${err.message}</p>`;
@@ -514,3 +524,81 @@ async function deleteProduct(id) {
     }
 }
 
+
+function viewOrderDetails(orderId) {
+    const order = (window.adminOrders || []).find(o => o._id === orderId);
+    if (!order) return alert('Order details not found');
+
+    const modal = document.getElementById('orderDetailsModal');
+    const title = document.getElementById('orderDetailTitle');
+    const body = document.getElementById('orderDetailBody');
+
+    if (!modal || !body) return;
+
+    title.textContent = `Order #${order._id.slice(-6).toUpperCase()}`;
+
+    const ship = order.shippingDetails || {};
+    const items = Array.isArray(order.items) ? order.items : [];
+    const total = Number(order.totalAmount || 0).toFixed(2);
+    const orderDate = new Date(order.date || Date.now()).toLocaleString();
+
+    body.innerHTML = `
+        <div style="background: rgba(255,255,255,0.03); padding: 1rem; border-radius: 12px; margin-bottom: 1.5rem; border: 1px solid rgba(255,255,255,0.06);">
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; font-size: 0.9rem;">
+                <div>
+                    <span style="color: var(--admin-text-muted); display: block; font-size: 0.8rem;">Customer Name</span>
+                    <strong style="color: var(--admin-text);">${ship.name || 'N/A'}</strong>
+                </div>
+                <div>
+                    <span style="color: var(--admin-text-muted); display: block; font-size: 0.8rem;">Phone</span>
+                    <strong style="color: var(--admin-text);">${ship.phone || 'N/A'}</strong>
+                </div>
+                <div style="grid-column: span 2;">
+                    <span style="color: var(--admin-text-muted); display: block; font-size: 0.8rem;">Shipping Address</span>
+                    <strong style="color: var(--admin-text);">${ship.address || ''}, ${ship.city || ''} ${ship.zip || ''}</strong>
+                </div>
+                <div>
+                    <span style="color: var(--admin-text-muted); display: block; font-size: 0.8rem;">Date Placed</span>
+                    <strong style="color: var(--admin-text);">${orderDate}</strong>
+                </div>
+                <div>
+                    <span style="color: var(--admin-text-muted); display: block; font-size: 0.8rem;">Current Status</span>
+                    <strong style="color: var(--admin-brand);">${order.status || 'Processing'}</strong>
+                </div>
+            </div>
+        </div>
+
+        <h4 style="font-size: 0.95rem; margin-bottom: 0.8rem; color: var(--admin-text);">Ordered Items (${items.length})</h4>
+        <div style="max-height: 220px; overflow-y: auto; border: 1px solid rgba(255,255,255,0.06); border-radius: 8px; padding: 0.5rem;">
+            ${items.map(item => `
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: 8px; border-bottom: 1px solid rgba(255,255,255,0.04);">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <img src="${item.image || 'assets/placeholder.png'}" alt="${item.name}" style="width: 38px; height: 38px; object-fit: contain; background: white; border-radius: 6px; padding: 2px;" onerror="this.src='assets/placeholder.png'">
+                        <div>
+                            <div style="font-weight: 600; font-size: 0.9rem; color: var(--admin-text);">${item.name}</div>
+                            <small style="color: var(--admin-text-muted);">Qty: ${item.quantity || 1} &times; $${Number(item.price || 0).toFixed(2)}</small>
+                        </div>
+                    </div>
+                    <div style="font-weight: 700; color: var(--admin-brand);">
+                        $${(Number(item.price || 0) * Number(item.quantity || 1)).toFixed(2)}
+                    </div>
+                </div>
+            `).join('')}
+        </div>
+
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(255,255,255,0.08); font-size: 1.2rem;">
+            <strong style="color: var(--admin-text);">Total Amount:</strong>
+            <strong style="color: var(--admin-brand); font-size: 1.4rem;">$${total}</strong>
+        </div>
+    `;
+
+    modal.classList.add('show');
+}
+
+function closeOrderModal() {
+    const modal = document.getElementById('orderDetailsModal');
+    if (modal) modal.classList.remove('show');
+}
+
+window.viewOrderDetails = viewOrderDetails;
+window.closeOrderModal = closeOrderModal;

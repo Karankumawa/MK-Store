@@ -20,7 +20,7 @@
     <header>
         <nav>
             <div class="logo">
-                <img src="../assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
+                <a href="/index.html" style="display:flex;align-items:center;gap:10px;text-decoration:none;"><img src="/assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto"></a>
                 <h1>M.K. Store</h1>
             </div>
             <div class="search-bar">
@@ -28,12 +28,11 @@
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
             <ul class="nav-links">
-                <li><a href="../index.html"><i class="fa fa-home"></i> Home</a></li>
-                <li><a href="../shop.html" class="active"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="../cart.html"><i class="fa fa-shopping-cart"></i> Cart <span
-                            class="cart-count">0</span></a>
-                </li>
-                <li><a href="../login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="/index.html"><i class="fa fa-home"></i> Home</a></li>
+                <li><a href="/shop.html" class="active"><i class="fa fa-shopping-bag"></i> Shop</a></li>
+                <li><a href="/cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a></li>
+                <li><a href="/login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="/profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>
     </header>
@@ -89,35 +88,12 @@
         </div>
     </main>
     <div id="footer-placeholder"></div>
-    <script>
-        // Temporary override for this page context until we make footer.js smarter
-        document.addEventListener("DOMContentLoaded", function () {
-            const footerPlaceholder = document.getElementById("footer-placeholder");
-            if (footerPlaceholder) {
-                fetch("../components/footer.html")
-                    .then(response => response.text())
-                    .then(data => {
-                        footerPlaceholder.innerHTML = data;
-                        // Start animation (simplified)
-                        const animatedFooter = footerPlaceholder.querySelector('[data-animate]');
-                        if (animatedFooter) animatedFooter.classList.add('in-view');
-
-                        // Fix links inside the loaded footer
-                        // (Because the footer HTML has relative links like "index.html" which are wrong for this subfolder)
-                        const links = footerPlaceholder.querySelectorAll('a');
-                        links.forEach(link => {
-                            const href = link.getAttribute('href');
-                            if (href && !href.startsWith('http') && !href.startsWith('javascript') && !href.startsWith('#')) {
-                                link.setAttribute('href', '../' + href);
-                            }
-                        });
-                    });
-            }
-        });
-    </script>
+    <script src="/js/footer.js"></script>
     <script>window.pageCategory = 'Fashion';</script>
-    <script src="../js/script.js"></script>
-    <script src="../js/shop.js"></script>
+    <script src="/js/script.js"></script>
+    <script src="/js/nav.js"></script>
+    <script src="/js/shop.js"></script>
+    <script src="/js/livehelp.js"></script>
 </body>
 
 </html>

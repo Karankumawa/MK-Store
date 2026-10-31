@@ -76,28 +76,45 @@ router.delete('/users/:id', verifyAdmin, async (req, res) => {
 
 // Register
 router.post('/register', async (req, res) => {
-    const { username, email, password } = req.body;
+    let { username, email, password } = req.body;
     try {
+        if (!username || !email || !password) {
+            return res.status(400).json({ msg: 'Please provide all required fields' });
+        }
+        if (password.length < 6) {
+            return res.status(400).json({ msg: 'Password must be at least 6 characters' });
+        }
+
+        username = username.trim();
+        email = email.trim().toLowerCase();
+
         // Check if user already exists
-        const { data: existingUser } = await supabase.from('users').select('id, email, username').or(`email.eq.${email},username.eq.${username}`);
-        if (existingUser && existingUser.length > 0) {
-            const hasEmail = existingUser.some(u => u.email === email);
+        const { data: allUsers } = await supabase.from('users').select('id, email, username');
+        if (allUsers && allUsers.length > 0) {
+            const hasEmail = allUsers.some(u => u.email && u.email.toLowerCase() === email);
             if (hasEmail) return res.status(400).json({ msg: 'An account with this email already exists' });
-            return res.status(400).json({ msg: 'This username is already taken' });
+            const hasUser = allUsers.some(u => u.username && u.username.toLowerCase() === username.toLowerCase());
+            if (hasUser) return res.status(400).json({ msg: 'This username is already taken' });
         }
 
         const salt = await bcrypt.genSalt(10);
         const hashedPassword = await bcrypt.hash(password, salt);
 
-        const newUser = { username, email, password: hashedPassword, role: 'user' };
+        const newUser = {
+            username,
+            email,
+            password: hashedPassword,
+            role: 'user',
+            created_at: new Date().toISOString()
+        };
         
-        const { data: user, error } = await supabase.from('users').insert(newUser).select('id, username, role').single();
+        const { data: user, error } = await supabase.from('users').insert(newUser).select('id, username, email, role').single();
         if (error) throw error;
 
         const payload = { user: { id: user.id, role: user.role } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, username: user.username, role: user.role } });
+            res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: user.role } });
         });
     } catch (err) {
         console.error('Registration Error:', err.message);
@@ -107,23 +124,35 @@ router.post('/register', async (req, res) => {
 
 // Login (Checks Users, then Admins)
 router.post('/login', async (req, res) => {
-    const { email, password } = req.body;
+    let { email, password } = req.body;
     try {
+        if (!email || !password) {
+            return res.status(400).json({ msg: 'Please enter both email and password' });
+        }
+
+        email = email.trim().toLowerCase();
         let user = null;
         let role = 'user';
 
-        // 1. Try finding in users table
-        let { data: regularUser } = await supabase.from('users').select('*').eq('email', email).single();
-        
-        if (regularUser) {
-            user = regularUser;
-            role = 'user';
-        } else {
-            // 2. Try finding in admins table
-            let { data: adminUser } = await supabase.from('admins').select('*').eq('email', email).single();
-            if (adminUser) {
-                user = adminUser;
-                role = 'admin';
+        // 1. Try finding in users table (case-insensitive)
+        const { data: allUsers } = await supabase.from('users').select('*');
+        if (allUsers) {
+            const match = allUsers.find(u => u.email && u.email.toLowerCase() === email);
+            if (match) {
+                user = match;
+                role = match.role || 'user';
+            }
+        }
+
+        // 2. Try finding in admins table if not found
+        if (!user) {
+            const { data: allAdmins } = await supabase.from('admins').select('*');
+            if (allAdmins) {
+                const matchAdmin = allAdmins.find(a => a.email && a.email.toLowerCase() === email);
+                if (matchAdmin) {
+                    user = matchAdmin;
+                    role = 'admin';
+                }
             }
         }
 
@@ -133,9 +162,9 @@ router.post('/login', async (req, res) => {
         if (!isMatch) return res.status(400).json({ msg: 'Invalid Credentials' });
 
         const payload = { user: { id: user.id, role: role } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, username: user.username, role: role } });
+            res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: role } });
         });
     } catch (err) {
         console.error(err.message);
@@ -150,32 +179,37 @@ router.get('/me', async (req, res) => {
         if (!token) return res.status(401).json({ msg: 'No token, authorization denied' });
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        const tableName = decoded.user.role === 'admin' ? 'admins' : 'users';
 
-        const selectQuery = decoded.user.role === 'admin' 
-            ? 'id, username, email, created_at' 
-            : 'id, username, email, role, google_id, address, city, zip, phone, profile_picture, created_at';
-
-        const { data: user, error } = await supabase.from(tableName)
-            .select(selectQuery)
+        // First attempt to find in users table
+        let { data: user } = await supabase.from('users')
+            .select('id, username, email, role, google_id, address, city, zip, phone, profile_picture, created_at')
             .eq('id', decoded.user.id)
             .single();
-            
-        if (error || !user) return res.status(404).json({ msg: 'User not found' });
+
+        // If not found in users, check admins table
+        if (!user) {
+            const { data: adminUser } = await supabase.from('admins')
+                .select('id, username, email, created_at')
+                .eq('id', decoded.user.id)
+                .single();
+
+            if (adminUser) {
+                user = { ...adminUser, role: 'admin' };
+            }
+        }
+
+        if (!user) return res.status(404).json({ msg: 'User not found' });
         
         user._id = user.id;
-        user.role = decoded.user.role;
-        
-        if (decoded.user.role !== 'admin') {
-            user.profilePicture = user.profile_picture;
-            user.googleId = user.google_id;
-        }
+        user.role = user.role || decoded.user.role || 'user';
+        user.profilePicture = user.profile_picture || null;
+        user.googleId = user.google_id || null;
         user.createdAt = user.created_at;
         
         res.json(user);
     } catch (err) {
         console.error(err.message);
-        res.status(500).send('Server Error');
+        res.status(401).json({ msg: 'Token is invalid or expired' });
     }
 });
 
@@ -187,25 +221,25 @@ router.put('/me', async (req, res) => {
 
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
         
-        if (decoded.user.role === 'admin') {
-             // Admin table doesn't have address, city, etc. in our schema.
-             return res.json({ msg: "Profile updated (Admin)", _id: decoded.user.id, role: 'admin' });
-        }
-
         const { address, city, zip, phone } = req.body;
         const updates = {};
-        if (address) updates.address = address;
-        if (city) updates.city = city;
-        if (zip) updates.zip = zip;
-        if (phone) updates.phone = phone;
+        if (address !== undefined) updates.address = address;
+        if (city !== undefined) updates.city = city;
+        if (zip !== undefined) updates.zip = zip;
+        if (phone !== undefined) updates.phone = phone;
 
-        const { data: user, error } = await supabase.from('users')
+        // Try updating in users table first
+        let { data: user } = await supabase.from('users')
             .update(updates)
             .eq('id', decoded.user.id)
             .select('id, username, email, role, google_id, address, city, zip, phone, profile_picture, created_at')
             .single();
 
-        if (error || !user) return res.status(404).json({ msg: 'User not found' });
+        if (!user && decoded.user.role === 'admin') {
+            return res.json({ msg: "Profile updated (Admin)", _id: decoded.user.id, role: 'admin' });
+        }
+
+        if (!user) return res.status(404).json({ msg: 'User not found' });
         
         user._id = user.id;
         user.profilePicture = user.profile_picture;
@@ -263,9 +297,9 @@ router.post('/google', async (req, res) => {
         }
 
         const payload = { user: { id: user.id, role: user.role } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h' }, (err, token) => {
+        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, username: user.username, role: user.role, picture: user.profile_picture } });
+            res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: user.role, picture: user.profile_picture } });
         });
 
     } catch (err) {

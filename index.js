@@ -17,10 +17,11 @@ app.use(express.static(path.join(__dirname, 'public')));
 supabase.from('products').select('id').limit(1)
     .then(({ error }) => {
         if (error) {
-            console.error('Supabase connection error:', error.message);
+            console.error('Database connection error:', error.message);
         } else {
             console.log(`Server PID: ${process.pid}`);
-            console.log(`Supabase Connected successfully.`);
+            const mode = (supabase.isLocal && supabase.isLocal()) ? 'Local JSON Store (server/data/store.json)' : 'Supabase';
+            console.log(`Database connected successfully [${mode}].`);
         }
     })
     .catch(err => console.log(err));
@@ -29,6 +30,7 @@ supabase.from('products').select('id').limit(1)
 app.use('/api/auth', require('./server/routes/auth'));
 app.use('/api/products', require('./server/routes/products'));
 app.use('/api/orders', require('./server/routes/orders'));
+app.use('/api/cart', require('./server/routes/cart'));
 
 // Serve index.html for root
 app.get('/', (req, res) => {
@@ -41,6 +43,20 @@ const verifyAdmin = (req, res, next) => {
     next();
 };
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 3000;
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+const server = app.listen(PORT, () => {
+    console.log(`Server running at http://localhost:${PORT}`);
+});
+
+server.on('error', (err) => {
+    if (err.code === 'EADDRINUSE') {
+        const fallbackPort = Number(PORT) + 1;
+        console.warn(`Port ${PORT} in use, switching to port ${fallbackPort}...`);
+        app.listen(fallbackPort, () => console.log(`Server running at http://localhost:${fallbackPort}`));
+    } else {
+        console.error('Server startup error:', err);
+    }
+});
+
+module.exports = { app, server };

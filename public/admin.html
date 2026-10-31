@@ -51,6 +51,11 @@
                     </li>
                 </ul>
             </nav>
+            <div style="padding: 0 1.2rem; margin-bottom: 0.5rem;">
+                <a href="index.html" style="display:flex; align-items:center; gap:10px; color:#94a3b8; font-size:0.85rem; text-decoration:none; padding:10px; border-radius:10px; background:rgba(255,255,255,0.03); transition:all 0.2s;">
+                    <i class="fa fa-arrow-left"></i> <span>View Storefront</span>
+                </a>
+            </div>
             <div class="logout-item">
                 <a href="javascript:void(0)" id="logoutBtn" style="color: #ef4444;">
                     <i class="fa fa-sign-out-alt"></i> <span>Logout</span>
@@ -123,6 +128,22 @@
                     <button type="submit" class="btn-primary" id="saveProductBtn">Save Product</button>
                 </div>
             </form>
+        </div>
+    </div>
+
+        <!-- View Order Details Modal -->
+    <div id="orderDetailsModal" class="modal">
+        <div class="modal-content" style="max-width: 650px;">
+            <div class="modal-header">
+                <h2 id="orderDetailTitle">Order Details</h2>
+                <button class="close-btn" onclick="closeOrderModal()">&times;</button>
+            </div>
+            <div id="orderDetailBody" style="padding: 1.5rem 0;">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-secondary" onclick="closeOrderModal()">Close</button>
+            </div>
         </div>
     </div>
 

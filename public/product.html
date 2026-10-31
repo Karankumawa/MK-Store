@@ -5,32 +5,47 @@
     <title>Product Details - M.K. Store</title>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap"
-        rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="css/product.css">
     <link rel="stylesheet" href="css/cart.css">
 </head>
 
 <body>
+    <!-- Top Announcement Bar -->
+    <div class="top-announcement-bar">
+        <div>
+            <span class="announcement-badge">MEMBER EXCLUSIVE</span>
+            <span>Free Shipping on all orders over $50 | 100% Guaranteed Freshness & Quality</span>
+        </div>
+        <div class="top-links">
+            <a href="about.html"><i class="fa-solid fa-circle-info"></i> About</a>
+            <a href="contact.html"><i class="fa-solid fa-headset"></i> Support</a>
+        </div>
+    </div>
+
     <header>
         <nav>
-            <div class="logo">
+            <a href="index.html" class="logo" style="text-decoration:none;">
                 <img src="assets/Logo.png" alt="M.K. Store Logo" style="height:40px; width:auto">
                 <h1>M.K. Store</h1>
-            </div>
+            </a>
             <div class="search-bar">
                 <input type="text" id="search-input" placeholder="Search products...">
                 <button id="search-button"><i class="fa fa-search"></i></button>
             </div>
+            <div class="menu-toggle">
+                <i class="fa fa-bars"></i>
+            </div>
             <ul class="nav-links">
                 <li><a href="index.html"><i class="fa fa-home"></i> Home</a></li>
                 <li><a href="shop.html"><i class="fa fa-shopping-bag"></i> Shop</a></li>
-                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count">0</span></a>
-                </li>
+                <li><a href="cart.html"><i class="fa fa-shopping-cart"></i> Cart <span class="cart-count"></span></a></li>
                 <li><a href="login.html"><i class="fa fa-user"></i> Login</a></li>
+                <li><a href="profile.html"><i class="fa fa-user-circle"></i> Profile</a></li>
             </ul>
         </nav>
     </header>
@@ -40,25 +55,17 @@
             <!-- Left: Gallery -->
             <div class="product-gallery">
                 <div class="main-image-container">
-                    <img id="main-product-img" src="" alt="Product Image">
+                    <img id="main-product-img" src="assets/placeholder.png" alt="Product Image">
                 </div>
-                <!-- Thumbnails (Static for now, but could be dynamic) -->
-                <div class="thumbnail-list">
-                    <img src="" class="thumbnail active" onclick="changeImage(this.src)" id="thumb-1">
-                    <img src="https://via.placeholder.com/150?text=View+2" class="thumbnail"
-                        onclick="changeImage(this.src)">
-                    <img src="https://via.placeholder.com/150?text=View+3" class="thumbnail"
-                        onclick="changeImage(this.src)">
-                    <img src="https://via.placeholder.com/150?text=View+4" class="thumbnail"
-                        onclick="changeImage(this.src)">
+                <div class="thumbnail-list" id="product-thumbnails">
+                    <img src="assets/placeholder.png" class="thumbnail active" id="thumb-1">
                 </div>
             </div>
 
             <!-- Right: Details -->
             <div class="product-info-detail">
                 <div class="product-breadcrumb">
-                    <a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <span
-                        id="breadcrumb-category">Category</span>
+                    <a href="index.html">Home</a> / <a href="shop.html">Shop</a> / <span id="breadcrumb-category">General</span>
                 </div>
 
                 <h1 id="product-name" class="product-title-large">Loading Product...</h1>
@@ -68,8 +75,7 @@
                         <span id="product-rating">4.5</span> <i class="fa fa-star"></i>
                     </div>
                     <span class="review-count">1,245 Reviews</span>
-                    <span class="stock-status" style="color:#16a34a; font-weight:600;"><i
-                            class="fa fa-check-circle"></i> In Stock</span>
+                    <span class="stock-status" style="color:#16a34a; font-weight:600;"><i class="fa fa-check-circle"></i> In Stock</span>
                 </div>
 
                 <div class="product-price-large">
@@ -77,15 +83,15 @@
                     <span class="original-price" id="img-original-price">$0.00</span>
                     <span class="discount-badge">20% OFF</span>
                 </div>
-                <p style="color:#64748b; margin-bottom:2rem;">Inclusive of all taxes</p>
+                <p style="color:#64748b; margin-bottom:1.5rem; font-size:0.9rem;">Inclusive of all applicable taxes</p>
 
                 <!-- Description Snippet -->
-                <div style="margin-bottom:2rem; line-height:1.7; color:#334155;">
-                    <p id="product-desc-short">Experience premium quality with this improved version. Designed for
-                        durability and performance.</p>
+                <div style="margin-bottom:1.5rem; line-height:1.7; color:#334155;">
+                    <p id="product-desc-short">Experience premium quality with this verified item. Carefully sourced, authentic, and packed with safety seals for complete satisfaction.</p>
                 </div>
 
-                <div class="product-actions-large">
+                <!-- Actions: Qty + Add to Cart + Buy Now -->
+                <div class="product-actions-large" style="display:flex; flex-wrap:wrap; gap:12px; align-items:center;">
                     <div class="quantity-selector">
                         <button class="qty-btn" onclick="updateQty(-1)">-</button>
                         <input type="text" value="1" class="qty-input" id="qty-input" readonly>
@@ -94,61 +100,79 @@
                     <button class="btn-add-cart-large" id="add-to-cart-btn">
                         <i class="fa fa-shopping-cart"></i> Add to Cart
                     </button>
-                    <button class="btn-wishlist-large">
+                    <button class="btn-buy-now-large" id="buy-now-btn" style="background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color:white; border:none; padding: 14px 28px; border-radius: 12px; font-weight:700; font-size: 1rem; cursor:pointer; display:flex; align-items:center; gap:8px; box-shadow: 0 10px 20px -5px rgba(245, 158, 11, 0.4); transition: transform 0.2s ease;">
+                        <i class="fa-solid fa-bolt"></i> Buy Now
+                    </button>
+                    <button class="btn-wishlist-large" title="Add to Wishlist">
                         <i class="fa-regular fa-heart"></i>
                     </button>
                 </div>
 
                 <!-- Features -->
-                <div class="product-features">
+                <div class="product-features" style="margin-top:2rem;">
                     <div class="feature-item">
                         <div class="feature-icon"><i class="fa fa-truck"></i></div>
                         <div>
-                            <h4 style="font-weight:600;">Free Delivery</h4>
-                            <p style="font-size:0.9rem; color:#64748b;">For orders over $50</p>
+                            <h4 style="font-weight:600;">Express Delivery</h4>
+                            <p style="font-size:0.9rem; color:#64748b;">Free for orders over $50</p>
                         </div>
                     </div>
                     <div class="feature-item">
                         <div class="feature-icon"><i class="fa fa-shield-alt"></i></div>
                         <div>
-                            <h4 style="font-weight:600;">1 Year Warranty</h4>
-                            <p style="font-size:0.9rem; color:#64748b;">Standard warranty included</p>
+                            <h4 style="font-weight:600;">Authentic Guarantee</h4>
+                            <p style="font-size:0.9rem; color:#64748b;">100% genuine product</p>
                         </div>
                     </div>
                 </div>
 
                 <!-- Tabs -->
-                <div class="product-tabs">
+                <div class="product-tabs" style="margin-top:2rem;">
                     <div class="tab-headers">
-                        <button class="tab-btn active" onclick="switchTab('desc')">Description</button>
-                        <button class="tab-btn" onclick="switchTab('spec')">Specifications</button>
-                        <button class="tab-btn" onclick="switchTab('reviews')">Reviews</button>
+                        <button class="tab-btn active" onclick="switchTab('desc', this)">Description</button>
+                        <button class="tab-btn" onclick="switchTab('spec', this)">Specifications</button>
+                        <button class="tab-btn" onclick="switchTab('reviews', this)">Customer Reviews</button>
                     </div>
                     <div id="tab-desc" class="tab-content active">
-                        <p>Detailed product description goes here. This product is made with high-quality materials and
-                            designed to last. It is perfect for your daily needs and offers great value for money.</p>
+                        <p>This premium item is sourced directly from certified producers. Crafted to the highest quality standards, it brings unmatched dependability to your daily lifestyle.</p>
                         <br>
-                        <p><strong>Key Benefits:</strong></p>
-                        <ul style="padding-left:1.5rem; margin-top:0.5rem;">
-                            <li>Premium Build Quality</li>
-                            <li>Ergonomic Design</li>
-                            <li>Eco-friendly Materials</li>
+                        <p><strong>Highlights:</strong></p>
+                        <ul style="padding-left:1.5rem; margin-top:0.5rem; line-height:1.7;">
+                            <li>Guaranteed authentic & factory sealed</li>
+                            <li>Strictly tested for quality and performance</li>
+                            <li>Protected under M.K. Store customer assurance policy</li>
                         </ul>
                     </div>
                     <div id="tab-spec" class="tab-content">
                         <table style="width:100%; border-collapse: collapse;">
                             <tr>
-                                <td style="padding:10px; border-bottom:1px solid #e2e8f0; font-weight:600;">Brand</td>
-                                <td style="padding:10px; border-bottom:1px solid #e2e8f0;">M.K. Select</td>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0; font-weight:600;">Store</td>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0;">M.K. Store Verified</td>
                             </tr>
                             <tr>
-                                <td style="padding:10px; border-bottom:1px solid #e2e8f0; font-weight:600;">Model</td>
-                                <td style="padding:10px; border-bottom:1px solid #e2e8f0;">2024 Edition</td>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0; font-weight:600;">Condition</td>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0;">Brand New (100% Original)</td>
+                            </tr>
+                            <tr>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0; font-weight:600;">Availability</td>
+                                <td style="padding:10px; border-bottom:1px solid #e2e8f0;">Ready to Dispatch</td>
                             </tr>
                         </table>
                     </div>
                     <div id="tab-reviews" class="tab-content">
-                        <p>No reviews yet.</p>
+                        <div style="display:flex; align-items:center; gap:16px; margin-bottom:1.5rem;">
+                            <div style="font-size:3rem; font-weight:800; color:#0f172a; font-family:'Outfit', sans-serif;">4.8</div>
+                            <div>
+                                <div style="color:#f59e0b; font-size:1.1rem;">
+                                    <i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star"></i><i class="fa fa-star-half-stroke"></i>
+                                </div>
+                                <small style="color:#64748b;">Based on 1,245 verified buyers</small>
+                            </div>
+                        </div>
+                        <div style="background:#f8fafc; padding:1rem 1.25rem; border-radius:12px; border:1px solid #e2e8f0; margin-bottom:10px;">
+                            <strong>Aman S.</strong> <span style="color:#16a34a; font-size:0.8rem; margin-left:8px;"><i class="fa fa-check-circle"></i> Verified Buyer</span>
+                            <p style="margin-top:6px; color:#475569; font-size:0.92rem;">"Superb quality, delivery was fast and the packaging was completely secure. Very satisfied!"</p>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -160,90 +184,140 @@
 
     <!-- Logic to fetch product -->
     <script>
-        // Simple script to handle UI logic
+        let currentProduct = null;
+
         function updateQty(change) {
             const input = document.getElementById('qty-input');
-            let val = parseInt(input.value) + change;
+            let val = (parseInt(input.value) || 1) + change;
             if (val < 1) val = 1;
             input.value = val;
         }
 
-        function switchTab(tabId) {
+        function switchTab(tabId, btn) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-            event.target.classList.add('active');
-            document.getElementById('tab-' + tabId).classList.add('active');
+            if (btn) btn.classList.add('active');
+            const target = document.getElementById('tab-' + tabId);
+            if (target) target.classList.add('active');
         }
 
-        function changeImage(src) {
-            document.getElementById('main-product-img').src = src;
+        function changeImage(src, thumbEl) {
+            const mainImg = document.getElementById('main-product-img');
+            if (mainImg) mainImg.src = src;
+            document.querySelectorAll('.thumbnail').forEach(t => t.classList.remove('active'));
+            if (thumbEl) thumbEl.classList.add('active');
         }
 
-        // Fetch Product Data
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const productId = urlParams.get('id');
+            const container = document.querySelector('.product-detail-container');
 
             if (!productId) {
-                // Handle no ID (redirect or show error)
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding: 4rem 1rem; width:100%;">
+                            <h2>No Product Selected</h2>
+                            <p style="color:#64748b; margin: 1rem 0 2rem 0;">Please choose a product from our shop collection.</p>
+                            <a href="shop.html" class="mk-btn-primary" style="display:inline-flex; width:auto;">Browse Catalog</a>
+                        </div>
+                    `;
+                }
                 return;
             }
 
             try {
-                // In a real app, fetch single product. For now, we fetch all and find one since we don't have a single product endpoint yet
-                // Or better, assume we passed data via simple object if from static array. 
-                // But since we are full stack, let's fetch from API if we can, or just find it from list.
-                // Actually, I'll update the backend to have a single product route? No, to be safe, I'll just fetch all and filter client side for now to speed up.
-
-                const res = await fetch('/api/products');
-                const products = await res.json();
-                const product = products.find(p => p._id === productId);
+                const res = await fetch('/api/products/' + encodeURIComponent(productId));
+                if (!res.ok) throw new Error('Product not found');
+                const product = await res.json();
 
                 if (product) {
+                    currentProduct = product;
                     document.title = product.name + " - M.K. Store";
                     document.getElementById('product-name').textContent = product.name;
-                    document.getElementById('product-price').textContent = '$' + product.price;
-                    document.getElementById('img-original-price').textContent = '$' + (product.price * 1.2).toFixed(2);
+                    document.getElementById('product-price').textContent = '$' + Number(product.price).toFixed(2);
+                    document.getElementById('img-original-price').textContent = '$' + (Number(product.price) * 1.25).toFixed(2);
                     document.getElementById('product-rating').textContent = product.rating || 4.5;
-                    document.getElementById('main-product-img').src = product.image;
-                    document.getElementById('thumb-1').src = product.image;
-                    document.getElementById('breadcrumb-category').textContent = product.category || 'Shop';
 
-                    // Setup Add to Cart
-                    document.getElementById('add-to-cart-btn').onclick = () => {
-                        addToCartFromDetail(product);
-                    };
+                    const mainImg = document.getElementById('main-product-img');
+                    mainImg.src = product.image || 'assets/placeholder.png';
+                    mainImg.onerror = () => { mainImg.src = 'assets/placeholder.png'; };
+
+                    const thumb1 = document.getElementById('thumb-1');
+                    if (thumb1) {
+                        thumb1.src = product.image || 'assets/placeholder.png';
+                        thumb1.onclick = () => changeImage(thumb1.src, thumb1);
+                    }
+
+                    const breadcrumb = document.getElementById('breadcrumb-category');
+                    if (breadcrumb) {
+                        breadcrumb.innerHTML = `<a href="shop.html?category=${encodeURIComponent(product.category || '')}">${product.category || 'General'}</a>`;
+                    }
+
+                    // Attach Handlers
+                    const addBtn = document.getElementById('add-to-cart-btn');
+                    if (addBtn) {
+                        addBtn.onclick = () => addToCartFromDetail(product);
+                    }
+
+                    const buyBtn = document.getElementById('buy-now-btn');
+                    if (buyBtn) {
+                        buyBtn.onclick = () => buyNowFromDetail(product);
+                    }
                 }
             } catch (err) {
                 console.error(err);
+                if (container) {
+                    container.innerHTML = `
+                        <div style="text-align:center; padding: 4rem 1rem; width:100%;">
+                            <h2>Product Not Found</h2>
+                            <p style="color:#64748b; margin: 1rem 0 2rem 0;">The requested product is not available or has been removed.</p>
+                            <a href="shop.html" class="mk-btn-primary" style="display:inline-flex; width:auto;">Back to Shop</a>
+                        </div>
+                    `;
+                }
             }
         });
 
+        // Add to Cart from Detail
         function addToCartFromDetail(product) {
-            const qty = parseInt(document.getElementById('qty-input').value);
-            let cart = JSON.parse(localStorage.getItem('cart')) || [];
-            const existingItem = cart.find(item => item._id === product._id);
-
-            if (existingItem) {
-                existingItem.quantity += qty;
+            const qty = parseInt(document.getElementById('qty-input').value) || 1;
+            if (window.UserCart) {
+                const added = window.UserCart.addItem(product, qty);
+                if (!added) return; // Prompted guest modal
             } else {
-                cart.push({ ...product, quantity: qty });
+                alert('Please sign in to add items to cart.');
+                window.location.href = 'login.html';
+                return;
             }
 
-            localStorage.setItem('cart', JSON.stringify(cart));
-
-            // Show feedback and redirect
             const btn = document.getElementById('add-to-cart-btn');
-            btn.innerHTML = '<i class="fa fa-check"></i> Added';
+            btn.innerHTML = '<i class="fa fa-check"></i> Added!';
             btn.style.background = '#16a34a';
 
             setTimeout(() => {
                 window.location.href = 'cart.html';
-            }, 500);
+            }, 600);
+        }
+
+        // Buy Now directly from Detail
+        function buyNowFromDetail(product) {
+            const qty = parseInt(document.getElementById('qty-input').value) || 1;
+            if (window.UserCart) {
+                if (!window.UserCart.requireAuth('buy this product immediately', { ...product, quantity: qty })) {
+                    return; // Prompted guest modal
+                }
+                window.UserCart.addItem(product, qty);
+                window.location.href = 'checkout.html';
+            } else {
+                alert('Please sign in to purchase.');
+                window.location.href = 'login.html?redirect=checkout.html';
+            }
         }
     </script>
     <script src="js/script.js"></script>
     <script src="js/nav.js"></script>
+    <script src="js/livehelp.js"></script>
 </body>
 
 </html>

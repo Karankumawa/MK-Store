@@ -1,6 +1,6 @@
 const API_URL = '/api/auth';
 
-// Firebase Configuration
+// Firebase Configuration (Google Auth)
 const firebaseConfig = {
     apiKey: "AIzaSyA4Efxee8aHyt_6Wx0K8DLRnpp-hF-jNzo",
     authDomain: "login-shop-68cfc.firebaseapp.com",
@@ -24,18 +24,15 @@ if (typeof firebase !== 'undefined') {
 // Google Login Function
 function googleLogin() {
     if (typeof firebase === 'undefined') {
-        showNotification('Firebase not loaded', 'error');
+        showNotification('Firebase SDK is not loaded.', 'error');
         return;
     }
     const provider = new firebase.auth.GoogleAuthProvider();
     firebase.auth().signInWithPopup(provider)
         .then((result) => {
             const user = result.user;
-
-            // Get ID token
             user.getIdToken().then(async (idToken) => {
                 try {
-                    // Send token to backend for verification
                     const res = await fetch(`${API_URL}/google`, {
                         method: 'POST',
                         headers: { 'Content-Type': 'application/json' },
@@ -45,10 +42,8 @@ function googleLogin() {
                     const data = await res.json();
 
                     if (res.ok) {
-                        localStorage.setItem('token', data.token);
-                        localStorage.setItem('user', JSON.stringify(data.user));
-                        showNotification(`Welcome, ${data.user.username}!`, 'success');
-                        setTimeout(() => window.location.href = 'index.html', 1000);
+                        showNotification(`Welcome back, ${data.user.username}!`, 'success');
+                        handlePostAuth(data.user, data.token);
                     } else {
                         throw new Error(data.msg || 'Backend verification failed');
                     }
@@ -61,6 +56,63 @@ function googleLogin() {
             console.error("Google Login Error:", error);
             showNotification("Google Login Failed: " + error.message, 'error');
         });
+}
+
+function handlePostAuth(user, token) {
+    localStorage.setItem('token', token);
+    localStorage.setItem('user', JSON.stringify(user));
+
+    // Check if there was a pending action before login (e.g. guest clicked "Add to Cart")
+    const pendingRaw = localStorage.getItem('mkstore_pending_action');
+    if (pendingRaw) {
+        try {
+            const pending = JSON.parse(pendingRaw);
+            localStorage.removeItem('mkstore_pending_action');
+            if (pending.action === 'add_to_cart' && pending.product) {
+                const cartKey = `mkstore_cart_${user.id}`;
+                let cart = JSON.parse(localStorage.getItem(cartKey)) || [];
+                const pId = pending.product._id || pending.product.id;
+                const exist = cart.find(i => (i._id || i.id) === pId);
+                const qty = pending.product.quantity || 1;
+                if (exist) {
+                    exist.quantity = (exist.quantity || 1) + qty;
+                } else {
+                    cart.push({
+                        _id: pId,
+                        name: pending.product.name,
+                        price: parseFloat(pending.product.price) || 0,
+                        image: pending.product.image || 'assets/placeholder.png',
+                        quantity: qty
+                    });
+                }
+                localStorage.setItem(cartKey, JSON.stringify(cart));
+
+                // Sync with backend /api/cart
+                fetch('/api/cart', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'x-auth-token': token },
+                    body: JSON.stringify({ items: cart })
+                }).catch(() => {});
+
+                showNotification(`Added ${pending.product.name} to your cart! Redirecting to cart...`, 'success');
+                setTimeout(() => window.location.href = 'cart.html', 1000);
+                return;
+            }
+        } catch (e) {
+            console.error('Pending auth action error:', e);
+        }
+    }
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirect = urlParams.get('redirect');
+    if (redirect) {
+        setTimeout(() => window.location.href = redirect, 1000);
+        return;
+    }
+
+    setTimeout(() => {
+        window.location.href = user.role === 'admin' ? 'admin.html' : 'index.html';
+    }, 1000);
 }
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -83,6 +135,19 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
+    // Check if redirected from restricted page
+    const urlParams = new URLSearchParams(window.location.search);
+    const redirect = urlParams.get('redirect');
+    if (redirect) {
+        const infoMsg = document.createElement('div');
+        infoMsg.className = 'auth-redirect-notice';
+        infoMsg.innerHTML = '<i class="fa-solid fa-lock"></i> Please sign in to continue with your checkout / purchase.';
+        const formContainer = document.querySelector('.login-form') || document.querySelector('.register-form');
+        if (formContainer) {
+            formContainer.insertBefore(infoMsg, formContainer.children[1] || null);
+        }
+    }
+
     // Login Handling
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
@@ -101,19 +166,15 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
 
                 if (res.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    showNotification('Login Successful', 'success');
-                    setTimeout(() => {
-                        window.location.href = data.user.role === 'admin' ? 'admin.html' : 'index.html';
-                    }, 1000);
+                    showNotification('Login Successful! Welcome back.', 'success');
+                    handlePostAuth(data.user, data.token);
                 } else {
-                    showNotification(data.msg || 'Login failed', 'error');
+                    showNotification(data.msg || 'Login failed. Check your credentials.', 'error');
                     setLoading(btn, false, 'Login');
                 }
             } catch (err) {
                 console.error(err);
-                showNotification('Login failed. Please try again.', 'error');
+                showNotification('Login request failed. Please check connection.', 'error');
                 setLoading(btn, false, 'Login');
             }
         });
@@ -135,7 +196,7 @@ document.addEventListener('DOMContentLoaded', () => {
             }
 
             try {
-                setLoading(btn, true, 'Creating...');
+                setLoading(btn, true, 'Creating Account...');
                 const res = await fetch(`${API_URL}/register`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -144,10 +205,8 @@ document.addEventListener('DOMContentLoaded', () => {
                 const data = await res.json();
 
                 if (res.ok) {
-                    localStorage.setItem('token', data.token);
-                    localStorage.setItem('user', JSON.stringify(data.user));
-                    showNotification('Registration Successful! Redirecting...', 'success');
-                    setTimeout(() => window.location.href = 'index.html', 1500);
+                    showNotification('Account Created Successfully! Welcome to M.K. Store.', 'success');
+                    handlePostAuth(data.user, data.token);
                 } else {
                     console.error('Registration failed:', data);
                     showNotification(data.msg || 'Registration failed', 'error');
@@ -155,7 +214,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             } catch (err) {
                 console.error(err);
-                showNotification('Registration failed', 'error');
+                showNotification('Registration failed. Please try again.', 'error');
                 setLoading(btn, false, 'Register');
             }
         });
@@ -169,6 +228,10 @@ function setLoading(btn, isLoading, text) {
 }
 
 function showNotification(msg, type = 'success') {
+    if (window.showToast) {
+        window.showToast(msg, type);
+        return;
+    }
     const div = document.createElement('div');
     div.className = `notification ${type}`;
     div.textContent = msg;
@@ -177,7 +240,6 @@ function showNotification(msg, type = 'success') {
         border-radius: 12px; color: white; z-index: 100000;
         box-shadow: 0 10px 25px rgba(0,0,0,0.2); font-weight: 600;
         background: ${type === 'error' ? '#ef4444' : '#10b981'};
-        animation: slideIn 0.3s ease-out;
     `;
     document.body.appendChild(div);
     setTimeout(() => {
@@ -188,15 +250,12 @@ function showNotification(msg, type = 'success') {
     }, 4000);
 }
 
-// Add CSS animation for notification
-const style = document.createElement('style');
-style.textContent = `
-    @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-`;
-document.head.appendChild(style);
-
 function logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    window.location.href = 'login.html';
+    if (window.UserAuth) {
+        window.UserAuth.logout();
+    } else {
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
+        window.location.href = 'login.html';
+    }
 }

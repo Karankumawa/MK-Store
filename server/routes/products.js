@@ -35,13 +35,38 @@ router.get('/', async (req, res) => {
     }
 });
 
+// Get Single Product by ID
+router.get('/:id', async (req, res) => {
+    try {
+        const { data: product, error } = await supabase.from('products').select('*').eq('id', req.params.id).single();
+        if (error || !product) {
+            return res.status(404).json({ msg: 'Product not found' });
+        }
+        product._id = product.id;
+        res.json(product);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).send('Server Error');
+    }
+});
+
 // Create Product (Admin Only)
 router.post('/', adminAuth, async (req, res) => {
     try {
         const { name, price, image, category, rating } = req.body;
-        if (!name || !price) return res.status(400).json({ msg: 'Name and price are required' });
+        const numPrice = parseFloat(price);
+        if (!name || isNaN(numPrice) || numPrice <= 0) {
+            return res.status(400).json({ msg: 'Valid name and positive price are required' });
+        }
 
-        const newProduct = { name, price, image, category, rating };
+        const numRating = !isNaN(parseFloat(rating)) ? Math.min(5, Math.max(1, parseFloat(rating))) : 4.5;
+        const newProduct = {
+            name: name.trim(),
+            price: numPrice,
+            image: image ? image.trim() : 'assets/placeholder.png',
+            category: category ? category.trim() : 'General',
+            rating: numRating
+        };
 
         const { data: product, error } = await supabase.from('products').insert(newProduct).select().single();
         if (error) throw error;
@@ -60,11 +85,20 @@ router.put('/:id', adminAuth, async (req, res) => {
         const { name, price, image, category, rating } = req.body;
         
         const updateData = {};
-        if (name !== undefined) updateData.name = name;
-        if (price !== undefined) updateData.price = price;
-        if (image !== undefined) updateData.image = image;
-        if (category !== undefined) updateData.category = category;
-        if (rating !== undefined) updateData.rating = rating;
+        if (name !== undefined) updateData.name = name.trim();
+        if (price !== undefined) {
+            const numPrice = parseFloat(price);
+            if (isNaN(numPrice) || numPrice <= 0) {
+                return res.status(400).json({ msg: 'Price must be a positive number' });
+            }
+            updateData.price = numPrice;
+        }
+        if (image !== undefined) updateData.image = image ? image.trim() : 'assets/placeholder.png';
+        if (category !== undefined) updateData.category = category ? category.trim() : 'General';
+        if (rating !== undefined) {
+            const numRating = parseFloat(rating);
+            updateData.rating = !isNaN(numRating) ? Math.min(5, Math.max(1, numRating)) : 4.5;
+        }
 
         const { data: product, error } = await supabase.from('products')
             .update(updateData)
