@@ -24,39 +24,84 @@ if (typeof firebase !== 'undefined') {
 }
 
 // Google Login Function
+async function verifyBackendGoogleLogin(idToken, user) {
+    try {
+        const payload = {
+            token: idToken,
+            user: {
+                email: user.email,
+                displayName: user.displayName || user.email.split('@')[0],
+                photoURL: user.photoURL || null,
+                uid: user.uid
+            }
+        };
+
+        const res = await fetch(`${API_URL}/google`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+        });
+
+        const data = await res.json();
+
+        if (res.ok && data.token && data.user) {
+            showNotification(`Welcome back, ${data.user.username}!`, 'success');
+            handlePostAuth(data.user, data.token);
+        } else {
+            throw new Error(data.msg || 'Backend verification failed');
+        }
+    } catch (error) {
+        console.error("Backend Verification Error:", error);
+        showNotification("Login Failed: " + error.message, 'error');
+    }
+}
+
 function googleLogin() {
-    if (typeof firebase === 'undefined') {
-        showNotification('Firebase SDK is not loaded.', 'error');
+    if (typeof firebase === 'undefined' || !firebase.auth) {
+        showNotification('Firebase SDK is still loading. Please try again in a moment.', 'error');
         return;
     }
+
     const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+
     firebase.auth().signInWithPopup(provider)
-        .then((result) => {
+        .then(async (result) => {
             const user = result.user;
-            user.getIdToken().then(async (idToken) => {
-                try {
-                    const res = await fetch(`${API_URL}/google`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ token: idToken })
-                    });
-
-                    const data = await res.json();
-
-                    if (res.ok) {
-                        showNotification(`Welcome back, ${data.user.username}!`, 'success');
-                        handlePostAuth(data.user, data.token);
-                    } else {
-                        throw new Error(data.msg || 'Backend verification failed');
-                    }
-                } catch (error) {
-                    console.error("Backend Verification Error:", error);
-                    showNotification("Login Failed: " + error.message, 'error');
-                }
-            });
-        }).catch((error) => {
+            const idToken = await user.getIdToken();
+            await verifyBackendGoogleLogin(idToken, user);
+        })
+        .catch((error) => {
             console.error("Google Login Error:", error);
-            showNotification("Google Login Failed: " + error.message, 'error');
+
+            if (error.code === 'auth/unauthorized-domain') {
+                const currentHost = window.location.hostname;
+                const msg = `Domain '${currentHost}' is not authorized in Firebase Console. Please add '${currentHost}' to Firebase Console -> Authentication -> Settings -> Authorized Domains.`;
+                alert(msg);
+                showNotification(msg, 'error');
+            } else if (error.code === 'auth/popup-blocked') {
+                showNotification("Popup was blocked by your browser. Redirecting to Google...", 'info');
+                firebase.auth().signInWithRedirect(provider);
+            } else if (error.code === 'auth/popup-closed-by-user') {
+                showNotification("Sign-in popup was closed.", 'info');
+            } else {
+                showNotification("Google Login Failed: " + error.message, 'error');
+            }
+        });
+}
+
+// Check for redirect login on page load
+if (typeof firebase !== 'undefined' && firebase.auth) {
+    firebase.auth().getRedirectResult()
+        .then(async (result) => {
+            if (result && result.user) {
+                const user = result.user;
+                const idToken = await user.getIdToken();
+                await verifyBackendGoogleLogin(idToken, user);
+            }
+        })
+        .catch(err => {
+            if (err && err.code) console.debug('Redirect result check:', err.message);
         });
 }
 

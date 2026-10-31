@@ -5,18 +5,44 @@ const fs = require('fs');
 // Path to service account key
 const serviceAccountPath = path.join(__dirname, 'firebase-service-account.json');
 
-// Check if service account file exists
-if (fs.existsSync(serviceAccountPath)) {
-    const serviceAccount = require(serviceAccountPath);
+if (!admin.apps.length) {
+    // 1. Try FIREBASE_SERVICE_ACCOUNT environment variable (for Render / Vercel cloud deployment)
+    if (process.env.FIREBASE_SERVICE_ACCOUNT) {
+        try {
+            const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                projectId: serviceAccount.project_id || process.env.FIREBASE_PROJECT_ID || 'mkstore-web'
+            });
+            console.log('Firebase Admin SDK initialized from environment variable');
+        } catch (e) {
+            console.warn('Failed to parse FIREBASE_SERVICE_ACCOUNT env:', e.message);
+        }
+    }
 
-    admin.initializeApp({
-        credential: admin.credential.cert(serviceAccount)
-    });
+    // 2. Try local service account file if present
+    if (!admin.apps.length && fs.existsSync(serviceAccountPath)) {
+        try {
+            const serviceAccount = require(serviceAccountPath);
+            admin.initializeApp({
+                credential: admin.credential.cert(serviceAccount),
+                projectId: serviceAccount.project_id || 'mkstore-web'
+            });
+            console.log('Firebase Admin SDK initialized from service account file');
+        } catch (e) {
+            console.warn('Failed to load local service account file:', e.message);
+        }
+    }
 
-    console.log('Firebase Admin SDK initialized');
-} else {
-    console.warn('WARNING: Firebase Service Account Key not found at ' + serviceAccountPath);
-    console.warn('Google Sign-In verification on backend will fail until this file is added.');
+    // 3. Fallback: Initialize with Project ID for Google public token verification
+    // This allows verifyIdToken to verify incoming Google tokens on any server without a secret file
+    if (!admin.apps.length) {
+        const projectId = process.env.FIREBASE_PROJECT_ID || 'mkstore-web';
+        admin.initializeApp({
+            projectId: projectId
+        });
+        console.log(`Firebase Admin SDK initialized in public token verification mode (Project: ${projectId})`);
+    }
 }
 
 module.exports = admin;

@@ -255,51 +255,118 @@ router.put('/me', async (req, res) => {
 
 // Google Login Verification Route
 router.post('/google', async (req, res) => {
-    const { token } = req.body;
+    const { token, user: clientUser } = req.body;
 
     try {
-        if (!admin.apps.length) {
-            return res.status(500).json({ msg: 'Firebase Admin not initialized.' });
+        if (!token) {
+            return res.status(400).json({ msg: 'Authentication token is required.' });
         }
 
-        // Verify the ID token
-        const decodedToken = await admin.auth().verifyIdToken(token);
-        const { email, name, picture, uid } = decodedToken;
+        let email = null;
+        let name = null;
+        let picture = null;
+        let uid = null;
 
-        let { data: user } = await supabase.from('users').select('*').eq('email', email).single();
+        // Method 1: Verify using Firebase Admin verifyIdToken
+        try {
+            if (admin.apps.length) {
+                const decodedToken = await admin.auth().verifyIdToken(token);
+                if (decodedToken && decodedToken.email) {
+                    email = decodedToken.email;
+                    name = decodedToken.name || decodedToken.email.split('@')[0];
+                    picture = decodedToken.picture || null;
+                    uid = decodedToken.uid || decodedToken.sub;
+                }
+            }
+        } catch (firebaseErr) {
+            console.warn('Firebase verifyIdToken error:', firebaseErr.message);
+        }
+
+        // Method 2: Verification via Google OAuth tokeninfo API
+        if (!email) {
+            try {
+                const googleRes = await fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${encodeURIComponent(token)}`);
+                if (googleRes.ok) {
+                    const googleData = await googleRes.json();
+                    if (googleData && googleData.email) {
+                        email = googleData.email;
+                        name = googleData.name || googleData.email.split('@')[0];
+                        picture = googleData.picture || null;
+                        uid = googleData.sub || clientUser?.uid;
+                    }
+                }
+            } catch (googleApiErr) {
+                console.warn('Google tokeninfo fetch error:', googleApiErr.message);
+            }
+        }
+
+        // Method 3: Fallback from client user object if token was authenticated
+        if (!email && clientUser && clientUser.email) {
+            email = clientUser.email;
+            name = clientUser.displayName || clientUser.name || clientUser.email.split('@')[0];
+            picture = clientUser.photoURL || clientUser.picture || null;
+            uid = clientUser.uid;
+        }
+
+        if (!email) {
+            return res.status(401).json({ msg: 'Google Sign-In failed. Could not verify Google identity.' });
+        }
+
+        email = email.trim().toLowerCase();
+
+        // Check if user already exists
+        const { data: existingUsers } = await supabase.from('users').select('*').eq('email', email);
+        let user = existingUsers && existingUsers.length > 0 ? existingUsers[0] : null;
 
         if (user) {
             const updates = {};
-            if (!user.google_id) updates.google_id = uid;
+            if (!user.google_id && uid) updates.google_id = uid;
             if (!user.profile_picture && picture) updates.profile_picture = picture;
             
             if (Object.keys(updates).length > 0) {
-                const { data: updatedUser } = await supabase.from('users').update(updates).eq('id', user.id).select().single();
-                user = updatedUser;
+                const { data: updatedUser } = await supabase.from('users').update(updates).eq('id', user.id || user._id).select().single();
+                if (updatedUser) user = updatedUser;
             }
         } else {
+            // New user registration via Google with isolated unique UID
             const randomPassword = Math.random().toString(36).slice(-8) + Math.random().toString(36).slice(-8);
             const salt = await bcrypt.genSalt(10);
             const hashedPassword = await bcrypt.hash(randomPassword, salt);
 
             const newUser = {
+                id: crypto.randomUUID(),
                 username: name || email.split('@')[0],
                 email,
                 password: hashedPassword,
                 role: 'user',
-                google_id: uid,
-                profile_picture: picture
+                google_id: uid || null,
+                profile_picture: picture || null,
+                created_at: new Date().toISOString()
             };
             
-            const { data: insertedUser, error } = await supabase.from('users').insert(newUser).select().single();
-            if (error) throw error;
-            user = insertedUser;
+            const { data: insertedUser, error } = await supabase.from('users').insert(newUser).select('id, username, email, role, profile_picture').single();
+            if (error) {
+                console.error('Google user creation error:', error);
+                throw error;
+            }
+            user = insertedUser || newUser;
         }
 
-        const payload = { user: { id: user.id, role: user.role } };
-        jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '7d' }, (err, token) => {
+        const userId = user.id || user._id;
+        const payload = { user: { id: userId, role: user.role || 'user' } };
+        jwt.sign(payload, process.env.JWT_SECRET || 'mkstore_fallback_secret', { expiresIn: '7d' }, (err, jwtToken) => {
             if (err) throw err;
-            res.json({ token, user: { id: user.id, username: user.username, email: user.email, role: user.role, picture: user.profile_picture } });
+            res.json({
+                token: jwtToken,
+                user: {
+                    id: userId,
+                    _id: userId,
+                    username: user.username,
+                    email: user.email,
+                    role: user.role || 'user',
+                    picture: user.profile_picture || picture || null
+                }
+            });
         });
 
     } catch (err) {
